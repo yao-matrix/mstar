@@ -1,0 +1,4 @@
+interface:
+  display_name: "XPU Model Enabling"
+  short_description: "Enable and validate models on Intel XPU"
+  default_prompt: "Use $xpu-model-enabling to port and validate this model on Intel XPU."
