@@ -1,5 +1,6 @@
 import functools
 import logging
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import NamedTuple
@@ -87,9 +88,29 @@ class XPUPagedPlan:
     block_table: torch.Tensor
     cu_q: torch.Tensor
     host_kv_lens: torch.Tensor
+    write_pages: torch.Tensor
+    write_offsets: torch.Tensor
     max_q: int
     max_k: int
     causal: bool
+
+    def copy_from(self, other: "XPUPagedPlan") -> None:
+        """Refresh graph-stable planning buffers without changing addresses."""
+        if self.block_table.shape != other.block_table.shape:
+            raise ValueError(
+                "XPU graph block-table shape changed from "
+                f"{tuple(self.block_table.shape)} to {tuple(other.block_table.shape)}"
+            )
+        if self.cu_q.shape != other.cu_q.shape:
+            raise ValueError("XPU graph query-count shape changed")
+        if self.write_pages.shape != other.write_pages.shape:
+            raise ValueError("XPU graph token-count shape changed")
+        self.block_table.copy_(other.block_table)
+        self.cu_q.copy_(other.cu_q)
+        self.host_kv_lens.copy_(other.host_kv_lens)
+        self.write_pages.copy_(other.write_pages)
+        self.write_offsets.copy_(other.write_offsets)
+        self.segments = other.segments
 
 
 @dataclass
@@ -1422,10 +1443,23 @@ class XPUPagedCacheManager(FlashInferCacheManager):
                 kv_lens.append(total_len)
 
         max_blocks = max((len(row) for row in block_rows), default=1)
+        if self._cuda_graph_mode:
+            max_blocks = max(
+                max_blocks,
+                math.ceil(cfg.max_seq_len / cfg.page_size),
+            )
         padded_rows = [row + [0] * (max_blocks - len(row)) for row in block_rows]
         cu_q = [0]
-        for q_len in q_lens:
-            cu_q.append(cu_q[-1] + q_len)
+        write_pages: list[int] = []
+        write_offsets: list[int] = []
+        for segment, row in zip(segments, block_rows, strict=True):
+            cu_q.append(cu_q[-1] + segment.query_len)
+            for position in range(
+                segment.prefix_len,
+                segment.prefix_len + segment.query_len,
+            ):
+                write_pages.append(row[position // cfg.page_size])
+                write_offsets.append(position % cfg.page_size)
 
         return XPUPagedPlan(
             segments=segments,
@@ -1433,9 +1467,19 @@ class XPUPagedCacheManager(FlashInferCacheManager):
                 padded_rows, dtype=torch.int32, device=self.device,
             ),
             cu_q=torch.tensor(cu_q, dtype=torch.int32, device=self.device),
-            host_kv_lens=torch.tensor(kv_lens, dtype=torch.int32),
+            host_kv_lens=torch.tensor(
+                kv_lens,
+                dtype=torch.int32,
+                device=self.device if self._cuda_graph_mode else None,
+            ),
+            write_pages=torch.tensor(
+                write_pages, dtype=torch.long, device=self.device,
+            ),
+            write_offsets=torch.tensor(
+                write_offsets, dtype=torch.long, device=self.device,
+            ),
             max_q=max(q_lens, default=0),
-            max_k=max(kv_lens, default=0),
+            max_k=(cfg.max_seq_len if self._cuda_graph_mode else max(kv_lens, default=0)),
             causal=causal,
         )
 
@@ -1455,9 +1499,13 @@ class XPUPagedCacheManager(FlashInferCacheManager):
         ps = self._plan_states.get(effective_label) or _PlanState()
         ps.seq_lens = seq_lens
         ps.write_store = write_store
-        ps.xpu_paged = self._build_xpu_plan(
+        new_plan = self._build_xpu_plan(
             [effective_label], {effective_label: seq_lens}, is_causal,
         )
+        if self._cuda_graph_mode and ps.xpu_paged is not None:
+            ps.xpu_paged.copy_from(new_plan)
+        else:
+            ps.xpu_paged = new_plan
         self._plan_states[effective_label] = ps
         self._batched_cfg_info = None
 
@@ -1479,7 +1527,11 @@ class XPUPagedCacheManager(FlashInferCacheManager):
         ps = self._plan_states.get(combined_label) or _PlanState()
         ps.seq_lens = [n for label in labels for n in seq_lens[label]]
         ps.write_store = write_store
-        ps.xpu_paged = self._build_xpu_plan(labels, seq_lens, is_causal)
+        new_plan = self._build_xpu_plan(labels, seq_lens, is_causal)
+        if self._cuda_graph_mode and ps.xpu_paged is not None:
+            ps.xpu_paged.copy_from(new_plan)
+        else:
+            ps.xpu_paged = new_plan
         self._plan_states[combined_label] = ps
 
     @torch.compiler.disable
@@ -1499,25 +1551,8 @@ class XPUPagedCacheManager(FlashInferCacheManager):
 
         cfg = self.kv_cache_config
         layer_cache = self.kv_cache[layer_idx]
-        offset = 0
-        for segment in plan.segments:
-            state = self._get_state(segment.request_id, segment.label)
-            positions = torch.arange(
-                segment.prefix_len,
-                segment.prefix_len + segment.query_len,
-                dtype=torch.long, device=self.device,
-            )
-            pages = torch.tensor(
-                state.page_indices, dtype=torch.long, device=self.device,
-            )
-            physical_pages = pages[
-                torch.div(positions, cfg.page_size, rounding_mode="floor")
-            ]
-            page_offsets = positions % cfg.page_size
-            next_offset = offset + segment.query_len
-            layer_cache[physical_pages, 0, page_offsets] = k[offset:next_offset]
-            layer_cache[physical_pages, 1, page_offsets] = v[offset:next_offset]
-            offset = next_offset
+        layer_cache[plan.write_pages, 0, plan.write_offsets] = k
+        layer_cache[plan.write_pages, 1, plan.write_offsets] = v
 
         if self.auto_write_store and ps.write_store:
             for segment in plan.segments:
