@@ -563,7 +563,7 @@ class StatelessEngine(BaseEngine):
         and ``get_piecewise_cuda_graph_configs``) so submodules that don't
         support a feature are skipped without error.
         """
-        if not torch.cuda.is_available() or self.device is None:
+        if not torch.accelerator.is_available() or self.device is None:
             return
 
         for node_name, submodule in self.submodules.items():

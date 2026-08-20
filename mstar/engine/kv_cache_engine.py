@@ -330,7 +330,7 @@ class KVCacheEngine(BaseEngine):
         recompiles, so that mode is applied on the CUDA-graph path instead
         (see ``cuda_graph_runner``).
         """
-        if not torch.cuda.is_available():
+        if not torch.accelerator.is_available():
             return
 
         for node_name, submodule_mgmt in self.submodule_management.items():
@@ -358,14 +358,14 @@ class KVCacheEngine(BaseEngine):
 
     def warmup(self) -> None:
         """Compile submodules and capture CUDA graphs."""
-        from mstar.engine.cuda_graph_runner import CudaGraphRunner
+        from mstar.engine.accelerator_graph_runner import AcceleratorGraphRunner
 
         for node_name, submodule_mgmt in self.submodule_management.items():
             kv_mgmt = submodule_mgmt.kv_management
             submodule = submodule_mgmt.submodule
 
             # Standard AR decode CUDA graph (CudaGraphRunner).
-            runner = CudaGraphRunner(
+            runner = AcceleratorGraphRunner(
                 submodule_name=node_name,
                 submodule=submodule,
                 kv_cache_config=kv_mgmt.kv_cache_config,
@@ -381,7 +381,7 @@ class KVCacheEngine(BaseEngine):
             runner.warmup_and_capture()
             if runner.graphs:
                 submodule_mgmt.cuda_graph_runner = runner
-                logger.info("KVCacheEngine: CUDA graphs captured for %s (%d configs)",
+                logger.info("KVCacheEngine: Accelerator graphs captured for %s (%d configs)",
                             node_name, len(runner.graphs))
 
             # Piecewise CUDA graphs for inner-loop capture (e.g. VJepa2 AC
@@ -723,13 +723,15 @@ class KVCacheEngine(BaseEngine):
         bs = len(batch.request_ids)
         num_tokens = sum(inp.input_seq_len for inp in inputs)
 
-        if not submodule.can_use_cuda_graphs(batch, inputs):
+        if not submodule.can_use_accelerator_graphs(
+            batch, inputs, self.device
+        ):
             self._log_graph_miss(
                 node_name=batch.node_name,
                 graph_walk=batch.graph_walk,
                 bs=bs, num_tokens=num_tokens, requires_cfg=has_cfg,
                 runner=runner,
-                reason="submodule.can_use_cuda_graphs() returned False",
+                reason="submodule.can_use_accelerator_graphs() returned False",
             )
             return False
 
