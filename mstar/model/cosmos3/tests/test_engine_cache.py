@@ -28,10 +28,10 @@ import torch.nn.functional as F
 
 PROMPT = "A red cube resting on a polished wooden table, soft daylight."
 # Parity checks here are resolution-independent; 256x256 keeps them quick. The
-# CUDA-graph check below captures at whatever (H, W) it sets. NOTE: the in-process
+# accelerator-graph check below captures at whatever (H, W) it sets. NOTE: the in-process
 # graph-vs-fused PSNR is a coarse smoke check — it carries a cache-setup artifact
 # of this harness. The authoritative bit-exactness gate for the served graph is
-# the HTTP A/B (graph-on vs COSMOS3_DISABLE_CUDA_GRAPH=1), which is byte-identical
+# the HTTP A/B (graph-on vs COSMOS3_DISABLE_ACCELERATOR_GRAPH=1), which is byte-identical
 # at every resolution.
 H = W = 256
 STEPS = 12
@@ -617,13 +617,13 @@ def test_cross_request_batch_matches_individual() -> None:
 
 
 @torch.no_grad()
-def _run_cuda_graph_denoise(ctx):
+def _run_accelerator_graph_denoise(ctx):
     """Capture the image denoise step and run the whole loop through the real
-    CudaGraphRunner (one captured forward per step covering both guidance
+    AcceleratorGraphRunner (one captured forward per step covering both guidance
     branches), returning the final latents."""
     from mstar.conductor.request_info import CurrentForwardPassInfo
     from mstar.distributed.communication import CommGroup
-    from mstar.engine.cuda_graph_runner import CudaGraphRunner
+    from mstar.engine.accelerator_graph_runner import AcceleratorGraphRunner
     from mstar.model.submodule_base import ModelInputsFromEngine
     from mstar.utils.sampling import MultiSampler, MultiSamplingConfig
 
@@ -647,7 +647,7 @@ def _run_cuda_graph_denoise(ctx):
     ni = dit.prepare_inputs("prefill", fwd, {"text_inputs": ti})
     dit.forward("prefill", ei, **dit.preprocess("prefill", ei, [ni]))
 
-    runner = CudaGraphRunner(
+    runner = AcceleratorGraphRunner(
         submodule_name="dit", submodule=dit, kv_cache_config=shared["cfg"],
         alloc_manager=shared["alloc"], sampler=MultiSampler.new(
             aux_labels=[], device=dev, tp_group=CommGroup.trivial(),
@@ -656,7 +656,7 @@ def _run_cuda_graph_denoise(ctx):
         default_sampling_config=MultiSamplingConfig(), tp_group=CommGroup.trivial(),
     )
     runner.warmup_and_capture()
-    assert runner.graphs, "no CUDA graph captured for cosmos3 image_gen"
+    assert runner.graphs, "no accelerator graph captured for cosmos3 image_gen"
     runner.register_request(rid)
 
     fwd.graph_walk = "image_gen"
@@ -677,7 +677,7 @@ def _run_cuda_graph_denoise(ctx):
 
 
 @torch.no_grad()
-def test_cuda_graph_matches_eager() -> None:
+def test_accelerator_graph_matches_eager() -> None:
     """The captured-graph denoise step is the served path's accelerator: both
     guidance branches run in one captured forward (~2x faster than the eager
     step). Each captured forward matches eager to within bf16 (the first step
@@ -689,7 +689,7 @@ def test_cuda_graph_matches_eager() -> None:
         print("  (skipped cuda-graph parity: needs COSMOS3_NANO_DIR + CUDA)")
         return
     try:
-        lat_graph = _run_cuda_graph_denoise(ctx)
+        lat_graph = _run_accelerator_graph_denoise(ctx)
     except Exception as exc:  # noqa: BLE001
         print(f"  (skipped cuda-graph parity: FlashInfer/capture unavailable: {exc})")
         return
@@ -714,7 +714,7 @@ def _main() -> None:
         ("anchor_encode_matches_full", test_anchor_encode_matches_full),
         ("compile_vae_matches_eager", test_compile_vae_matches_eager),
         ("compile_vae_matches_eager_t2v", test_compile_vae_matches_eager_t2v),
-        ("cuda_graph_matches_eager", test_cuda_graph_matches_eager),
+        ("accelerator_graph_matches_eager", test_accelerator_graph_matches_eager),
         ("cross_request_batch_matches_individual", test_cross_request_batch_matches_individual),
     ]:
         try:

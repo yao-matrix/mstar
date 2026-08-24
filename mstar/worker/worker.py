@@ -2104,7 +2104,7 @@ class Worker:
                 )
 
         # Bound the load-time asymmetry between workers before any
-        # subgroup NCCL collective fires inside the per-bs CUDA-graph
+        # subgroup NCCL collective fires inside the per-bs accelerator-graph
         # capture loop. Without this fence, a worker with a small model
         # (e.g. an 8B Talker) can finish loading, enter warmup, and hit
         # its first subgroup barrier while a worker with a 30B Thinker
@@ -2116,11 +2116,11 @@ class Worker:
         # bootstrap completes within the retry budget.
         self.parallel_groups.barrier_all()
 
-        # CUDA graph capture before entering the main loop
+        # accelerator graph capture before entering the main loop
         self.engine_manager.warmup_all()
 
         # Sync every worker before the main loop opens. Per-batch-size
-        # captures inside CudaGraphRunner are already barriered on the
+        # captures inside AcceleratorGraphRunner are already barriered on the
         # node-local TP group, but that doesn't bound the time between
         # ``warmup_and_capture`` returning and ``run()`` starting to
         # schedule. Without this fence, a TP leader can finish warmup
@@ -2130,7 +2130,7 @@ class Worker:
         # yet, but the leader will sit on the first NCCL collective.
         self.parallel_groups.barrier_all()
 
-        # Setup (weight load + warmup + CUDA-graph capture) is complete. Tell
+        # Setup (weight load + warmup + accelerator-graph capture) is complete. Tell
         # the conductor this worker is ready. The conductor blocks its main
         # loop until every worker reports in, so the API server only advertises
         # readiness once all workers can actually serve.
@@ -2159,7 +2159,7 @@ class Worker:
         # await_gpu (which releases the GIL), so plan()'s Python work isn't
         # contended by main thread's fast/slow postprocess
         #
-        # With double-buffered wrappers (CudaGraphRunner.NUM_SLOTS=2) and
+        # With double-buffered wrappers (AcceleratorGraphRunner.NUM_SLOTS=2) and
         # advance_event signaling, plan(N+1) runs concurrent with replay(N)
         # on the disjoint slot — the actual GPU overlap. plan_executor waits
         # on prev_advance_event (signaled right after advance_seq_lens(N) on
@@ -2333,7 +2333,7 @@ class Worker:
                         # so both pre-plan and replay (queued below) target
                         # the SAME slot — and the OPPOSITE slot from
                         # batch_N's in-flight replay. The reservation lives
-                        # on spec_node_batch.metadata['cuda_graph_slot'];
+                        # on spec_node_batch.metadata['accelerator_graph_slot'];
                         # the engine forwards it to the runner.
                         if speculation is not None:
                             engine = self.engine_manager.get_engine(
@@ -2461,7 +2461,7 @@ class Worker:
                             # Block the main thread until the GPU executor
                             # thread is about to launch CUDA kernels (set
                             # deep in the engine: before graph.replay() in
-                            # CudaGraphRunner, or before forward/forward_batched
+                            # AcceleratorGraphRunner, or before forward/forward_batched
                             # in the eager AR path).
                             spec_launch_started_event = threading.Event()
                             spec_node_batch.metadata["launch_started_event"] = spec_launch_started_event

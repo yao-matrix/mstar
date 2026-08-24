@@ -265,7 +265,7 @@ class BaseEngine(ABC):
 
     # ── Async pre-execution hooks ────────────────────────────────────────
     #
-    # The worker uses these to coordinate a double-buffered CUDA-graph
+    # The worker uses these to coordinate a double-buffered accelerator-graph
     # runner: ``reserve_replay_slot`` picks the slot that the upcoming
     # batch will replay into; ``pre_plan_for_batch`` warms the plan-state
     # cache on that slot ahead of GPU submission so the GPU thread can
@@ -278,8 +278,8 @@ class BaseEngine(ABC):
     # unconditionally.
 
     def reserve_replay_slot(self, batch: NodeBatch) -> int | None:
-        """Reserve a CUDA-graph replay slot for ``batch`` and stash it on
-        ``batch.metadata['cuda_graph_slot']``. Returns the slot index,
+        """Reserve a accelerator-graph replay slot for ``batch`` and stash it on
+        ``batch.metadata['accelerator_graph_slot']``. Returns the slot index,
         or ``None`` when no captured graph matches.
         """
         return None
@@ -440,7 +440,7 @@ class BaseEngine(ABC):
         return StopCheckResult()
 
     def warmup(self) -> None:
-        """Optional CUDA graph capture. Override in subclasses."""
+        """Optional accelerator graph capture. Override in subclasses."""
         return
 
     def shutdown(self) -> None:

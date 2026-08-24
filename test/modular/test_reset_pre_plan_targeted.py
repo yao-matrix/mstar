@@ -6,7 +6,7 @@ engine across the worker on every speculation drop / pre-plan failure. With
 in-flight pre-plan whose ``_pre_planned_labels`` set hasn't yet been
 consumed by the matching replay.
 
-The fix added ``CudaGraphRunner.reset_pre_plan_state_for_slot`` to clear
+The fix added ``AcceleratorGraphRunner.reset_pre_plan_state_for_slot`` to clear
 just one (key, slot)'s pre-plan state. These tests drive the runner method
 directly with a stub graphs dict, verifying that:
 
@@ -23,11 +23,11 @@ import types
 
 sys.path.insert(0, ".")
 
-from mstar.engine.cuda_graph_runner import (
-    CudaGraphData,
-    CudaGraphKey,
-    CudaGraphRunner,
-    CudaGraphSlot,
+from mstar.engine.accelerator_graph_runner import (
+    AcceleratorGraphData,
+    AcceleratorGraphKey,
+    AcceleratorGraphRunner,
+    AcceleratorGraphSlot,
 )
 
 
@@ -42,14 +42,14 @@ def _make_stub_cm() -> types.SimpleNamespace:
     return cm
 
 
-def _make_slot(label_set: set[str], event_marker: object | None) -> CudaGraphSlot:
-    """Build a CudaGraphSlot with stub fields. The reset path only reads
+def _make_slot(label_set: set[str], event_marker: object | None) -> AcceleratorGraphSlot:
+    """Build a AcceleratorGraphSlot with stub fields. The reset path only reads
     ``static_cache_manager``, so other fields are placeholder objects.
     """
     cm = _make_stub_cm()
     cm._pre_planned_labels = set(label_set)
     cm._plan_done_event = event_marker
-    return CudaGraphSlot(
+    return AcceleratorGraphSlot(
         graph=object(),
         static_inputs={},
         static_outputs={},
@@ -57,7 +57,7 @@ def _make_slot(label_set: set[str], event_marker: object | None) -> CudaGraphSlo
     )
 
 
-def _make_runner_with_two_keys() -> CudaGraphRunner:
+def _make_runner_with_two_keys() -> AcceleratorGraphRunner:
     """Build a runner via ``__new__`` and populate ``graphs`` with two keys,
     each with two slots. Stub ``_get_basic_batched_key_for`` to do an
     exact-match lookup against (graph_walk, requires_cfg, bs) — skipping
@@ -66,24 +66,26 @@ def _make_runner_with_two_keys() -> CudaGraphRunner:
     num_tokens derived from config) since num_tokens is fully determined
     by the captured config for those graphs.
     """
-    runner = CudaGraphRunner.__new__(CudaGraphRunner)
+    runner = AcceleratorGraphRunner.__new__(AcceleratorGraphRunner)
     runner.enable_nvtx = False
 
-    key_a = CudaGraphKey(graph_walk="decode", requires_cfg=False, bs=4, num_tokens=4)
-    key_b = CudaGraphKey(graph_walk="decode", requires_cfg=True, bs=2, num_tokens=2)
+    key_a = AcceleratorGraphKey(graph_walk="decode", requires_cfg=False, bs=4, num_tokens=4)
+    key_b = AcceleratorGraphKey(graph_walk="decode", requires_cfg=True, bs=2, num_tokens=2)
 
     runner.graphs = {
-        key_a: CudaGraphData(
+        key_a: AcceleratorGraphData(
             config=object(),
             bs=4,
+            index=0,
             slots=[
                 _make_slot({"main"}, event_marker="A0"),
                 _make_slot({"main"}, event_marker="A1"),
             ],
         ),
-        key_b: CudaGraphData(
+        key_b: AcceleratorGraphData(
             config=object(),
             bs=2,
+            index=1,
             slots=[
                 _make_slot({"main", "cfg_img"}, event_marker="B0"),
                 _make_slot({"main", "cfg_img"}, event_marker="B1"),
@@ -116,10 +118,10 @@ class TestResetPrePlanTargeted:
             batch_size=4, slot=0,
         )
 
-        a0 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
-        a1 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
-        b0 = runner.graphs[CudaGraphKey("decode", True, 2, 2)].slots[0].static_cache_manager
-        b1 = runner.graphs[CudaGraphKey("decode", True, 2, 2)].slots[1].static_cache_manager
+        a0 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
+        a1 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
+        b0 = runner.graphs[AcceleratorGraphKey("decode", True, 2, 2)].slots[0].static_cache_manager
+        b1 = runner.graphs[AcceleratorGraphKey("decode", True, 2, 2)].slots[1].static_cache_manager
 
         # Targeted slot wiped.
         assert a0._pre_planned_labels == set()
@@ -142,8 +144,8 @@ class TestResetPrePlanTargeted:
             graph_walk="decode", requires_cfg=False,
             batch_size=4, slot=1,
         )
-        a0 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
-        a1 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
+        a0 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
+        a1 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
 
         assert a0._pre_planned_labels == {"main"}
         assert a0._plan_done_event == "A0"
@@ -161,7 +163,7 @@ class TestResetPrePlanTargeted:
             batch_size=999, slot=0,
         )
         # All slots unchanged.
-        a0 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
+        a0 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
         assert a0._pre_planned_labels == {"main"}
 
     def test_slot_index_wraps(self):
@@ -173,8 +175,8 @@ class TestResetPrePlanTargeted:
             graph_walk="decode", requires_cfg=False,
             batch_size=4, slot=3,  # wraps to 1
         )
-        a0 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
-        a1 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
+        a0 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
+        a1 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
         assert a0._pre_planned_labels == {"main"}  # untouched
         assert a1._pre_planned_labels == set()      # cleared via wrap
 
@@ -185,8 +187,8 @@ class TestResetPrePlanTargeted:
             graph_walk="decode", requires_cfg=False,
             batch_size=4, slot=None,
         )
-        a0 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
-        a1 = runner.graphs[CudaGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
+        a0 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[0].static_cache_manager
+        a1 = runner.graphs[AcceleratorGraphKey("decode", False, 4, 4)].slots[1].static_cache_manager
         assert a0._pre_planned_labels == set()
         assert a1._pre_planned_labels == {"main"}
 
@@ -195,7 +197,7 @@ class TestResetPrePlanTargeted:
         without raising — protects against early-startup or eager paths
         where pre_plan also no-ops.
         """
-        runner = CudaGraphRunner.__new__(CudaGraphRunner)
+        runner = AcceleratorGraphRunner.__new__(AcceleratorGraphRunner)
         runner.enable_nvtx = False
         runner.graphs = {}
         runner._get_basic_batched_key_for = lambda *a, **k: None

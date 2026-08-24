@@ -1,15 +1,15 @@
-"""Parity test: Qwen3-Omni Thinker prefill_text via CUDA graph vs eager.
+"""Parity test: Qwen3-Omni Thinker prefill_text via accelerator graph vs eager.
 
 For each (bs, num_tokens) bucket captured by the Thinker prefill_text graph,
 synthesize identical batched inputs, run them through both the eager
-``forward_batched`` path and the CUDA-graph ``runner.run`` path, and assert
+``forward_batched`` path and the accelerator-graph ``runner.run`` path, and assert
 that the raw ``__batched_logits__`` + ``__batched_thinker_states__`` agree
 within bf16 numerical tolerance (≤ 1e-2 relative per plan §6.2).
 
 Why bypass ``engine.warmup()``: it calls ``_compile_submodules`` *after*
 graph capture, which would leave the captured graph using uncompiled
 ``forward_batched`` while subsequent direct eager calls use the compiled
-version — not apples-to-apples. Instead we construct ``CudaGraphRunner``
+version — not apples-to-apples. Instead we construct ``AcceleratorGraphRunner``
 manually so both paths run through identical kernels and the only
 difference being measured is graph capture/replay vs direct call.
 
@@ -38,7 +38,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from mstar.conductor.request_info import CurrentForwardPassInfo  # noqa: E402
-from mstar.engine.cuda_graph_runner import CudaGraphKey, CudaGraphRunner  # noqa: E402
+from mstar.engine.accelerator_graph_runner import AcceleratorGraphKey, AcceleratorGraphRunner  # noqa: E402
 from mstar.engine.kv_cache_engine import KVCacheEngine  # noqa: E402
 from mstar.engine.kv_store import TransferEngineInfo  # noqa: E402
 from mstar.model.submodule_base import ARNodeInputs, ModelInputsFromEngine  # noqa: E402
@@ -101,12 +101,12 @@ class _StubTransferEngine:
 
 @pytest.fixture(scope="session")
 def thinker_engine_with_runner():
-    """Bring up the Thinker submodule on GPU and capture its CUDA graphs.
+    """Bring up the Thinker submodule on GPU and capture its accelerator graphs.
 
     Session-scoped because the warmup capture (~50 s on H100 across the 20
     Thinker captures) dominates wall time. All tests share one engine.
 
-    Manually constructs the CudaGraphRunner instead of calling
+    Manually constructs the AcceleratorGraphRunner instead of calling
     ``engine.warmup()`` to avoid the post-capture ``_compile_submodules``
     step, which would create a compile-vs-uncompile divergence between the
     captured graph and subsequent direct eager calls.
@@ -150,7 +150,7 @@ def thinker_engine_with_runner():
 
     submod_mgmt = engine.submodule_management["Thinker"]
     kv_mgmt = submod_mgmt.kv_management
-    runner = CudaGraphRunner(
+    runner = AcceleratorGraphRunner(
         submodule_name="Thinker",
         submodule=submod_mgmt.submodule,
         kv_cache_config=kv_mgmt.kv_cache_config,
@@ -162,7 +162,7 @@ def thinker_engine_with_runner():
     )
     runner.warmup_and_capture()
     assert runner.graphs, "warmup_and_capture produced no captured graphs"
-    submod_mgmt.cuda_graph_runner = runner
+    submod_mgmt.accelerator_graph_runner = runner
 
     yield engine, runner, submod_mgmt.submodule
 
@@ -180,8 +180,8 @@ def _make_inputs(
 ) -> tuple[list[str], list[ARNodeInputs]]:
     """Build bs ARNodeInputs whose seq_lens sum to total_tokens.
 
-    CudaGraphKey.num_tokens is the TOTAL across the batch — set by
-    FlashInferPackedCudaGraphConfig.get_total_tokens which returns the
+    AcceleratorGraphKey.num_tokens is the TOTAL across the batch — set by
+    FlashInferPackedAcceleratorGraphConfig.get_total_tokens which returns the
     keys of packed_seq_len_to_inputs, the captured token-bucket dict.
     Splitting total_tokens evenly across bs requests keeps the test inputs
     lined up with what was captured.
@@ -261,7 +261,7 @@ def _run_eager_per_rid(
     for prefill_text (can_batch returns False for that walk). We can't use
     forward_batched here: it asserts cache_manager.get_qo_indptr_buf("main")
     is non-None, which only holds for the runner's static cache manager.
-    A fresh BatchedCacheManager from _create_cache_manager has no CUDA-graph
+    A fresh BatchedCacheManager from _create_cache_manager has no accelerator-graph
     wrapper attached, so the assert fires before any model code runs.
 
     Returns (concatenated last-token logits (bs, V), concatenated thinker_states
@@ -317,7 +317,7 @@ def test_thinker_prefill_text_graph_matches_eager(
     thinker_engine_with_runner, bs: int, total_tokens: int,
 ):
     """Semantic + numerical agreement between per-rid sequential eager prefill
-    and CUDA-graph replay.
+    and accelerator-graph replay.
 
     Two checks per (bs, total_tokens) bucket:
 
@@ -338,7 +338,7 @@ def test_thinker_prefill_text_graph_matches_eager(
 
     Caveat: eager runs bs=1 single-request FlashInfer prefill kernels;
     graph runs the bs=N packed prefill kernel. These are different kernels
-    even *without* CUDA graphs (the codebase has no eager-packed prefill
+    even *without* accelerator graphs (the codebase has no eager-packed prefill
     path), so this test measures graph-replay AND kernel-dispatch deltas
     together. For pure graph-vs-direct-call validation, see the determinism
     test below + the production TTS smoke at HEAD c356a30.
@@ -346,7 +346,7 @@ def test_thinker_prefill_text_graph_matches_eager(
     engine, runner, submodule = thinker_engine_with_runner
     device = engine.device
 
-    key = CudaGraphKey(
+    key = AcceleratorGraphKey(
         graph_walk="prefill_text",
         requires_cfg=False,
         bs=bs,
@@ -447,11 +447,11 @@ def test_thinker_prefill_text_graph_replay_is_deterministic(
     logic doesn't introduce drift across calls.
 
     ``total_tokens`` is the sum across the batch — same semantics as the
-    parity test above, matching CudaGraphKey.num_tokens.
+    parity test above, matching AcceleratorGraphKey.num_tokens.
     """
     engine, runner, submodule = thinker_engine_with_runner
     device = engine.device
-    key = CudaGraphKey(
+    key = AcceleratorGraphKey(
         graph_walk="prefill_text",
         requires_cfg=False,
         bs=bs,

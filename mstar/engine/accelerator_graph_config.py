@@ -108,7 +108,7 @@ class BasicBatchedAcceleratorGraphConfig(AcceleratorGraphConfig):
         return [self.single_request_inputs.input_seq_len * bs]
 
 
-class FlashInferPackedCudaGraphConfig(AcceleratorGraphConfig):
+class FlashInferPackedAcceleratorGraphConfig(AcceleratorGraphConfig):
     def __init__(
         self,
         capture_graph_walk: str,
@@ -294,10 +294,3 @@ class PiecewisePackedConfig(PiecewiseAcceleratorGraphConfig):
                     )
                 )
         return shapes
-
-
-# Compatibility aliases for existing model integrations.
-CudaGraphConfigType = AcceleratorGraphConfigType
-CudaGraphConfig = AcceleratorGraphConfig
-BasicBatchedCudaGraphConfig = BasicBatchedAcceleratorGraphConfig
-PiecewiseCudaGraphConfig = PiecewiseAcceleratorGraphConfig

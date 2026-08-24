@@ -1,13 +1,13 @@
 """Generic token sampling utilities.
 
 Uses FlashInfer's fused top-k/top-p sampling kernel for GPU efficiency
-and CUDA graph compatibility. Model-agnostic — any AR model returns logits,
+and accelerator graph compatibility. Model-agnostic — any AR model returns logits,
 this module selects the next token.
 
 Supports per-request sampling parameters (different temperature/top_k/top_p
 for each request in a batch) via tensor parameters.
 
-CUDA graph compatible: no Python control flow branches — uses masking
+accelerator graph compatible: no Python control flow branches — uses masking
 to handle greedy vs sampled requests in the same batch.
 
 Usage:
@@ -210,7 +210,7 @@ class SamplingConfig:
     # Sizes the per-request seen-token mask for the repetition penalty. When set,
     # it MUST equal the model's logit width (lm_head/codec_head output dim): the
     # mask is indexed as ``[B, vocab_size]`` against ``logits[B, V]``, and on the
-    # CUDA-graph path it also gates allocation of the in-graph penalty buffers.
+    # accelerator-graph path it also gates allocation of the in-graph penalty buffers.
     vocab_size: int | None = None
     temperature: float = 0.6
     top_k: int = 0
@@ -677,14 +677,14 @@ def _to_tensor(
 # ---------------------------------------------------------------------------
 #
 # Reads top_k / top_p / temperature from preallocated device tensors so the
-# call can sit inside a CUDA graph capture region without allocating, syncing,
+# call can sit inside a accelerator graph capture region without allocating, syncing,
 # or branching on CPU-side values. The full ``Sampler`` class is *not* graph
 # capturable (repetition-penalty state, ``@torch.compiler.disable``, the
 # device-context switch inside ``sample_tokens``), so the unrolled MTP loop uses
 # this narrower path. ``deterministic=True`` disables the CPU-RNG-seeded path that
 # FlashInfer would otherwise take.
 
-def sample_cuda_graphable_gpu(
+def sample_accelerator_graphable_gpu(
     logits: torch.Tensor,
     temperature: torch.Tensor,
     top_k: torch.Tensor,
@@ -698,7 +698,7 @@ def sample_cuda_graphable_gpu(
     """Deterministic per-batch top-k/top-p sampling for graph-captured code.
 
     Routes through the fused Triton prep kernel (``fused_temperature_softmax``)
-    so the CUDA-graph path can apply the same vLLM-style repetition penalty as
+    so the accelerator-graph path can apply the same vLLM-style repetition penalty as
     the regular ``Sampler``, then samples with
     ``flashinfer.sampling.top_k_top_p_sampling_from_probs`` (``deterministic=True``
     — the graph-safe variant that avoids CPU-seeded RNG paths). Greedy requests
@@ -748,13 +748,13 @@ def sample_cuda_graphable_gpu(
 
 
 @dataclass
-class CudaGraphableSampler(BaseSampler):
+class AcceleratorGraphableSampler(BaseSampler):
     temperature_buf: torch.Tensor
     top_k_buf: torch.Tensor
     top_p_buf: torch.Tensor
     seed_buf: torch.Tensor
     offset_buf: torch.Tensor
-    # Repetition-penalty state for the CUDA-graph path. ``None`` for submodules
+    # Repetition-penalty state for the accelerator-graph path. ``None`` for submodules
     # that don't opt into seen-token tracking (then ``apply_penalty`` is a no-op).
     rep_penalty_buf: torch.Tensor | None = None
     seen_tokens_buf: torch.Tensor | None = None  # [bs, V] bool
@@ -769,7 +769,7 @@ class CudaGraphableSampler(BaseSampler):
         self, request_ids: list[str], logits: torch.Tensor,
         apply_penalty: bool = False,
     ):
-        codes = sample_cuda_graphable_gpu(
+        codes = sample_accelerator_graphable_gpu(
             logits, self.temperature_buf,
             self.top_k_buf, self.top_p_buf,
             self.seed_buf, self.offset_buf,
@@ -783,7 +783,7 @@ class CudaGraphableSampler(BaseSampler):
             self.applied_penalty_in_graph = True
             # Record the (broadcast, TP-agreed) token in the seen-token buffer so
             # the next step penalises it. ``scatter_`` with a scalar value is
-            # CUDA-graph capturable; advanced-index assignment
+            # accelerator-graph capturable; advanced-index assignment
             # (``buf[rows, codes] = True``) is not — it trips "operation not
             # permitted when stream is capturing".
             self.seen_tokens_buf.scatter_(1, codes.unsqueeze(1), True)
@@ -809,17 +809,17 @@ class CudaGraphableSampler(BaseSampler):
 
 
 @dataclass
-class MultiCudaGraphableSampler(BaseMultiSampler):
+class MultiAcceleratorGraphableSampler(BaseMultiSampler):
     """Graph-safe counterpart of ``MultiSampler``, built by ``MultiSamplerBuffers``.
 
     Submodules sample the main stream with ``sample`` and each aux stream with
     ``sample_aux(label, ...)``; every param comes from the label's own static
     device buffers, so replay honours per-request configs without recapture.
     """
-    main: CudaGraphableSampler
-    aux: dict[str, CudaGraphableSampler] = field(default_factory=dict)
+    main: AcceleratorGraphableSampler
+    aux: dict[str, AcceleratorGraphableSampler] = field(default_factory=dict)
 
-    def _samplers(self) -> "Iterable[CudaGraphableSampler]":
+    def _samplers(self) -> "Iterable[AcceleratorGraphableSampler]":
         return [self.main, *self.aux.values()]
 
     @property
@@ -852,7 +852,7 @@ class Buffer:
     """Three-tier storage for one per-request scalar sampling parameter.
 
     - ``buf``     ``[max_bs]``   per-step tensor, sliced to ``padded_bs`` and read
-      by ``CudaGraphableSampler`` (its address must stay stable across replays).
+      by ``AcceleratorGraphableSampler`` (its address must stay stable across replays).
     - ``master``  ``[capacity]`` slot-indexed cache, one row per active request.
     - ``row_cpu`` ``[1]`` pinned staging for a single async H2D master-row write.
     """
@@ -968,7 +968,7 @@ class SamplerBuffers:
     # on register instead.
     offset: Buffer
     # TP communicator for the submodule that owns these buffers. Passed
-    # through ``slice_for_bs`` into every per-step ``CudaGraphableSampler``
+    # through ``slice_for_bs`` into every per-step ``AcceleratorGraphableSampler``
     # so its ``_broadcast_tokens`` aligns the sampled token across ranks.
     # Without this, ``sample`` would build a
     # sampler with ``tp_group=None``, the broadcast would silently no-op,
@@ -978,7 +978,7 @@ class SamplerBuffers:
     tp_group: "CommGroup | None" = None  # noqa: F821
     # Per-request seen-token mask buffer for the repetition penalty. Present
     # only for submodules that opt in by declaring a vocab size (e.g. the
-    # Qwen3-Omni Talker). ``None`` => the CUDA-graph path applies no penalty.
+    # Qwen3-Omni Talker). ``None`` => the accelerator-graph path applies no penalty.
     seen_tokens: "MaskBuffer | None" = None
     # Master cache capacity (grown by doubling when more requests are
     # concurrently registered than the per-step buffer holds).
@@ -1195,7 +1195,7 @@ class SamplerBuffers:
     def gather_for_request_ids(
         self, request_ids: list[str], padded_bs: int,
         gather_seen_tokens: bool = True,
-    ) -> "CudaGraphableSampler":
+    ) -> "AcceleratorGraphableSampler":
         """Materialise the per-step sampling tensors for ``request_ids``.
 
         Padding slots (``i >= len(request_ids)``) reuse slot 0's row — the
@@ -1242,7 +1242,7 @@ class SamplerBuffers:
             self.seen_tokens.gather(idx_view, padded_bs)
 
         slices = self.slice_for_bs(padded_bs)
-        return CudaGraphableSampler(**slices)
+        return AcceleratorGraphableSampler(**slices)
 
     def scatter_offset(self) -> None:
         """Persist the (in-graph advanced) per-step offsets back to their slot
@@ -1323,8 +1323,8 @@ class MultiSamplerBuffers:
     def gather_for_request_ids(
         self, request_ids: list[str], padded_bs: int,
         gather_seen_tokens: bool = True,
-    ) -> MultiCudaGraphableSampler:
-        return MultiCudaGraphableSampler(
+    ) -> MultiAcceleratorGraphableSampler:
+        return MultiAcceleratorGraphableSampler(
             main=self.main.gather_for_request_ids(
                 request_ids, padded_bs, gather_seen_tokens,
             ),

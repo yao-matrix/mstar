@@ -20,10 +20,10 @@ from torch import nn
 
 from mstar.communication.tensors import NameToTensorList
 from mstar.conductor.request_info import CurrentForwardPassInfo
+from mstar.engine.accelerator_graph_config import FlashInferPackedAcceleratorGraphConfig
+from mstar.engine.accelerator_graph_runner import BasicBatchedAcceleratorGraphConfig
 from mstar.engine.base import NodeBatch
 from mstar.engine.cache_manager import BatchedCacheManager
-from mstar.engine.cuda_graph_config import FlashInferPackedCudaGraphConfig
-from mstar.engine.cuda_graph_runner import BasicBatchedCudaGraphConfig
 from mstar.engine.kv_store import PositionInfo
 from mstar.model.qwen3_omni.components.code2wav import Qwen3OmniMoeCode2Wav
 from mstar.model.qwen3_omni.components.rope import (
@@ -36,7 +36,7 @@ from mstar.model.qwen3_omni.components.rope import (
 from mstar.model.qwen3_omni.components.talker import Qwen3OmniCodePredictor, Qwen3OmniTalkerModel
 from mstar.model.qwen3_omni.config import Qwen3OmniModelConfig
 from mstar.model.submodule_base import ARNodeInputs, ARNodeSubmodule, ModelInputsFromEngine, NodeInputs, NodeSubmodule
-from mstar.utils.sampling import MultiCudaGraphableSampler, SeenTokenMask
+from mstar.utils.sampling import MultiAcceleratorGraphableSampler, SeenTokenMask
 
 logger = logging.getLogger(__name__)
 
@@ -529,7 +529,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
         ]
 
         # Compute cos/sin for 3D MRoPE.  Returned as separate tensor keys
-        # (not a tuple) so the CUDA graph runner can detect them as static
+        # (not a tuple) so the accelerator graph runner can detect them as static
         # inputs and copy them into the captured buffers at replay.
         inv_freq = self._get_inv_freq(device)
         cos_3d, sin_3d = compute_3d_cos_sin(
@@ -583,7 +583,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
             ]
             extra_inputs["mrope_pos_advance"] = mrope_pos_advance
             # Side-channel: stash on the cache_manager's plan state via the
-            # public setter so the CUDA-graph runner's post-replay
+            # public setter so the accelerator-graph runner's post-replay
             # ``advance_seq_lens()`` (which is called with no args) advances
             # ``position_id_start`` by the MRoPE 3D-grid span instead of by
             # ``seq_len``. The eager path consumes ``mrope_pos_advance`` from
@@ -808,12 +808,12 @@ class ThinkerSubmodule(ARNodeSubmodule):
             )
         return packed
 
-    def get_cuda_graph_configs(self, device: torch.device, tp_world_size: int = 1):
-        """Declare CUDA graph captures for ``thinker_decode`` and the prefill walks.
+    def get_accelerator_graph_configs(self, device: torch.device, tp_world_size: int = 1):
+        """Declare accelerator graph captures for ``thinker_decode`` and the prefill walks.
 
-        Decode uses ``BasicBatchedCudaGraphConfig`` (one capture per bs;
+        Decode uses ``BasicBatchedAcceleratorGraphConfig`` (one capture per bs;
         runner clones single_request_inputs and runs preprocess itself).
-        Prefill uses ``FlashInferPackedCudaGraphConfig`` (one capture per
+        Prefill uses ``FlashInferPackedAcceleratorGraphConfig`` (one capture per
         (bs, num_tokens) bucket; the dict here IS the post-preprocess
         packed input — runner does not call preprocess at capture).
 
@@ -857,7 +857,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
             "mrope_pos_advance": 0,
         }
         return [
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="thinker_decode",
                 requires_cfg=False,
                 labels=["main"],
@@ -879,7 +879,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
                 compile=True,
                 capture_batch_sizes=[1, 2, 4, 8, 16, 32],
             ),
-            FlashInferPackedCudaGraphConfig(
+            FlashInferPackedAcceleratorGraphConfig(
                 capture_graph_walk="prefill_text",
                 replay_graph_walks=["prefill_text", "prefill_audio"],
                 packed_seq_len_to_inputs=prefill_text_packed,
@@ -913,7 +913,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
             # that prefill_text/audio don't. mrope_pos_advance flows
             # out-of-band via ``BatchedCacheManager.set_custom_pos_advance``
             # — see ``cache_manager._PlanState.custom_pos_advance``.
-            FlashInferPackedCudaGraphConfig(
+            FlashInferPackedAcceleratorGraphConfig(
                 capture_graph_walk="prefill_vision",
                 replay_graph_walks=["prefill_vision"],
                 packed_seq_len_to_inputs=prefill_vision_packed,
@@ -954,7 +954,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
 
         Decode path (1 token per request, ``hidden`` shape ``(bs, hidden)``):
           Always packs ``thinker_states`` + ``thinker_mask`` in every per-rid
-          output dict so the captured CUDA graph has a static output shape
+          output dict so the captured accelerator graph has a static output shape
           regardless of request metadata. Per-rid filtering (dropping
           ``thinker_states`` / ``thinker_mask`` for ``audio_output=False``
           requests) happens OUTSIDE the captured region via
@@ -990,7 +990,7 @@ class ThinkerSubmodule(ARNodeSubmodule):
           path reads the side-channel.
         """
 
-        # Packed dict from FlashInferPackedCudaGraphConfig is tensor-only by
+        # Packed dict from FlashInferPackedAcceleratorGraphConfig is tensor-only by
         # design (the runner's static-buffer interning skips non-tensor
         # entries), so for prefill walks we recover mrope_section from the
         # class constant when the kwarg is missing. Decode goes through
@@ -1482,7 +1482,7 @@ class TalkerSubmodule(ARNodeSubmodule):
     def _forward_decode_like(
         self, request_ids: list[str],
         cache_handle: BatchedCacheManager,
-        injected_sampler: MultiCudaGraphableSampler,
+        injected_sampler: MultiAcceleratorGraphableSampler,
         suppress_mask: torch.Tensor,
         all_codes: torch.Tensor,
         codec_emb_sum: torch.Tensor,
@@ -1617,7 +1617,7 @@ class TalkerSubmodule(ARNodeSubmodule):
           Same _forward_decode_like as decode but uses the ``last_token_indices``
           tensor produced by ``preprocess`` (``cumsum(seq_lens) - 1``) to
           ``index_select`` the per-request last hidden before codec_head.
-          Captured under ``BasicBatchedCudaGraphConfig`` (single bucket per bs:
+          Captured under ``BasicBatchedAcceleratorGraphConfig`` (single bucket per bs:
           total_tokens = bs * 9), which routes ``_create_persistent_wrappers``
           through ``FlashInferPrefillWrapper`` (since total_tokens != bs);
           per-rid output construction matches the decode branch.
@@ -1731,18 +1731,18 @@ class TalkerSubmodule(ARNodeSubmodule):
             ),
         }
 
-    def get_cuda_graph_configs(self, device: torch.device, tp_world_size: int = 1):
-        """Declare CUDA graph captures for ``talker_decode``, ``talker_prefill``, and ``talker_last_prefill``.
+    def get_accelerator_graph_configs(self, device: torch.device, tp_world_size: int = 1):
+        """Declare accelerator graph captures for ``talker_decode``, ``talker_prefill``, and ``talker_last_prefill``.
 
-        ``talker_decode``: ``BasicBatchedCudaGraphConfig`` (one capture per bs;
+        ``talker_decode``: ``BasicBatchedAcceleratorGraphConfig`` (one capture per bs;
         runner clones single_request_inputs with input_seq_len=1 and runs
         preprocess itself).
 
-        ``talker_prefill``: ``FlashInferPackedCudaGraphConfig`` (one capture per
+        ``talker_prefill``: ``FlashInferPackedAcceleratorGraphConfig`` (one capture per
         (bs, num_tokens) bucket; the dict here IS the post-preprocess packed
         input — runner does not call preprocess at capture).
 
-        ``talker_last_prefill``: ``BasicBatchedCudaGraphConfig`` (one capture per
+        ``talker_last_prefill``: ``BasicBatchedAcceleratorGraphConfig`` (one capture per
         bs; single_request_inputs has input_seq_len=9 so total_tokens = bs * 9).
         ``total_tokens != bs`` forces ``_create_persistent_wrappers`` to use a
         ``FlashInferPrefillWrapper`` instead of the decode wrapper, which means
@@ -1755,7 +1755,7 @@ class TalkerSubmodule(ARNodeSubmodule):
             for num_tokens in self.TALKER_PREFILL_TOKEN_BUCKETS
         }
         return [
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="talker_decode", requires_cfg=False, labels=["main"],
                 single_request_inputs=ARNodeInputs(
                     input_embeds=torch.zeros(
@@ -1767,7 +1767,7 @@ class TalkerSubmodule(ARNodeSubmodule):
                 capture_batch_sizes=[1, 2, 4, 8, 16, 32],
                 compile=True
             ),
-            FlashInferPackedCudaGraphConfig(
+            FlashInferPackedAcceleratorGraphConfig(
                 capture_graph_walk="talker_prefill",
                 replay_graph_walks=["talker_prefill"],
                 packed_seq_len_to_inputs=talker_prefill_packed,
@@ -1777,7 +1777,7 @@ class TalkerSubmodule(ARNodeSubmodule):
                 capture_batch_sizes=self.TALKER_PREFILL_CAPTURE_BATCH_SIZES,
                 compile=True
             ),
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="talker_last_prefill",
                 requires_cfg=False,
                 labels=["main"],
@@ -1849,10 +1849,10 @@ class Code2WavSubmodule(NodeSubmodule):
         self._first_chunk_emitted.discard(request_id)
         self._latest_seq_len.pop(request_id, None)
 
-    def get_cuda_graph_configs(self, device, tp_world_size: int = 1):
+    def get_accelerator_graph_configs(self, device, tp_world_size: int = 1):
         num_quantizers = self.config.code2wav.num_quantizers
         return [
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="code2wav_chunk",
                 single_request_inputs=ARNodeInputs(
                     tensor_inputs={
@@ -2004,8 +2004,8 @@ class Code2WavSubmodule(NodeSubmodule):
                 for inputs in model_inputs
         }) == 1
 
-    def can_use_cuda_graphs(self, batch, model_inputs: list[NodeInputs]):
-        res = super().can_use_cuda_graphs(batch, model_inputs) \
+    def can_use_accelerator_graphs(self, batch, model_inputs: list[NodeInputs]):
+        res = super().can_use_accelerator_graphs(batch, model_inputs) \
             and self.can_batch(batch, model_inputs) \
                 and model_inputs[0].tensor_inputs["codec_tokens"].shape[1] == self.full_seqlen
         return res

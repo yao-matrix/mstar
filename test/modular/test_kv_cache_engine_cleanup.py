@@ -31,7 +31,7 @@ def _mgmt(submodule):
         tp_group=MagicMock(name="tp_group"),
         default_sampling_config=MagicMock(name="sampling_config"),
         sampler=MagicMock(name="sampler"),
-        cuda_graph_runner=None,
+        accelerator_graph_runner=None,
     )
 
 

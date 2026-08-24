@@ -12,10 +12,10 @@ from torch import nn
 
 from mstar.communication.tensors import NameToTensorList
 from mstar.conductor.request_info import CurrentForwardPassInfo
+from mstar.engine.accelerator_graph_config import FlashInferPackedAcceleratorGraphConfig
+from mstar.engine.accelerator_graph_runner import BasicBatchedAcceleratorGraphConfig
 from mstar.engine.base import NodeBatch
 from mstar.engine.cache_manager import BatchedCacheManager
-from mstar.engine.cuda_graph_config import FlashInferPackedCudaGraphConfig
-from mstar.engine.cuda_graph_runner import BasicBatchedCudaGraphConfig
 from mstar.engine.kv_store import PositionInfo
 from mstar.model.bagel.components.language_model import BagelForCausalLM
 from mstar.model.bagel.components.modeling_utils import (
@@ -253,7 +253,7 @@ class VAEEncoderSubmodule(NodeSubmodule):
 
         """Convert raw images to VAE encoder input format.
 
-        Computes patchified dimensions as Python ints for CUDA graph
+        Computes patchified dimensions as Python ints for accelerator graph
         compatibility (no .item() calls in forward).
 
         Full implementation should include:
@@ -280,7 +280,7 @@ class VAEEncoderSubmodule(NodeSubmodule):
             image_tensor = self.transform(self.transform.resize_transform(img))
         device = image_tensor.device
 
-        # Compute patchified dimensions as ints (CUDA graph compatible)
+        # Compute patchified dimensions as ints (accelerator graph compatible)
         p = self.latent_patch_size
         ds = self.latent_downsample
         _, img_h, img_w = image_tensor.shape
@@ -326,7 +326,7 @@ class VAEEncoderSubmodule(NodeSubmodule):
         latent = self.vae_model.encode(padded_images)
 
         p = self.latent_patch_size
-        # h, w are already ints from preprocess (CUDA graph compatible)
+        # h, w are already ints from preprocess (accelerator graph compatible)
         packed_latent = []
         for lat in latent:
             lat = lat[:, :h * p, :w * p].reshape(
@@ -493,10 +493,10 @@ class LLMSubmodule(ARNodeSubmodule):
             ),
         }
 
-    def get_cuda_graph_configs(
+    def get_accelerator_graph_configs(
         self, device: torch.device, tp_world_size: int = 1,
-    ) -> list[BasicBatchedCudaGraphConfig | FlashInferPackedCudaGraphConfig]:
-        """Declare CUDA graph captures for ``decode`` (cfg-off + cfg-on) and ``prefill_text`` (cfg-off only).
+    ) -> list[BasicBatchedAcceleratorGraphConfig | FlashInferPackedAcceleratorGraphConfig]:
+        """Declare accelerator graph captures for ``decode`` (cfg-off + cfg-on) and ``prefill_text`` (cfg-off only).
 
         cfg-on prefill_text is intentionally NOT captured. BAGEL's
         ``preprocess`` for prefill_text+cfg calls
@@ -520,19 +520,19 @@ class LLMSubmodule(ARNodeSubmodule):
                 for num_tokens in self.PREFILL_TEXT_TOKEN_BUCKETS
             }
             configs = [
-                BasicBatchedCudaGraphConfig(
+                BasicBatchedAcceleratorGraphConfig(
                     capture_graph_walk="decode",
                     requires_cfg=False,
                     labels=["main"],
                     single_request_inputs=dummy.clone(),
                 ),
-                BasicBatchedCudaGraphConfig(
+                BasicBatchedAcceleratorGraphConfig(
                     capture_graph_walk="decode",
                     requires_cfg=True,
                     labels=["main", "cfg_img"],
                     single_request_inputs=dummy.clone(),
                 ),
-                FlashInferPackedCudaGraphConfig(
+                FlashInferPackedAcceleratorGraphConfig(
                     capture_graph_walk="prefill_text",
                     replay_graph_walks=["prefill_text"],
                     packed_seq_len_to_inputs=prefill_text_packed,
@@ -583,7 +583,7 @@ class LLMSubmodule(ARNodeSubmodule):
                 },
             )
             configs.append(
-                BasicBatchedCudaGraphConfig(
+                BasicBatchedAcceleratorGraphConfig(
                     capture_graph_walk="image_gen_cfg",
                     requires_cfg=True,
                     labels=[label],
@@ -705,7 +705,7 @@ class LLMSubmodule(ARNodeSubmodule):
         When cache_handle is provided (sequential execution), calls
         plan_attention/plan_rope for every cache label needed by this
         graph walk. This must happen outside forward() because plan
-        operations are CUDA graph incompatible.
+        operations are accelerator graph incompatible.
 
         When cache_handle is None (batched execution preprocesses per-request
         without planning; planning is done separately via preprocess_batched).
@@ -954,7 +954,7 @@ class LLMSubmodule(ARNodeSubmodule):
         """embed_tokens -> LLM forward -> lm_head -> logits.
 
         Returns logits; token sampling is done by the engine post-forward
-        (outside CUDA graph capture).
+        (outside accelerator graph capture).
 
         When requires_cfg is True: also forward for cfg_img to keep its
         KV cache in sync (cfg_img tracks all text, no images).
@@ -1331,7 +1331,7 @@ class LLMSubmodule(ARNodeSubmodule):
         4. Per-request lm_head -> logits
 
         Returns logits per request. Token sampling is done by the engine
-        post-forward (outside CUDA graph capture).
+        post-forward (outside accelerator graph capture).
 
         plan_attention/plan_rope are called in preprocess_batched.
         """
@@ -1448,7 +1448,7 @@ class VAEDecoderSubmodule(NodeSubmodule):
 
         Unwraps latents from list. Image dimensions (image_h, image_w)
         are provided via per-request metadata and converted to ints for
-        CUDA graph compatibility.
+        accelerator graph compatibility.
         """
         return NodeInputs(
             tensor_inputs={

@@ -1,17 +1,17 @@
 """Accelerator graph capture and replay for AR decode and EncDec engines.
 
-Separate CUDA graph captures keyed by (graph_walk, requires_cfg, batch_size).
+Separate accelerator graph captures keyed by (graph_walk, requires_cfg, batch_size).
 - decode + no_cfg: 1 LLM forward pass (main label only)
 - decode + cfg: 2 LLM forward passes (main + cfg_img)
 
-Key requirements for CUDA graph compatibility:
+Key requirements for accelerator graph compatibility:
 - FlashInfer wrappers must be PERSISTENT (same Python object during capture and replay)
 - Static buffers updated via .copy_(), not reassignment
 - No dynamic memory allocation inside captured region
 - No Python control flow that changes between replays
 - advance_seq_lens() is Python-only — called AFTER graph.replay(), not inside
 
-Also provides EncDecCudaGraphWrapper for stateless encoder/decoder submodules
+Also provides EncDecAcceleratorGraphWrapper for stateless encoder/decoder submodules
 and PiecewiseAcceleratorGraphRunner for capturing transformer block loops (VJepa2 predictors).
 """
 
@@ -35,7 +35,7 @@ from mstar.engine.accelerator_graph_config import (
     AcceleratorGraphConfig,
     AcceleratorGraphConfigType,
     BasicBatchedAcceleratorGraphConfig,
-    FlashInferPackedCudaGraphConfig,
+    FlashInferPackedAcceleratorGraphConfig,
     PiecewiseAcceleratorGraphConfig,
     PiecewiseCaptureShape,
     PiecewiseConfigType,
@@ -146,7 +146,7 @@ class _SlotCaptureSpec:
 
 
 class AcceleratorGraphRunner:
-    """Captures and replays CUDA graphs for AR decode batches.
+    """Captures and replays accelerator graphs for AR decode batches.
 
     Separate graphs per (graph_walk, requires_cfg, batch_size).
 
@@ -154,7 +154,7 @@ class AcceleratorGraphRunner:
     1. For each config (decode+no_cfg, decode+cfg):
        a. For each batch_size (largest first for memory reuse):
           - Create persistent FlashInfer wrappers per label
-          - Create static BatchedCacheManager with cuda_graph_plan_states
+          - Create static BatchedCacheManager with accelerator_graph_plan_states
           - Create static input buffers
           - Warmup: 2 forward passes
           - Capture the graph
@@ -266,7 +266,7 @@ class AcceleratorGraphRunner:
 
         if not hasattr(self.submodule, 'forward_batched'):
             logger.info("Submodule %s does not support batched forward, "
-                        "skipping CUDA graph capture", self.submodule_name)
+                        "skipping accelerator graph capture", self.submodule_name)
             return
 
         self.memory_pool = self.graph_backend.graph_pool_handle()
@@ -296,7 +296,7 @@ class AcceleratorGraphRunner:
                                     self.submodule_name, key, bs)
                     except Exception:
                         logger.warning(
-                            "Failed to capture CUDA graph for %s: %s bs=%d",
+                            "Failed to capture accelerator graph for %s: %s bs=%d",
                             self.submodule_name, key, bs, exc_info=True)
 
         mem_after = self.graph_backend.memory_allocated()
@@ -323,7 +323,7 @@ class AcceleratorGraphRunner:
         self, bs: int, config: AcceleratorGraphConfig,
         total_tokens: int, slot_idx: int = 0,
     ) -> dict:
-        """Create persistent FlashInfer wrappers for CUDA graph capture.
+        """Create persistent FlashInfer wrappers for accelerator graph capture.
 
         Returns dict of label -> _PlanState with persistent wrappers.
 
@@ -351,7 +351,7 @@ class AcceleratorGraphRunner:
                 for label in config.labels
             }
 
-        # Allocate workspace buffer for CUDA graph wrappers.
+        # Allocate workspace buffer for accelerator graph wrappers.
         # Each (label, slot) gets its own workspace — slots must NOT share
         # workspace because plan() writes scheduling state there and the
         # captured replay reads it; concurrent plan(slot B) + replay(slot A)
@@ -369,7 +369,7 @@ class AcceleratorGraphRunner:
                     batch_size=bs,
                     max_num_pages=cfg.max_num_pages,
                     device=self.device,
-                    use_cuda_graph=True,
+                    use_accelerator_graph=True,
                     enable_nvtx=self.enable_nvtx,
                     backend=cfg.flashinfer_backend,
                 )
@@ -384,7 +384,7 @@ class AcceleratorGraphRunner:
                     max_total_tokens=total_tokens,
                     max_num_pages=cfg.max_num_pages,
                     device=self.device,
-                    use_cuda_graph=True,
+                    use_accelerator_graph=True,
                     enable_nvtx=self.enable_nvtx,
                     backend=cfg.flashinfer_backend,
                 )
@@ -482,7 +482,7 @@ class AcceleratorGraphRunner:
         self, dummy_rids, plan_states,
         config: AcceleratorGraphConfig
     ):
-        # Create the configured cache-manager backend with CUDA graph plan states
+        # Create the configured cache-manager backend with accelerator graph plan states
         cache_manager = create_cache_manager(
             request_ids=dummy_rids,
             active_labels_per_request={rid: "main" for rid in dummy_rids},
@@ -491,7 +491,7 @@ class AcceleratorGraphRunner:
             buffer_manager=self.buffer_manager,
             kv_cache_config=self.kv_cache_config,
             device=self.device,
-            cuda_graph_plan_states=plan_states,
+            accelerator_graph_plan_states=plan_states,
             auto_write_store=False,
             enable_nvtx=self.enable_nvtx,
         )
@@ -721,7 +721,7 @@ class AcceleratorGraphRunner:
 
     def _capture_one_flashinfer_packed(
         self, key: AcceleratorGraphKey,
-        config: FlashInferPackedCudaGraphConfig,
+        config: FlashInferPackedAcceleratorGraphConfig,
         submodule: ARNodeSubmodule,
     ):
         """Capture NUM_SLOTS prefill graphs for (bs, num_tokens) bucket.
@@ -829,7 +829,7 @@ class AcceleratorGraphRunner:
         template = config.single_request_inputs
         if template is None:
             logger.warning(
-                "%s.get_cuda_graph_configs returned a BasicBatchedAcceleratorGraphConfig "
+                "%s.get_accelerator_graph_configs returned a BasicBatchedAcceleratorGraphConfig "
                 "with single_request_inputs=None for walk=%s — skipping capture",
                 self.submodule_name, config.capture_graph_walk,
             )
@@ -1314,7 +1314,7 @@ class AcceleratorGraphRunner:
         if key is None:
             raise RuntimeError(
                 f"No captured graph for walk={graph_walk!r}, requires_cfg={requires_cfg}, "
-                f"bs={real_bs}, num_tokens={real_num_tokens} — _can_use_cuda_graph "
+                f"bs={real_bs}, num_tokens={real_num_tokens} — _can_use_accelerator_graph "
                 "should have rejected this batch upstream."
             )
 
@@ -1489,8 +1489,8 @@ class AcceleratorGraphRunner:
                 self.graph_backend.current_stream().wait_event(plan_done_event)
                 static_cm._plan_done_event = None
             if self.enable_nvtx:
-                mark("gpu_thread.cuda_graph_start")
-                range_push("gpu_thread.cuda_graph", synchronize=False)
+                mark("gpu_thread.accelerator_graph_start")
+                range_push("gpu_thread.accelerator_graph", synchronize=False)
                 range_push("cg.replay", synchronize=False)
             # Release the main thread now that all CPU-side prep is done and
             # we're about to enter the CUDA driver. graph.replay() drops the
@@ -1503,7 +1503,7 @@ class AcceleratorGraphRunner:
             if self.enable_nvtx:
                 range_pop(synchronize=False)
                 range_pop(synchronize=False)
-                mark("gpu_thread.cuda_graph_end")
+                mark("gpu_thread.accelerator_graph_end")
 
 
             if graph_data.applied_penalty_in_graph:
@@ -1723,8 +1723,8 @@ class AcceleratorGraphRunner:
 
             # --- Step 4: Replay ---
             if self.enable_nvtx:
-                mark("gpu_thread.cuda_graph_start")
-                range_push("gpu_thread.cuda_graph", synchronize=False)
+                mark("gpu_thread.accelerator_graph_start")
+                range_push("gpu_thread.accelerator_graph", synchronize=False)
                 range_push("cg.replay", synchronize=False)
             # Release the main thread now that all CPU-side prep is done and
             # we're about to enter the CUDA driver. graph.replay() drops the
@@ -1737,7 +1737,7 @@ class AcceleratorGraphRunner:
             if self.enable_nvtx:
                 range_pop(synchronize=False)
                 range_pop(synchronize=False)
-                mark("gpu_thread.cuda_graph_end")
+                mark("gpu_thread.accelerator_graph_end")
 
             if graph_data.applied_penalty_in_graph:
                 engine_inputs.sampler.sync_seen_token_masks(
@@ -2068,7 +2068,7 @@ class AcceleratorGraphRunner:
 
 
 class StatelessAcceleratorGraphRunner:
-    """CUDA graph capture/replay for stateless batched submodules.
+    """accelerator graph capture/replay for stateless batched submodules.
 
     Contract (matches the AR runner so submodules look similar across engines):
 
@@ -2080,12 +2080,12 @@ class StatelessAcceleratorGraphRunner:
             May return an empty dict to signal "can't be batched" — the
             engine falls back to the eager path in that case.
 
-        cuda_graph_forward(**packed_tensors) -> dict[str, torch.Tensor]
+        accelerator_graph_forward(**packed_tensors) -> dict[str, torch.Tensor]
             Pure-tensor call captured inside the graph. Output tensors must
             have batch-dim first, same size as the input batch dim, so the
             runner can slice ``[:actual_bs]`` and index per request.
 
-        get_cuda_graph_configs(device, tp_world_size=1) -> list[AcceleratorGraphConfig]
+        get_accelerator_graph_configs(device, tp_world_size=1) -> list[AcceleratorGraphConfig]
             Each config's ``single_request_inputs`` is a single per-request
             ARNodeInputs (same shape as real runtime inputs). The runner
             clones it per capture batch slot, then feeds the resulting list
@@ -2096,7 +2096,7 @@ class StatelessAcceleratorGraphRunner:
         2. Call submodule.preprocess → packed tensors.
         3. Allocate matching static buffers, copy the packed tensors in.
         4. Run 2 warmup forwards outside the graph (kernel compilation).
-        5. Capture ``cuda_graph_forward(**static_buffers)``.
+        5. Capture ``accelerator_graph_forward(**static_buffers)``.
 
     Runtime flow (per ``run(batch, submodule)`` call):
         1. submodule.preprocess on real inputs → packed tensors.
@@ -2168,12 +2168,12 @@ class StatelessAcceleratorGraphRunner:
                         bs, config, self.submodule
                     )
                     logger.info(
-                        "Captured codec CUDA graph for %s: walk=%s bs=%d",
+                        "Captured codec accelerator graph for %s: walk=%s bs=%d",
                         self.submodule_name, config.capture_graph_walk, bs,
                     )
                 except Exception:
                     logger.warning(
-                        "Failed to capture codec CUDA graph for %s: walk=%s bs=%d",
+                        "Failed to capture codec accelerator graph for %s: walk=%s bs=%d",
                         self.submodule_name, config.capture_graph_walk, bs, exc_info=True,
                     )
 
@@ -2357,8 +2357,8 @@ class StatelessAcceleratorGraphRunner:
             mark("gpu_thread.preprocess_end")
 
         if self.enable_nvtx:
-            mark("gpu_thread.cuda_graph_start")
-            range_push("gpu_thread.cuda_graph", synchronize=False)
+            mark("gpu_thread.accelerator_graph_start")
+            range_push("gpu_thread.accelerator_graph", synchronize=False)
             range_push("codec_cg.replay", synchronize=False)
         # Release the main thread now that all CPU-side prep is done and
         # we're about to enter the CUDA driver. graph.replay() drops the
@@ -2371,11 +2371,11 @@ class StatelessAcceleratorGraphRunner:
         if self.enable_nvtx:
             range_pop(synchronize=False)
             range_pop(synchronize=False)
-            mark("gpu_thread.cuda_graph_end")
+            mark("gpu_thread.accelerator_graph_end")
 
         if not isinstance(static_output, dict):
             raise TypeError(
-                f"{self.submodule_name}: cuda_graph_forward must return dict[str, Tensor] "
+                f"{self.submodule_name}: accelerator_graph_forward must return dict[str, Tensor] "
                 f"(got {type(static_output).__name__}) so outputs can be split per request"
             )
 
@@ -2446,14 +2446,14 @@ class PiecewiseOutput:
 
 
 class PiecewiseAcceleratorGraphRunner:
-    """Captures one inner callable of a submodule's forward as a CUDA graph.
+    """Captures one inner callable of a submodule's forward as a accelerator graph.
 
     Unlike ``AcceleratorGraphRunner`` (which replays a whole ``forward_batched`` under
     engine control, with sampling / CFG / double-buffer / output remap), this
     captures a SUB-REGION of a forward — e.g. a transformer block loop — while
     the surrounding preamble/postamble stays eager and the submodule itself
     invokes ``run()``. It is configured entirely by a
-    ``PiecewiseAcceleratorGraphConfig`` (see ``cuda_graph_config.py``):
+    ``PiecewiseAcceleratorGraphConfig`` (see ``accelerator_graph_config.py``):
 
     - ``config.make_static_inputs(shape)`` allocates the persistent buffers the
       captured region reads. The runner owns them; ``run`` copies real inputs
@@ -2644,7 +2644,7 @@ class PiecewiseAcceleratorGraphRunner:
             buffer_manager=self.buffer_manager,
             kv_cache_config=self.kv_cache_config,
             device=self.device,
-            cuda_graph_plan_states=plan_states,
+            accelerator_graph_plan_states=plan_states,
         )
         return static_cm, dummy_rids
 
@@ -2667,7 +2667,7 @@ class PiecewiseAcceleratorGraphRunner:
                 max_total_tokens=shape.total_tokens,
                 max_num_pages=cfg.max_num_pages,
                 device=self.device,
-                use_cuda_graph=True,
+                use_accelerator_graph=True,
                 backend=cfg.flashinfer_backend,
             )
             plan_states[label] = _PlanState(wrapper=wrapper)
@@ -2905,7 +2905,7 @@ def build_piecewise_runners(
     sampler_buffers: MultiSamplerBuffers | None = None,
 ) -> dict[str, PiecewiseAcceleratorGraphRunner]:
     """Build + warm up one ``PiecewiseAcceleratorGraphRunner`` per label a submodule
-    declares via ``get_piecewise_cuda_graph_configs``.
+    declares via ``get_piecewise_accelerator_graph_configs``.
 
     Shared by ``KVCacheEngine`` and ``StatelessEngine`` so the install logic
     lives in one place. KV-cache managers are only forwarded to configs whose
@@ -2913,7 +2913,7 @@ def build_piecewise_runners(
     Returns only the runners that captured at least one graph; a submodule that
     opts into none, or whose capture fails, yields an empty dict (eager path).
     """
-    configs = submodule.get_piecewise_cuda_graph_configs(
+    configs = submodule.get_piecewise_accelerator_graph_configs(
         device, autocast_dtype, tp_world_size
     )
     runners: dict[str, PiecewiseAcceleratorGraphRunner] = {}

@@ -161,11 +161,11 @@ class Cosmos3Config:
     guidance_scale_action: float = 1.0
     flow_shift_action: float = 5.0
 
-    # ----- denoise CUDA-graph capture (serving knobs) -----
-    # Capture the fixed-shape denoise step as a CUDA graph (the launch-bound-tier
+    # ----- denoise accelerator-graph capture (serving knobs) -----
+    # Capture the fixed-shape denoise step as a accelerator graph (the launch-bound-tier
     # accelerator). Set False to serve the denoise loop eagerly. The env var
-    # COSMOS3_DISABLE_CUDA_GRAPH, when set, overrides this.
-    cuda_graph: bool = True
+    # COSMOS3_DISABLE_ACCELERATOR_GRAPH, when set, overrides this.
+    accelerator_graph: bool = True
     # Only capture resolutions whose latent H*W is at or below this; larger tiers
     # (720p+, video) run eager+dense where the graph is net-slower. The env var
     # COSMOS3_GRAPH_MAX_LATENT_AREA overrides this.
