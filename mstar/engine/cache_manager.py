@@ -1,5 +1,6 @@
 import functools
 import logging
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import NamedTuple
@@ -87,9 +88,29 @@ class XPUPagedPlan:
     block_table: torch.Tensor
     cu_q: torch.Tensor
     host_kv_lens: torch.Tensor
+    write_pages: torch.Tensor
+    write_offsets: torch.Tensor
     max_q: int
     max_k: int
     causal: bool
+
+    def copy_from(self, other: "XPUPagedPlan") -> None:
+        """Refresh graph-stable planning buffers without changing addresses."""
+        if self.block_table.shape != other.block_table.shape:
+            raise ValueError(
+                "XPU graph block-table shape changed from "
+                f"{tuple(self.block_table.shape)} to {tuple(other.block_table.shape)}"
+            )
+        if self.cu_q.shape != other.cu_q.shape:
+            raise ValueError("XPU graph query-count shape changed")
+        if self.write_pages.shape != other.write_pages.shape:
+            raise ValueError("XPU graph token-count shape changed")
+        self.block_table.copy_(other.block_table)
+        self.cu_q.copy_(other.cu_q)
+        self.host_kv_lens.copy_(other.host_kv_lens)
+        self.write_pages.copy_(other.write_pages)
+        self.write_offsets.copy_(other.write_offsets)
+        self.segments = other.segments
 
 
 @dataclass
@@ -97,10 +118,10 @@ class _PlanState:
     """Pre-computed state from plan_attention/plan_rope for a single cache label.
 
     Stored per-label so that preprocess can plan for all relevant labels
-    upfront (plan operations are CUDA graph incompatible). During forward,
+    upfront (plan operations are accelerator graph incompatible). During forward,
     run_attention/apply_rope look up the active label's plan state.
 
-    In CUDA graph mode, wrapper is a persistent FlashInferPrefillWrapper or
+    In accelerator graph mode, wrapper is a persistent FlashInferPrefillWrapper or
     FlashInferDecodeWrapper created once during capture. plan_attention()
     calls wrapper.plan() which updates static buffers via .copy_().
 
@@ -112,7 +133,7 @@ class _PlanState:
     ``advance_seq_lens`` reads it when ``pos_id_ns`` is None and advances
     ``position_id_start`` by these values instead of by ``seq_len``.
     Auto-cleared by ``advance_seq_lens`` so it doesn't leak across calls.
-    The CUDA-graph runner's post-replay ``advance_seq_lens()`` call is what
+    The accelerator-graph runner's post-replay ``advance_seq_lens()`` call is what
     actually consumes this — the model's inner ``advance_seq_lens(pos_id_ns=...)``
     runs at capture time only and is not replayed.
     """
@@ -124,7 +145,7 @@ class _PlanState:
     # Plan memo: fingerprint of the last wrapper.plan() inputs for this label;
     # when it matches, the re-plan is skipped. Only the cross-attention path
     # sets it today (its context pages are immutable after add_cross_attn_kv),
-    # and only where plan states persist across steps (the CUDA-graph runner);
+    # and only where plan states persist across steps (the accelerator-graph runner);
     # the eager path rebuilds the cache manager per step and still re-plans.
     #
     # Future reference — this is a general-purpose tool, not cross-attn only.
@@ -226,7 +247,7 @@ class BatchedCacheManager(ABC):
         buffer_manager: WorkspaceBufferManager,
         kv_cache_config: KVCacheConfig,
         device,
-        cuda_graph_plan_states: dict[str, _PlanState] | None = None,
+        accelerator_graph_plan_states: dict[str, _PlanState] | None = None,
         auto_write_store: bool=False,
         enable_nvtx: bool=False,
         cross_pools: dict[str, CrossAttnPool] | None = None,
@@ -245,15 +266,15 @@ class BatchedCacheManager(ABC):
 
         self.auto_write_store = auto_write_store
 
-        # CUDA graph mode: persistent wrappers passed in from CudaGraphRunner.
+        # accelerator graph mode: persistent wrappers passed in from AcceleratorGraphRunner.
         # When set, plan_attention() uses the persistent wrapper's plan()
         # method instead of creating a new wrapper each call.
-        self._cuda_graph_mode = cuda_graph_plan_states is not None
+        self._accelerator_graph_mode = accelerator_graph_plan_states is not None
 
         # Per-label plan state: plan_attention/plan_rope store results here,
         # run_attention/apply_rope look up by active label.
-        if cuda_graph_plan_states is not None:
-            self._plan_states: dict[str, _PlanState] = cuda_graph_plan_states
+        if accelerator_graph_plan_states is not None:
+            self._plan_states: dict[str, _PlanState] = accelerator_graph_plan_states
         else:
             self._plan_states: dict[str, _PlanState] = {}
 
@@ -266,7 +287,7 @@ class BatchedCacheManager(ABC):
         # call to short-circuit — the captured graph's preprocess skips the
         # heavy FlashInfer wrapper.plan() (GIL-contended with main thread's
         # fast/slow post in the speculative path). Populated by
-        # CudaGraphRunner.pre_plan_for_batch with one entry per label in the
+        # AcceleratorGraphRunner.pre_plan_for_batch with one entry per label in the
         # captured config; each entry is consumed by the matching
         # plan_attention call and removed.
         #
@@ -314,8 +335,8 @@ class BatchedCacheManager(ABC):
 
     @torch.compiler.disable
     def get_qo_indptr_buf(self, label: str = "main") -> torch.Tensor | None:
-        """Return the persistent qo_indptr static buffer for a CUDA-graph
-        prefill wrapper, or None if not in CUDA-graph mode / wrong wrapper.
+        """Return the persistent qo_indptr static buffer for a accelerator-graph
+        prefill wrapper, or None if not in accelerator-graph mode / wrong wrapper.
 
         Captured prefill paths read this to recover per-request token boundaries
         from inside the captured region — plan_attention updates the buffer via
@@ -408,7 +429,7 @@ class BatchedCacheManager(ABC):
     ):
         """Pre-compute position IDs for RoPE for a cache label.
 
-        In CUDA graph mode, updates the static pos_ids tensor via .copy_()
+        In accelerator graph mode, updates the static pos_ids tensor via .copy_()
         so that the same GPU address is used during graph replay.
 
         Args:
@@ -447,7 +468,7 @@ class BatchedCacheManager(ABC):
         # intermediate device-side allocation + GPU→GPU copy the eager path
         # would do.
         static_copy_from_cpu = (
-            self._cuda_graph_mode and ps.pos_ids is not None and pos_ids is None
+            self._accelerator_graph_mode and ps.pos_ids is not None and pos_ids is None
         )
 
         computed_pos_ids = pos_ids
@@ -476,7 +497,7 @@ class BatchedCacheManager(ABC):
                 device=self.device, dtype=torch.long,
             )
 
-        if self._cuda_graph_mode:
+        if self._accelerator_graph_mode:
             if ps.pos_ids is not None:
                 n = computed_pos_ids.shape[0]
                 if self.enable_nvtx:
@@ -827,8 +848,8 @@ class FlashInferCacheManager(BatchedCacheManager):
         vectorized KV writes, builds FlashInfer index tensors, and plans the
         wrapper. All state is stored in _plan_states[label].
 
-        In CUDA graph mode, uses the persistent wrapper from _plan_states
-        (pre-built by CudaGraphRunner) and calls its plan() method which
+        In accelerator graph mode, uses the persistent wrapper from _plan_states
+        (pre-built by AcceleratorGraphRunner) and calls its plan() method which
         updates static buffers via .copy_(). In eager mode, creates a new
         wrapper each call.
 
@@ -1096,12 +1117,12 @@ class FlashInferCacheManager(BatchedCacheManager):
         paged_kv_last_page_len = torch.tensor(kv_last_page_lens, dtype=torch.int32)
 
         ps = self._plan_states.get(combined_label)
-        if self._cuda_graph_mode and ps is not None and ps.wrapper is not None:
-            # CUDA-graph mode: reuse the persistent wrapper across denoise steps.
+        if self._accelerator_graph_mode and ps is not None and ps.wrapper is not None:
+            # accelerator-graph mode: reuse the persistent wrapper across denoise steps.
             # plan() updates its static buffers via .copy_() so the captured
             # kernel picks up each step's page table without reallocating.
             wrapper = ps.wrapper
-        elif self._cuda_graph_mode:
+        elif self._accelerator_graph_mode:
             # First call under capture: build the persistent wrapper sized for the
             # fixed batch (labels x requests) and token budget.
             wrapper = FlashInferPrefillWrapper(
@@ -1114,7 +1135,7 @@ class FlashInferCacheManager(BatchedCacheManager):
                 max_total_tokens=sum(combined_seq_lens),
                 max_num_pages=cfg.max_num_pages,
                 device=self.device,
-                use_cuda_graph=True,
+                use_accelerator_graph=True,
                 enable_nvtx=self.enable_nvtx,
                 backend=cfg.flashinfer_backend,
             )
@@ -1163,7 +1184,7 @@ class FlashInferCacheManager(BatchedCacheManager):
         call). Writes K and V to the paged KV cache at pre-computed page
         positions, then runs the FlashInfer wrapper for batched attention.
 
-        In CUDA graph mode, uses wrapper.set_kv_cache() + wrapper.run()
+        In accelerator graph mode, uses wrapper.set_kv_cache() + wrapper.run()
         which operates on pre-computed token_to_page/token_to_cache or
         kv_cache_locations tensors (static GPU addresses).
 
@@ -1422,10 +1443,23 @@ class XPUPagedCacheManager(FlashInferCacheManager):
                 kv_lens.append(total_len)
 
         max_blocks = max((len(row) for row in block_rows), default=1)
+        if self._accelerator_graph_mode:
+            max_blocks = max(
+                max_blocks,
+                math.ceil(cfg.max_seq_len / cfg.page_size),
+            )
         padded_rows = [row + [0] * (max_blocks - len(row)) for row in block_rows]
         cu_q = [0]
-        for q_len in q_lens:
-            cu_q.append(cu_q[-1] + q_len)
+        write_pages: list[int] = []
+        write_offsets: list[int] = []
+        for segment, row in zip(segments, block_rows, strict=True):
+            cu_q.append(cu_q[-1] + segment.query_len)
+            for position in range(
+                segment.prefix_len,
+                segment.prefix_len + segment.query_len,
+            ):
+                write_pages.append(row[position // cfg.page_size])
+                write_offsets.append(position % cfg.page_size)
 
         return XPUPagedPlan(
             segments=segments,
@@ -1433,9 +1467,19 @@ class XPUPagedCacheManager(FlashInferCacheManager):
                 padded_rows, dtype=torch.int32, device=self.device,
             ),
             cu_q=torch.tensor(cu_q, dtype=torch.int32, device=self.device),
-            host_kv_lens=torch.tensor(kv_lens, dtype=torch.int32),
+            host_kv_lens=torch.tensor(
+                kv_lens,
+                dtype=torch.int32,
+                device=self.device if self._accelerator_graph_mode else None,
+            ),
+            write_pages=torch.tensor(
+                write_pages, dtype=torch.long, device=self.device,
+            ),
+            write_offsets=torch.tensor(
+                write_offsets, dtype=torch.long, device=self.device,
+            ),
             max_q=max(q_lens, default=0),
-            max_k=max(kv_lens, default=0),
+            max_k=(cfg.max_seq_len if self._accelerator_graph_mode else max(kv_lens, default=0)),
             causal=causal,
         )
 
@@ -1455,9 +1499,13 @@ class XPUPagedCacheManager(FlashInferCacheManager):
         ps = self._plan_states.get(effective_label) or _PlanState()
         ps.seq_lens = seq_lens
         ps.write_store = write_store
-        ps.xpu_paged = self._build_xpu_plan(
+        new_plan = self._build_xpu_plan(
             [effective_label], {effective_label: seq_lens}, is_causal,
         )
+        if self._accelerator_graph_mode and ps.xpu_paged is not None:
+            ps.xpu_paged.copy_from(new_plan)
+        else:
+            ps.xpu_paged = new_plan
         self._plan_states[effective_label] = ps
         self._batched_cfg_info = None
 
@@ -1479,7 +1527,11 @@ class XPUPagedCacheManager(FlashInferCacheManager):
         ps = self._plan_states.get(combined_label) or _PlanState()
         ps.seq_lens = [n for label in labels for n in seq_lens[label]]
         ps.write_store = write_store
-        ps.xpu_paged = self._build_xpu_plan(labels, seq_lens, is_causal)
+        new_plan = self._build_xpu_plan(labels, seq_lens, is_causal)
+        if self._accelerator_graph_mode and ps.xpu_paged is not None:
+            ps.xpu_paged.copy_from(new_plan)
+        else:
+            ps.xpu_paged = new_plan
         self._plan_states[combined_label] = ps
 
     @torch.compiler.disable
@@ -1499,25 +1551,8 @@ class XPUPagedCacheManager(FlashInferCacheManager):
 
         cfg = self.kv_cache_config
         layer_cache = self.kv_cache[layer_idx]
-        offset = 0
-        for segment in plan.segments:
-            state = self._get_state(segment.request_id, segment.label)
-            positions = torch.arange(
-                segment.prefix_len,
-                segment.prefix_len + segment.query_len,
-                dtype=torch.long, device=self.device,
-            )
-            pages = torch.tensor(
-                state.page_indices, dtype=torch.long, device=self.device,
-            )
-            physical_pages = pages[
-                torch.div(positions, cfg.page_size, rounding_mode="floor")
-            ]
-            page_offsets = positions % cfg.page_size
-            next_offset = offset + segment.query_len
-            layer_cache[physical_pages, 0, page_offsets] = k[offset:next_offset]
-            layer_cache[physical_pages, 1, page_offsets] = v[offset:next_offset]
-            offset = next_offset
+        layer_cache[plan.write_pages, 0, plan.write_offsets] = k
+        layer_cache[plan.write_pages, 1, plan.write_offsets] = v
 
         if self.auto_write_store and ps.write_store:
             for segment in plan.segments:
@@ -1565,7 +1600,7 @@ class DenseGenCacheManager(FlashInferCacheManager):
         only (the launch overhead it removes is what matters at bs=1; bs>1
         amortizes the plan and grows the per-request prefix gather, so it stays
         on the paged path)."""
-        return not self._cuda_graph_mode and len(self.request_ids) == 1
+        return not self._accelerator_graph_mode and len(self.request_ids) == 1
 
     def plan_attention(
         self,

@@ -6,9 +6,9 @@ from torch import nn
 
 from mstar.communication.tensors import NameToTensorList
 from mstar.conductor.request_info import CurrentForwardPassInfo
+from mstar.engine.accelerator_graph_config import FlashInferPackedAcceleratorGraphConfig
+from mstar.engine.accelerator_graph_runner import BasicBatchedAcceleratorGraphConfig
 from mstar.engine.base import NodeBatch
-from mstar.engine.cuda_graph_config import FlashInferPackedCudaGraphConfig
-from mstar.engine.cuda_graph_runner import BasicBatchedCudaGraphConfig
 from mstar.engine.kv_cache_engine import BatchedCacheManager
 from mstar.engine.kv_store import PositionInfo
 from mstar.model.orpheus.config import OrpheusModelConfig
@@ -55,15 +55,15 @@ class OrpheusLLMSubmodule(ARNodeSubmodule):
             ),
         }
 
-    def get_cuda_graph_configs(
+    def get_accelerator_graph_configs(
         self, device: torch.device, tp_world_size: int = 1,
-    ) -> list[BasicBatchedCudaGraphConfig | FlashInferPackedCudaGraphConfig]:
+    ) -> list[BasicBatchedAcceleratorGraphConfig | FlashInferPackedAcceleratorGraphConfig]:
         prefill_packed = {
             num_tokens: self._build_prefill_packed(num_tokens, device)
             for num_tokens in self.PREFILL_TOKEN_BUCKETS
         }
         return [
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="decode",
                 requires_cfg=False, labels=["main"],
                 single_request_inputs=ARNodeInputs(
@@ -71,7 +71,7 @@ class OrpheusLLMSubmodule(ARNodeSubmodule):
                     input_seq_len=1
                 ),
             ),
-            FlashInferPackedCudaGraphConfig(
+            FlashInferPackedAcceleratorGraphConfig(
                 capture_graph_walk="prefill",
                 replay_graph_walks=["prefill"],
                 packed_seq_len_to_inputs=prefill_packed,
@@ -219,7 +219,7 @@ class OrpheusLLMSubmodule(ARNodeSubmodule):
     ) -> dict[str, NameToTensorList]:
         qo_indptr_buf = cache_handle.get_qo_indptr_buf("main")
         assert qo_indptr_buf is not None, (
-            "prefill forward_batched requires a CUDA-graph "
+            "prefill forward_batched requires a accelerator-graph "
             "FlashInferPrefillWrapper (qo_indptr static buffer); got None."
         )
         last_token_indices = (qo_indptr_buf[1:] - 1).long()
@@ -321,7 +321,9 @@ class SNACDecoderSubmodule(NodeSubmodule):
     def _num_frames(self) -> int:
         return self.config.snac_window_tokens // (4 * self.config.tokens_per_frame)
 
-    def get_cuda_graph_configs(self, device: torch.device, tp_world_size: int = 1) -> list[BasicBatchedCudaGraphConfig]:
+    def get_accelerator_graph_configs(
+        self, device: torch.device, tp_world_size: int = 1
+    ) -> list[BasicBatchedAcceleratorGraphConfig]:
         """Declare the SNAC decode capture.
         """
         # One streaming window is ``snac_window_tokens`` raw tokens
@@ -335,7 +337,7 @@ class SNACDecoderSubmodule(NodeSubmodule):
             input_seq_len=tokens_per_window
         )
         return [
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="snac_chunk",
                 single_request_inputs=dummy,
                 capture_batch_sizes=[1, 2, 4, 8, 16],
@@ -457,6 +459,6 @@ class SNACDecoderSubmodule(NodeSubmodule):
         codes_2 = c2.reshape(mf.shape[0], -1)
         return codes_0, codes_1, codes_2
 
-    def can_use_cuda_graphs(self, batch, model_inputs):
-        return super().can_use_cuda_graphs(batch, model_inputs) \
+    def can_use_accelerator_graphs(self, batch, model_inputs):
+        return super().can_use_accelerator_graphs(batch, model_inputs) \
             and self.can_batch(batch, model_inputs)

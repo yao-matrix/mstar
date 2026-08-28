@@ -18,9 +18,12 @@ from torch import nn
 
 from mstar.communication.tensors import NameToTensorList
 from mstar.conductor.request_info import CurrentForwardPassInfo
+from mstar.engine.accelerator_graph_config import (
+    BasicBatchedAcceleratorGraphConfig,
+    FlashInferPackedAcceleratorGraphConfig,
+)
 from mstar.engine.base import NodeBatch
 from mstar.engine.cache_manager import BatchedCacheManager
-from mstar.engine.cuda_graph_config import BasicBatchedCudaGraphConfig, FlashInferPackedCudaGraphConfig
 from mstar.model.pi05.components.action_expert import Pi05ActionExpert, Pi05TimeMLP
 from mstar.model.pi05.components.flow_matching import sincos_timestep_embedding
 from mstar.model.pi05.components.paligemma import Pi05PaliGemmaExpert
@@ -144,26 +147,26 @@ class Pi05ViTEncoderSubmodule(NodeSubmodule):
             for inp in model_inputs
         )
 
-    def get_cuda_graph_configs(self, device: torch.device, tp_world_size: int = 1) -> list:
-        """CUDA graph capture config for the SigLIP encoder.
+    def get_accelerator_graph_configs(self, device: torch.device, tp_world_size: int = 1) -> list:
+        """accelerator graph capture config for the SigLIP encoder.
 
         Captures the batched encoder forward for bs ∈ [1, 2, 4] during the
         'prefill' walk. Each capture slot holds one request's pixel_values:
         (num_cameras, 3, H, W). preprocess() stacks them to (bs, num_cameras,
-        3, H, W) so shape[0] == bs, satisfying StatelessCudaGraphRunner's
+        3, H, W) so shape[0] == bs, satisfying StatelessAcceleratorGraphRunner's
         leading-dim == bs requirement.
 
         compile=False because warmup() already applies torch.compile to
         forward_batched; _capture_one captures the compiled callable directly.
         """
-        from mstar.engine.cuda_graph_config import BasicBatchedCudaGraphConfig
+        from mstar.engine.accelerator_graph_config import BasicBatchedAcceleratorGraphConfig
         H = W = self.config.vit_image_size
         num_cameras = self.config.num_cameras
         return [
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="prefill",
                 single_request_inputs=ARNodeInputs(
-                    input_seq_len=0,  # not used by StatelessCudaGraphRunner
+                    input_seq_len=0,  # not used by StatelessAcceleratorGraphRunner
                     tensor_inputs={
                         "pixel_values": torch.zeros(
                             num_cameras, 3, H, W,
@@ -194,7 +197,7 @@ class Pi05ViTEncoderSubmodule(NodeSubmodule):
         inputs: list[NodeInputs],
     ) -> dict[str, torch.Tensor | Any]:
         # Stack images across requests: (bs, num_cameras, 3, H, W).
-        # Leading dim == bs satisfies StatelessCudaGraphRunner's shape validation,
+        # Leading dim == bs satisfies StatelessAcceleratorGraphRunner's shape validation,
         # and forward_batched flattens it back before the encoder call.
         all_images = [inp.tensor_inputs["pixel_values"] for inp in inputs]
         pixel_values = torch.stack(all_images, dim=0)
@@ -404,16 +407,16 @@ class Pi05LLMSubmodule(ARNodeSubmodule):
         emb = self.embed_tokens(ids)
         return emb * self._text_embed_scale
 
-    def get_cuda_graph_configs(
+    def get_accelerator_graph_configs(
         self, device: torch.device, tp_world_size: int = 1,
-    ) -> list[BasicBatchedCudaGraphConfig | FlashInferPackedCudaGraphConfig]:
+    ) -> list[BasicBatchedAcceleratorGraphConfig | FlashInferPackedAcceleratorGraphConfig]:
         # Visibility check: log the shape that's about to be captured so it's
         # easy to confirm yaml-level Pi05Config overrides (e.g. action_horizon
         # for the DROID variant) flowed all the way through. The values here
         # are read directly from self.config — same source as the nn.Linear
         # weight shapes — so they're guaranteed consistent.
         logger.info(
-            "Pi05LLMSubmodule.get_cuda_graph_configs: capturing 'action_gen' "
+            "Pi05LLMSubmodule.get_accelerator_graph_configs: capturing 'action_gen' "
             "graph with input_seq_len=%d, noisy_actions=(%d, %d), batch_sizes=[1,2,4] "
             "(num_flow_steps=%d denoising iters runs INSIDE this captured graph; "
             "denoising count is independent of horizon)",
@@ -430,7 +433,7 @@ class Pi05LLMSubmodule(ARNodeSubmodule):
         return [
             # Action generation always has latents of the same size, so it is a similar
             # paradigm to AR decode and can use the batched cuda graphs
-            BasicBatchedCudaGraphConfig(
+            BasicBatchedAcceleratorGraphConfig(
                 capture_graph_walk="action_gen", requires_cfg=False, labels=["main"],
                 single_request_inputs=ARNodeInputs(
                     input_seq_len=self.config.action_horizon,
@@ -443,7 +446,7 @@ class Pi05LLMSubmodule(ARNodeSubmodule):
                 ),
                 capture_batch_sizes=self.ACTION_GEN_CAPTURE_BATCH_SIZES
             ),
-            FlashInferPackedCudaGraphConfig(
+            FlashInferPackedAcceleratorGraphConfig(
                 capture_graph_walk="prefill",
                 packed_seq_len_to_inputs=prefill_packed,
                 requires_cfg=False,

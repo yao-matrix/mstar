@@ -675,7 +675,7 @@ def test_qwen3_tts_talker_batches_and_captures_decode():
 
     assert submodule.disable_torch_compile is True
     assert submodule.can_batch(batch, model_inputs)
-    assert submodule.can_use_cuda_graphs(batch, model_inputs)
+    assert submodule.can_use_accelerator_graphs(batch, model_inputs)
     cache_manager = SimpleNamespace(
         set_active_label=lambda label: None,
         plan_attention=lambda **kwargs: None,
@@ -693,7 +693,7 @@ def test_qwen3_tts_talker_batches_and_captures_decode():
     assert packed["input_embeds"].shape == (2, 16)
     assert packed["last_token_indices"].tolist() == [0, 1]
     assert packed["suppress_eos"].tolist() == [True, True]
-    graph_config = submodule.get_cuda_graph_configs(torch.device("cpu"))[0]
+    graph_config = submodule.get_accelerator_graph_configs(torch.device("cpu"))[0]
     assert graph_config.capture_graph_walk == "talker_decode"
     assert graph_config.capture_batch_sizes == [1, 2, 4, 8, 16, 32]
     assert graph_config.single_request_inputs.tensor_inputs[
@@ -704,7 +704,7 @@ def test_qwen3_tts_talker_batches_and_captures_decode():
     # (They used to fall out of both.)
     info["b"].step_metadata["subtalker_sampling"] = {"temperature": 0.7}
     assert submodule.can_batch(batch, model_inputs)
-    assert submodule.can_use_cuda_graphs(batch, model_inputs)
+    assert submodule.can_use_accelerator_graphs(batch, model_inputs)
 
 
 def test_qwen3_tts_code_predictor_uses_decode_attn_nhd(monkeypatch):
@@ -779,7 +779,7 @@ def test_qwen3_tts_depth_loop_piecewise_captures_its_own_sampling():
     buffers — so eager paths (above all prefill) still replay it, and per-request
     params stay live after capture.
     """
-    from mstar.engine.cuda_graph_runner import PiecewiseCudaGraphRunner
+    from mstar.engine.accelerator_graph_runner import PiecewiseAcceleratorGraphRunner
     from mstar.utils.sampling import (
         MultiSamplerBuffers,
         MultiSamplingConfig,
@@ -806,10 +806,10 @@ def test_qwen3_tts_depth_loop_piecewise_captures_its_own_sampling():
     for rid in rids:
         bufs.register_request(rid, multi)
 
-    configs = submodule.get_piecewise_cuda_graph_configs(
+    configs = submodule.get_piecewise_accelerator_graph_configs(
         dev, torch.bfloat16
     )
-    runner = PiecewiseCudaGraphRunner(
+    runner = PiecewiseAcceleratorGraphRunner(
         config=configs["code_predictor_loop"], device=dev,
         autocast_dtype=torch.bfloat16,
         # uses_sampler=True config: the engine wires the node's sampler buffers
@@ -992,14 +992,14 @@ def test_qwen3_tts_codec_batches_and_declares_cuda_graphs():
     )
 
     assert submodule.can_batch(batch, model_inputs)
-    assert submodule.can_use_cuda_graphs(batch, model_inputs)
+    assert submodule.can_use_accelerator_graphs(batch, model_inputs)
     packed = submodule.preprocess(
         "codec_chunk",
         ModelInputsFromEngine(request_ids=["a", "b"], per_request_info={}),
         model_inputs,
     )
     assert packed["codec_tokens"].shape == (2, 4, 5)
-    graph_config = submodule.get_cuda_graph_configs(torch.device("cpu"))[0]
+    graph_config = submodule.get_accelerator_graph_configs(torch.device("cpu"))[0]
     assert graph_config.capture_graph_walk == "codec_chunk"
     assert submodule.max_batch_size("codec_chunk") == 8
     assert graph_config.capture_batch_sizes == [1, 2, 4, 8]

@@ -1,7 +1,7 @@
-"""Latency benchmark: Qwen3-Omni Thinker prefill_text — eager vs CUDA graph.
+"""Latency benchmark: Qwen3-Omni Thinker prefill_text — eager vs accelerator graph.
 
 For each (bs, num_tokens) bucket captured by the Thinker prefill_text graph,
-times the eager ``forward_batched`` path against the CUDA-graph ``runner.run``
+times the eager ``forward_batched`` path against the accelerator-graph ``runner.run``
 path on identical synthetic inputs. Reports median, p10, p90 wall-clock per
 call plus the speedup ratio.
 
@@ -37,7 +37,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from mstar.conductor.request_info import CurrentForwardPassInfo  # noqa: E402
-from mstar.engine.cuda_graph_runner import CudaGraphKey, CudaGraphRunner  # noqa: E402
+from mstar.engine.accelerator_graph_runner import AcceleratorGraphKey, AcceleratorGraphRunner  # noqa: E402
 from mstar.engine.kv_cache_engine import KVCacheEngine  # noqa: E402
 from mstar.engine.kv_store import TransferEngineInfo  # noqa: E402
 from mstar.model.submodule_base import ARNodeInputs, ModelInputsFromEngine  # noqa: E402
@@ -66,7 +66,7 @@ class _StubTransferEngine:
 
 
 def _bring_up_thinker(cache_dir: str | None = None):
-    """Load Qwen3-Omni Thinker, build KVCacheEngine, capture CUDA graphs.
+    """Load Qwen3-Omni Thinker, build KVCacheEngine, capture accelerator graphs.
 
     Skips ``engine.warmup()``'s ``_compile_submodules`` step so the eager
     side and the captured graph use the same uncompiled kernels (matches the
@@ -75,7 +75,7 @@ def _bring_up_thinker(cache_dir: str | None = None):
     """
     from mstar.model.qwen3_omni.qwen3_omni_model import Qwen3OmniModel
 
-    # cuda_graph_runner calls torch.cuda.set_device(self.device) inside the
+    # accelerator_graph_runner calls torch.cuda.set_device(self.device) inside the
     # capture path; it rejects a bare torch.device("cuda"). Use the explicit
     # current-device index, matching how production workers pass it.
     device = torch.device(f"cuda:{torch.cuda.current_device()}")
@@ -104,7 +104,7 @@ def _bring_up_thinker(cache_dir: str | None = None):
 
     submod_mgmt = engine.submodule_management["Thinker"]
     kv_mgmt = submod_mgmt.kv_management
-    runner = CudaGraphRunner(
+    runner = AcceleratorGraphRunner(
         submodule_name="Thinker",
         submodule=submod_mgmt.submodule,
         kv_cache_config=kv_mgmt.kv_cache_config,
@@ -115,7 +115,7 @@ def _bring_up_thinker(cache_dir: str | None = None):
         autocast_dtype=torch.bfloat16,
     )
     runner.warmup_and_capture()
-    submod_mgmt.cuda_graph_runner = runner
+    submod_mgmt.accelerator_graph_runner = runner
     return engine, runner, submod_mgmt.submodule, device
 
 
@@ -189,7 +189,7 @@ def _time_eager_one(
 ) -> float:
     """One timed eager prefill — per-rid sequential, the production path.
 
-    forward_batched can't be timed here (asserts on a CUDA-graph-only
+    forward_batched can't be timed here (asserts on a accelerator-graph-only
     qo_indptr_buf). _execute_sequential calls submodule.forward in a per-rid
     loop for prefill_text; we mirror that.
     """
@@ -228,7 +228,7 @@ def _time_eager_one(
 
 def _time_graph_one(
     engine: KVCacheEngine,
-    runner: CudaGraphRunner,
+    runner: AcceleratorGraphRunner,
     submodule,
     bs: int,
     total_tokens: int,
@@ -272,7 +272,7 @@ def _percentile(data: list[float], p: float) -> float:
 
 def _bench_bucket(
     engine: KVCacheEngine,
-    runner: CudaGraphRunner,
+    runner: AcceleratorGraphRunner,
     submodule,
     bs: int,
     total_tokens: int,
@@ -282,9 +282,9 @@ def _bench_bucket(
 ) -> dict:
     """Time one (bs, total_tokens) bucket. Returns timing stats in milliseconds.
 
-    total_tokens is the sum across the batch (matches CudaGraphKey.num_tokens).
+    total_tokens is the sum across the batch (matches AcceleratorGraphKey.num_tokens).
     """
-    key = CudaGraphKey(
+    key = AcceleratorGraphKey(
         graph_walk="prefill_text",
         requires_cfg=False,
         bs=bs,
@@ -322,7 +322,7 @@ def _bench_bucket(
 
 def _print_results(results: list[dict]) -> None:
     print("\n" + "=" * 88)
-    print("Qwen3-Omni Thinker prefill_text — eager vs CUDA graph (per-call latency, ms)")
+    print("Qwen3-Omni Thinker prefill_text — eager vs accelerator graph (per-call latency, ms)")
     print("Note: total_tokens is the sum across the batch (split evenly per request).")
     print("=" * 88)
     header = (

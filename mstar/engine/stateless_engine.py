@@ -4,7 +4,7 @@ A single configurable engine class handles encoder/decoder forwards, flow /
 diffusion forwards, and audio codec forwards. They share the same execution
 skeleton — ``prepare_inputs → can_batch? → forward[_batched] → postprocess`` —
 and differ only in knobs (autocast dtype, whether ``torch.compile`` is applied,
-whether the piecewise CUDA-graph runner is opt-in, etc.). Those knobs live on
+whether the piecewise accelerator-graph runner is opt-in, etc.). Those knobs live on
 ``StatelessEngineConfig``.
 
 Stateful engines (paged KV cache, FlashInfer planning, sampling, CFG) live in
@@ -18,6 +18,7 @@ from dataclasses import dataclass
 import torch
 
 from mstar.distributed.communication import WorkerParallelGroups
+from mstar.engine.accelerator_graph_runner import PiecewiseAcceleratorGraphRunner, StatelessAcceleratorGraphRunner
 from mstar.engine.base import (
     BaseEngine,
     EngineType,
@@ -27,7 +28,6 @@ from mstar.engine.base import (
     PreparedBatch,
     StopCheckResult,
 )
-from mstar.engine.cuda_graph_runner import PiecewiseCudaGraphRunner, StatelessCudaGraphRunner
 from mstar.model.submodule_base import (
     ARNodeInputs,
     ModelInputsFromEngine,
@@ -51,21 +51,21 @@ class StatelessEngineConfig:
     - ``force_float32_submodules`` casts every submodule to ``.float()`` in
       ``load_model``. Required when ``autocast_dtype is None`` and the
       reference run is numerically sensitive (audio codec).
-    - ``cuda_graph_capable`` enables ``StatelessCudaGraphRunner`` capture during
+    - ``accelerator_graph_capable`` enables ``StatelessAcceleratorGraphRunner`` capture during
       ``warmup``. Submodules still opt in by returning a non-empty list from
-      ``get_cuda_graph_configs(device)``.
+      ``get_accelerator_graph_configs(device)``.
     - ``apply_torch_compile`` enables ``torch.compile(submodule.forward)``
       during warmup. Audio codec disables this because the one-shot compile
       cost is too high for short forwards.
-    - ``enable_piecewise_runner`` enables ``PiecewiseCudaGraphRunner`` for
-      submodules that return configs from ``get_piecewise_cuda_graph_configs()``.
+    - ``enable_piecewise_runner`` enables ``PiecewiseAcceleratorGraphRunner`` for
+      submodules that return configs from ``get_piecewise_accelerator_graph_configs()``.
     - ``name`` is the NVTX range prefix.
     """
 
     engine_type: EngineType = EngineType.STATELESS
     autocast_dtype: torch.dtype | None = torch.bfloat16
     force_float32_submodules: bool = False
-    cuda_graph_capable: bool = True
+    accelerator_graph_capable: bool = True
     apply_torch_compile: bool = True
     enable_piecewise_runner: bool = False
     name: str = "stateless"
@@ -75,7 +75,7 @@ def make_enc_dec_config(autocast_dtype: torch.dtype | None) -> StatelessEngineCo
     return StatelessEngineConfig(
         engine_type=EngineType.STATELESS,
         autocast_dtype=autocast_dtype,
-        cuda_graph_capable=True,
+        accelerator_graph_capable=True,
         apply_torch_compile=True,
         enable_piecewise_runner=True,
         name="enc_dec",
@@ -87,7 +87,7 @@ def make_audio_codec_config(_autocast_dtype: torch.dtype | None = None) -> State
         engine_type=EngineType.STATELESS,
         autocast_dtype=None,
         force_float32_submodules=True,
-        cuda_graph_capable=True,
+        accelerator_graph_capable=True,
         apply_torch_compile=False,
         enable_piecewise_runner=False,
         name="audio_codec",
@@ -97,10 +97,10 @@ def make_audio_codec_config(_autocast_dtype: torch.dtype | None = None) -> State
 class StatelessEngine(BaseEngine):
     """Single engine class for all stateless submodules.
 
-    Holds the submodules it was given, plus any ``StatelessCudaGraphRunner``s
+    Holds the submodules it was given, plus any ``StatelessAcceleratorGraphRunner``s
     captured during warmup. ``execute_batch`` runs the universal
     prepare → dispatch → postprocess skeleton; the dispatch picks between
-    CUDA-graph replay, batched forward, and per-request sequential.
+    accelerator-graph replay, batched forward, and per-request sequential.
     """
 
     def __init__(
@@ -123,7 +123,7 @@ class StatelessEngine(BaseEngine):
                 engine_type=config.engine_type,
                 autocast_dtype=autocast_dtype,
                 force_float32_submodules=config.force_float32_submodules,
-                cuda_graph_capable=config.cuda_graph_capable,
+                accelerator_graph_capable=config.accelerator_graph_capable,
                 apply_torch_compile=config.apply_torch_compile,
                 enable_piecewise_runner=config.enable_piecewise_runner,
                 name=config.name,
@@ -131,10 +131,10 @@ class StatelessEngine(BaseEngine):
         self.config = config
         self.submodules: dict[str, NodeSubmodule] = {}
         self.device: torch.device | None = None
-        self.cuda_graph_runners: dict[str, StatelessCudaGraphRunner] = {}
-        # node_name -> {label -> PiecewiseCudaGraphRunner}; spread into
+        self.accelerator_graph_runners: dict[str, StatelessAcceleratorGraphRunner] = {}
+        # node_name -> {label -> PiecewiseAcceleratorGraphRunner}; spread into
         # ModelInputsFromEngine at execute time.
-        self._piecewise_runners: dict[str, dict[str, "PiecewiseCudaGraphRunner"]] = {}
+        self._piecewise_runners: dict[str, dict[str, "PiecewiseAcceleratorGraphRunner"]] = {}
 
         # Dedup set for "captured graphs exist but don't match this shape"
         # warnings — each unique miss is logged at most once.
@@ -153,7 +153,7 @@ class StatelessEngine(BaseEngine):
         if submodule is None:
             return None
         submod_max_bs = submodule.max_batch_size(graph_walk)
-        runner = self.cuda_graph_runners.get(node_name)
+        runner = self.accelerator_graph_runners.get(node_name)
         if runner is None:
             return submod_max_bs
         configs = [cfg for cfg in runner.capture_configs if graph_walk in cfg.replay_graph_walks]
@@ -383,31 +383,31 @@ class StatelessEngine(BaseEngine):
         inputs: list[NodeInputs],
         submodule: NodeSubmodule,
     ) -> NodeOutput:
-        """Pick CUDA-graph replay / batched forward / sequential."""
+        """Pick accelerator-graph replay / batched forward / sequential."""
         can_batch = submodule.can_batch(batch, inputs)
-        runner = self.cuda_graph_runners.get(batch.node_name)
-        if can_batch and runner is not None and self._can_use_cuda_graph(
+        runner = self.accelerator_graph_runners.get(batch.node_name)
+        if can_batch and runner is not None and self._can_use_accelerator_graph(
             batch, submodule, inputs, runner
         ):
-            return self._execute_with_cuda_graph(batch, submodule, inputs, runner)
+            return self._execute_with_accelerator_graph(batch, submodule, inputs, runner)
         if can_batch:
             return self._execute_batched(batch, inputs, submodule)
         return self._execute_sequential(batch, inputs, submodule)
 
-    def _can_use_cuda_graph(
+    def _can_use_accelerator_graph(
         self,
         batch: NodeBatch,
         submodule: NodeSubmodule,
         inputs: list[NodeInputs],
-        runner: StatelessCudaGraphRunner,
+        runner: StatelessAcceleratorGraphRunner,
     ) -> bool:
         bs = len(batch.request_ids)
         # Audio codec submodules export an extra veto (e.g. SNAC's frame-count
         # check). Encoder/decoder submodules don't — absence means "no veto".
-        can_use = getattr(submodule, "can_use_cuda_graphs", None)
+        can_use = getattr(submodule, "can_use_accelerator_graphs", None)
         if can_use is not None and not can_use(batch, inputs):
             self._log_graph_miss(
-                batch, bs, runner, "submodule.can_use_cuda_graphs() returned False"
+                batch, bs, runner, "submodule.can_use_accelerator_graphs() returned False"
             )
             return False
         if not runner.can_run(batch_size=bs, graph_walk=batch.graph_walk):
@@ -421,7 +421,7 @@ class StatelessEngine(BaseEngine):
         self,
         batch: NodeBatch,
         bs: int,
-        runner: StatelessCudaGraphRunner,
+        runner: StatelessAcceleratorGraphRunner,
         reason: str,
     ) -> None:
         if not runner.graphs:
@@ -445,15 +445,15 @@ class StatelessEngine(BaseEngine):
             captured_walks,
         )
 
-    def _execute_with_cuda_graph(
+    def _execute_with_accelerator_graph(
         self,
         batch: NodeBatch,
         submodule: NodeSubmodule,
         inputs: list[ARNodeInputs],
-        runner: StatelessCudaGraphRunner,
+        runner: StatelessAcceleratorGraphRunner,
     ) -> NodeOutput:
         if self.enable_nvtx:
-            range_push(f"{self.config.name}.cuda_graph.run")
+            range_push(f"{self.config.name}.accelerator_graph.run")
         per_rid = runner.run(
             graph_walk=batch.graph_walk,
             request_ids=batch.request_ids,
@@ -557,19 +557,19 @@ class StatelessEngine(BaseEngine):
     # ─── Warmup ────────────────────────────────────────────────────────
 
     def warmup(self) -> None:
-        """Apply ``torch.compile`` and capture optional CUDA graphs.
+        """Apply ``torch.compile`` and capture optional accelerator graphs.
 
-        Each step is opt-in by the submodule (via ``get_cuda_graph_configs``
-        and ``get_piecewise_cuda_graph_configs``) so submodules that don't
+        Each step is opt-in by the submodule (via ``get_accelerator_graph_configs``
+        and ``get_piecewise_accelerator_graph_configs``) so submodules that don't
         support a feature are skipped without error.
         """
-        if not torch.cuda.is_available() or self.device is None:
+        if not torch.accelerator.is_available() or self.device is None:
             return
 
         for node_name, submodule in self.submodules.items():
             if self.config.apply_torch_compile:
                 self._apply_torch_compile(node_name, submodule)
-            if self.config.cuda_graph_capable:
+            if self.config.accelerator_graph_capable:
                 self._capture_codec_graphs(node_name, submodule)
             if self.config.enable_piecewise_runner:
                 self._install_piecewise_runner(node_name, submodule)
@@ -604,13 +604,13 @@ class StatelessEngine(BaseEngine):
             )
 
     def _capture_codec_graphs(self, node_name: str, submodule: NodeSubmodule) -> None:
-        if not hasattr(submodule, "get_cuda_graph_configs"):
+        if not hasattr(submodule, "get_accelerator_graph_configs"):
             return
-        codec_configs = submodule.get_cuda_graph_configs(self.device)
+        codec_configs = submodule.get_accelerator_graph_configs(self.device)
         if not codec_configs:
             return
         try:
-            runner = StatelessCudaGraphRunner(
+            runner = StatelessAcceleratorGraphRunner(
                 submodule_name=node_name,
                 submodule=submodule,
                 device=self.device,
@@ -619,16 +619,16 @@ class StatelessEngine(BaseEngine):
             runner.enable_nvtx = self.enable_nvtx
             runner.warmup_and_capture()
             if runner.graphs:
-                self.cuda_graph_runners[node_name] = runner
+                self.accelerator_graph_runners[node_name] = runner
                 logger.info(
-                    "StatelessEngine[%s]: StatelessCudaGraphRunner installed for %s (%d graphs)",
+                    "StatelessEngine[%s]: StatelessAcceleratorGraphRunner installed for %s (%d graphs)",
                     self.config.name,
                     node_name,
                     len(runner.graphs),
                 )
         except Exception:
             logger.warning(
-                "StatelessEngine[%s]: StatelessCudaGraphRunner capture failed for %s, using eager mode",
+                "StatelessEngine[%s]: StatelessAcceleratorGraphRunner capture failed for %s, using eager mode",
                 self.config.name,
                 node_name,
                 exc_info=True,
@@ -638,7 +638,7 @@ class StatelessEngine(BaseEngine):
         # Stateless submodules have no KV cache, so the KV managers are all
         # None; a piecewise config with uses_kv_cache=True on a stateless node
         # would fail its own assert and be skipped (eager path) by the builder.
-        from mstar.engine.cuda_graph_runner import build_piecewise_runners
+        from mstar.engine.accelerator_graph_runner import build_piecewise_runners
 
         tp_config = self.parallel_groups.get_tp_config_for_node(node_name)
         self._piecewise_runners[node_name] = build_piecewise_runners(

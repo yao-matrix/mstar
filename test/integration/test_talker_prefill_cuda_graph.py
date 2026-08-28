@@ -1,4 +1,4 @@
-"""Determinism test: Qwen3-Omni Talker talker_prefill CUDA graph replay.
+"""Determinism test: Qwen3-Omni Talker talker_prefill accelerator graph replay.
 
 The pure graph-vs-eager numerical-parity check this file used to carry was
 removed: the only available "eager" baseline is per-rid sequential
@@ -37,7 +37,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from mstar.conductor.request_info import CurrentForwardPassInfo  # noqa: E402
-from mstar.engine.cuda_graph_runner import CudaGraphKey, CudaGraphRunner  # noqa: E402
+from mstar.engine.accelerator_graph_runner import AcceleratorGraphKey, AcceleratorGraphRunner  # noqa: E402
 from mstar.engine.kv_cache_engine import KVCacheEngine  # noqa: E402
 from mstar.engine.kv_store import TransferEngineInfo  # noqa: E402
 from mstar.model.submodule_base import ARNodeInputs  # noqa: E402
@@ -86,12 +86,12 @@ class _StubTransferEngine:
 
 @pytest.fixture(scope="session")
 def talker_engine_with_runner():
-    """Bring up the Talker_LLM submodule on GPU and capture its CUDA graphs.
+    """Bring up the Talker_LLM submodule on GPU and capture its accelerator graphs.
 
     Session-scoped because the warmup capture (~30 s on H100 across the
     talker_decode + talker_prefill captures) dominates wall time.
 
-    Manually constructs the CudaGraphRunner instead of calling
+    Manually constructs the AcceleratorGraphRunner instead of calling
     ``engine.warmup()`` to avoid the post-capture ``_compile_submodules``
     step, which would create a compile-vs-uncompile divergence between
     the captured graph and subsequent direct calls.
@@ -129,7 +129,7 @@ def talker_engine_with_runner():
 
     submod_mgmt = engine.submodule_management["Talker_LLM"]
     kv_mgmt = submod_mgmt.kv_management
-    runner = CudaGraphRunner(
+    runner = AcceleratorGraphRunner(
         submodule_name="Talker_LLM",
         submodule=submod_mgmt.submodule,
         kv_cache_config=kv_mgmt.kv_cache_config,
@@ -141,7 +141,7 @@ def talker_engine_with_runner():
     )
     runner.warmup_and_capture()
     assert runner.graphs, "warmup_and_capture produced no captured graphs"
-    submod_mgmt.cuda_graph_runner = runner
+    submod_mgmt.accelerator_graph_runner = runner
 
     yield engine, runner, submod_mgmt.submodule
 
@@ -210,7 +210,7 @@ def test_talker_prefill_graph_replay_is_deterministic(
     engine, runner, submodule = talker_engine_with_runner
     device = engine.device
     talker_hidden_size = submodule.config.talker_hidden_size
-    key = CudaGraphKey(
+    key = AcceleratorGraphKey(
         graph_walk="talker_prefill",
         requires_cfg=False,
         bs=bs,

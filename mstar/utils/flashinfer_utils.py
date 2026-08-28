@@ -2,10 +2,10 @@
 
 Provides:
 - run_attention: simple single-request attention helper
-- FlashInferPrefillWrapper: batched prefill with paged KV cache, optional CUDA graph mode
-- FlashInferDecodeWrapper: batched decode with paged KV cache, optional CUDA graph mode
+- FlashInferPrefillWrapper: batched prefill with paged KV cache, optional accelerator graph mode
+- FlashInferDecodeWrapper: batched decode with paged KV cache, optional accelerator graph mode
 
-CUDA graph mode requires:
+accelerator graph mode requires:
 - Static buffer pointers passed at construction (qo_indptr_buf, paged_kv_indptr_buf, etc.)
 - plan() updates values via .copy_() without reallocating
 - The same wrapper object must be used during both capture and replay
@@ -44,7 +44,7 @@ class FlashInferPrefillWrapper:
 
     Wraps flashinfer.BatchPrefillWithPagedKVCacheWrapper with:
     - Pre-computed token_to_page / token_to_cache for vectorized KV writes
-    - Optional CUDA graph mode with static buffers
+    - Optional accelerator graph mode with static buffers
 
     Args:
         workspace_buffer: FlashInfer workspace (256MB+ recommended)
@@ -52,11 +52,11 @@ class FlashInferPrefillWrapper:
         num_kv_heads: number of key/value heads
         head_dim: dimension per head
         page_size: KV cache page size
-        batch_size: required for CUDA graph mode (max requests in batch)
-        max_total_tokens: required for CUDA graph mode (max total new tokens across batch)
-        max_num_pages: required for CUDA graph mode (max pages across all requests)
+        batch_size: required for accelerator graph mode (max requests in batch)
+        max_total_tokens: required for accelerator graph mode (max total new tokens across batch)
+        max_num_pages: required for accelerator graph mode (max pages across all requests)
         device: torch device
-        use_cuda_graph: if True, pre-allocate static buffers for graph capture
+        use_accelerator_graph: if True, pre-allocate static buffers for graph capture
     """
 
     def __init__(
@@ -70,12 +70,12 @@ class FlashInferPrefillWrapper:
         max_total_tokens: int | None = None,
         max_num_pages: int | None = None,
         device: torch.device = torch.device("cuda"),
-        use_cuda_graph: bool = False,
+        use_accelerator_graph: bool = False,
         enable_nvtx: bool = False,
         backend: str = "auto",
     ):
         self.device = device
-        self.use_cuda_graph = use_cuda_graph
+        self.use_accelerator_graph = use_accelerator_graph
         self.enable_nvtx = enable_nvtx
         self.batch_size = batch_size
         self.max_total_tokens = max_total_tokens
@@ -87,10 +87,10 @@ class FlashInferPrefillWrapper:
 
         import flashinfer
 
-        if self.use_cuda_graph:
-            assert batch_size is not None, "batch_size required for CUDA graph mode"
-            assert max_total_tokens is not None, "max_total_tokens required for CUDA graph mode"
-            assert max_num_pages is not None, "max_num_pages required for CUDA graph mode"
+        if self.use_accelerator_graph:
+            assert batch_size is not None, "batch_size required for accelerator graph mode"
+            assert max_total_tokens is not None, "max_total_tokens required for accelerator graph mode"
+            assert max_num_pages is not None, "max_num_pages required for accelerator graph mode"
 
             # Pre-allocate static index buffers
             self._qo_indptr_buf = torch.zeros(
@@ -145,7 +145,7 @@ class FlashInferPrefillWrapper:
     ):
         """Plan attention and compute KV write indices.
 
-        In CUDA graph mode, updates static buffers via .copy_() so that
+        In accelerator graph mode, updates static buffers via .copy_() so that
         the same GPU addresses are used during graph replay.
 
         Inputs may be on CPU — that's preferred because FlashInfer's
@@ -179,7 +179,7 @@ class FlashInferPrefillWrapper:
 
         # Allow the qo_indptr to be accessible by BatchedCacheManager.get_qo_indptr_buf,
         # even if we're not in a cuda graph
-        if not self.use_cuda_graph:
+        if not self.use_accelerator_graph:
             self._qo_indptr_buf = qo_indptr
 
         # Compute per-token page and offset for vectorized KV writes
@@ -219,7 +219,7 @@ class FlashInferPrefillWrapper:
         token_to_page = paged_kv_indices[abs_page_ptr].to(torch.long)
         token_to_cache = off_in_page.to(torch.long)
 
-        if self.use_cuda_graph:
+        if self.use_accelerator_graph:
             self.token_to_page[:total_tokens].copy_(token_to_page)
             self.token_to_cache[:total_tokens].copy_(token_to_cache)
             if total_tokens < self.max_total_tokens:
@@ -274,10 +274,10 @@ class FlashInferDecodeWrapper:
         num_kv_heads: number of key/value heads
         head_dim: dimension per head
         page_size: KV cache page size
-        batch_size: required for CUDA graph mode (max requests in batch)
-        max_num_pages: required for CUDA graph mode (max pages across all requests)
+        batch_size: required for accelerator graph mode (max requests in batch)
+        max_num_pages: required for accelerator graph mode (max pages across all requests)
         device: torch device
-        use_cuda_graph: if True, pre-allocate static buffers for graph capture
+        use_accelerator_graph: if True, pre-allocate static buffers for graph capture
     """
 
     def __init__(
@@ -290,12 +290,12 @@ class FlashInferDecodeWrapper:
         batch_size: int | None = None,
         max_num_pages: int | None = None,
         device: torch.device = torch.device("cuda"),
-        use_cuda_graph: bool = False,
+        use_accelerator_graph: bool = False,
         enable_nvtx: bool = False,
         backend: str = "auto",
     ):
         self.device = device
-        self.use_cuda_graph = use_cuda_graph
+        self.use_accelerator_graph = use_accelerator_graph
         self.enable_nvtx = enable_nvtx
         self.batch_size = batch_size
         self.num_qo_heads = num_qo_heads
@@ -306,9 +306,9 @@ class FlashInferDecodeWrapper:
 
         import flashinfer
 
-        if self.use_cuda_graph:
-            assert batch_size is not None, "batch_size required for CUDA graph mode"
-            assert max_num_pages is not None, "max_num_pages required for CUDA graph mode"
+        if self.use_accelerator_graph:
+            assert batch_size is not None, "batch_size required for accelerator graph mode"
+            assert max_num_pages is not None, "max_num_pages required for accelerator graph mode"
 
             self._paged_kv_indptr_buf = torch.zeros(
                 batch_size + 1, dtype=torch.int32, device=device
@@ -415,7 +415,7 @@ class FlashInferDecodeWrapper:
                 if self.enable_nvtx:
                     range_pop(synchronize=False)
 
-        if self.use_cuda_graph:
+        if self.use_accelerator_graph:
             if self.enable_nvtx:
                 range_push("flashinfer.decode.kv_location_copy", synchronize=False)
             try:

@@ -7,6 +7,11 @@ import torch
 
 from mstar.conductor.request_info import CurrentForwardPassInfo
 from mstar.distributed.communication import CommGroup, WorkerParallelGroups
+from mstar.engine.accelerator_graph_runner import (
+    AcceleratorGraphRunner,
+    PiecewiseAcceleratorGraphRunner,
+    build_piecewise_runners,
+)
 from mstar.engine.base import (
     BaseEngine,
     EngineCapabilities,
@@ -23,11 +28,6 @@ from mstar.engine.cache_manager import (
     create_cache_manager,
 )
 from mstar.engine.cpu_page_pool import CPUPagePool
-from mstar.engine.cuda_graph_runner import (
-    CudaGraphRunner,
-    PiecewiseCudaGraphRunner,
-    build_piecewise_runners,
-)
 from mstar.engine.kv_store import (
     AllocationFailedError,
     CrossAttnPool,
@@ -127,10 +127,10 @@ class SubmoduleManagement:
     tp_group: CommGroup
     default_sampling_config: MultiSamplingConfig
     sampler: MultiSampler
-    cuda_graph_runner: CudaGraphRunner | None = None
-    # label -> PiecewiseCudaGraphRunner for inner-loop capture; spread into
+    accelerator_graph_runner: AcceleratorGraphRunner | None = None
+    # label -> PiecewiseAcceleratorGraphRunner for inner-loop capture; spread into
     # ModelInputsFromEngine so the submodule's forward can look them up.
-    piecewise_runners: dict[str, "PiecewiseCudaGraphRunner"] = field(default_factory=dict)
+    piecewise_runners: dict[str, "PiecewiseAcceleratorGraphRunner"] = field(default_factory=dict)
 
 
 class KVCacheEngine(BaseEngine):
@@ -325,12 +325,12 @@ class KVCacheEngine(BaseEngine):
 
         Compiles each submodule's ``forward`` and ``forward_batched`` with the
         default mode (fullgraph=False, dynamic=None). Called from ``warmup``
-        after CUDA graph capture. ``max-autotune-no-cudagraphs`` is intentionally
+        after accelerator graph capture. ``max-autotune-no-cudagraphs`` is intentionally
         not used here: on variable-shape inputs it triggers frequent slow
-        recompiles, so that mode is applied on the CUDA-graph path instead
-        (see ``cuda_graph_runner``).
+        recompiles, so that mode is applied on the accelerator-graph path instead
+        (see ``accelerator_graph_runner``).
         """
-        if not torch.cuda.is_available():
+        if not torch.accelerator.is_available():
             return
 
         for node_name, submodule_mgmt in self.submodule_management.items():
@@ -357,15 +357,15 @@ class KVCacheEngine(BaseEngine):
                                node_name, exc_info=True)
 
     def warmup(self) -> None:
-        """Compile submodules and capture CUDA graphs."""
-        from mstar.engine.cuda_graph_runner import CudaGraphRunner
+        """Compile submodules and capture accelerator graphs."""
+        from mstar.engine.accelerator_graph_runner import AcceleratorGraphRunner
 
         for node_name, submodule_mgmt in self.submodule_management.items():
             kv_mgmt = submodule_mgmt.kv_management
             submodule = submodule_mgmt.submodule
 
-            # Standard AR decode CUDA graph (CudaGraphRunner).
-            runner = CudaGraphRunner(
+            # Standard AR decode accelerator graph (AcceleratorGraphRunner).
+            runner = AcceleratorGraphRunner(
                 submodule_name=node_name,
                 submodule=submodule,
                 kv_cache_config=kv_mgmt.kv_cache_config,
@@ -380,13 +380,13 @@ class KVCacheEngine(BaseEngine):
             runner.enable_nvtx = self.enable_nvtx
             runner.warmup_and_capture()
             if runner.graphs:
-                submodule_mgmt.cuda_graph_runner = runner
-                logger.info("KVCacheEngine: CUDA graphs captured for %s (%d configs)",
+                submodule_mgmt.accelerator_graph_runner = runner
+                logger.info("KVCacheEngine: Accelerator graphs captured for %s (%d configs)",
                             node_name, len(runner.graphs))
 
-            # Piecewise CUDA graphs for inner-loop capture (e.g. VJepa2 AC
+            # Piecewise accelerator graphs for inner-loop capture (e.g. VJepa2 AC
             # rollout block loop). Submodules opt in via
-            # get_piecewise_cuda_graph_configs; runners are spread into
+            # get_piecewise_accelerator_graph_configs; runners are spread into
             # ModelInputsFromEngine at execute time.
             submodule_mgmt.piecewise_runners = build_piecewise_runners(
                 submodule=submodule,
@@ -402,7 +402,7 @@ class KVCacheEngine(BaseEngine):
                 sampler_buffers=runner.sampler_buffer,
             )
 
-        # torch.compile applied after CUDA graph capture so compiled kernels
+        # torch.compile applied after accelerator graph capture so compiled kernels
         # are baked into the graphs.
         self._compile_submodules()
 
@@ -461,10 +461,10 @@ class KVCacheEngine(BaseEngine):
             return
         submod_max_bs = self.submodule_management[node_name].submodule.max_batch_size(graph_walk)
         submod_mg = self.submodule_management[node_name]
-        if submod_mg.cuda_graph_runner is None:
+        if submod_mg.accelerator_graph_runner is None:
             return submod_max_bs
 
-        runner = submod_mg.cuda_graph_runner
+        runner = submod_mg.accelerator_graph_runner
         configs = [
             cfg for cfg in runner.capture_configs \
                 if graph_walk in cfg.replay_graph_walks
@@ -477,12 +477,12 @@ class KVCacheEngine(BaseEngine):
         # submodule's max_batch_size instead of the captured-size ceiling.
         if not configs:
             return submod_max_bs
-        max_cuda_graph_bs = max([
+        max_accelerator_graph_bs = max([
             max(cfg.capture_batch_sizes or runner.CAPTURE_BATCH_SIZES) for cfg in configs
         ])
         if submod_max_bs is not None:
-            return min(max_cuda_graph_bs, submod_max_bs)
-        return max_cuda_graph_bs
+            return min(max_accelerator_graph_bs, submod_max_bs)
+        return max_accelerator_graph_bs
 
     def _sample_decode_outputs(
         self,
@@ -491,20 +491,20 @@ class KVCacheEngine(BaseEngine):
     ) -> NodeOutput:
         """Post-process decode outputs: sample tokens from logits.
 
-        Called AFTER the model forward (and outside CUDA graph capture).
+        Called AFTER the model forward (and outside accelerator graph capture).
         Replaces 'logits' with 'new_token' in each request's output.
         """
 
         for rid, tensors in output.per_request_output_tensors.items():
             # Guard against non-per-rid keys (e.g. the __batched_logits__
-            # sentinel used as a CUDA-graph fast-path hint): their value is
+            # sentinel used as a accelerator-graph fast-path hint): their value is
             # a torch.Tensor, not a dict, so the `"logits" not in tensors`
             # check below would raise TypeError (Tensor.__contains__ calls
             # torch.eq on strings).
             if not isinstance(tensors, dict) or "logits" not in tensors:
                 continue
             logits = tensors["logits"][0]  # [1, vocab_size]
-            # Clone for the same reason as the cuda_graph_runner sampler
+            # Clone for the same reason as the accelerator_graph_runner sampler
             # paths: FlashInfer's sampling reuses the output buffer and
             # speculation chains expose the alias as token doubling.
             tensors["new_token"] = [
@@ -566,15 +566,15 @@ class KVCacheEngine(BaseEngine):
 
         # `__batched_logits__` is the stacked [B, V] logits the submodule
         # already produced for the batch. When present, sample once across
-        # the whole batch instead of looping per-rid (matches the CUDA-graph
-        # fast path in cuda_graph_runner.sample_and_remap).
+        # the whole batch instead of looping per-rid (matches the accelerator-graph
+        # fast path in accelerator_graph_runner.sample_and_remap).
         batched_logits = batched_output.pop("__batched_logits__", None)
 
         # Prefill-style submodules emit batch-wide packed sentinels instead of
         # per-rid entries, because per-request slice ends depend on the real
         # seq_lens a fixed-shape captured region can't honor. Slice them here,
         # merging key-by-key (and dropping the now-consumed sentinels) so this
-        # path matches CudaGraphRunner._merge_unpacked. No-op for decode-style
+        # path matches AcceleratorGraphRunner._merge_unpacked. No-op for decode-style
         # submodules, whose hook returns {}.
         real_seq_lens = [inp.input_seq_len for inp in inputs]
         unpacked = submodule.unpack_packed_outputs(
@@ -624,7 +624,7 @@ class KVCacheEngine(BaseEngine):
             range_pop(synchronize=False)
 
         # Apply per-rid output filter so submodules that emit a static set
-        # of keys for CUDA-graph capture compat (e.g. Qwen3-Omni Thinker
+        # of keys for accelerator-graph capture compat (e.g. Qwen3-Omni Thinker
         # always emits thinker_states) can drop keys per real request in
         # eager mode too, keeping both execution paths consistent.
         for rid in batch.request_ids:
@@ -700,19 +700,19 @@ class KVCacheEngine(BaseEngine):
             range_pop(synchronize=False)
         return output
 
-    def _can_use_cuda_graph(self, batch: NodeBatch, inputs: list[ARNodeInputs]) -> bool:
-        """Check if CUDA graph replay is available for this batch.
+    def _can_use_accelerator_graph(self, batch: NodeBatch, inputs: list[ARNodeInputs]) -> bool:
+        """Check if accelerator graph replay is available for this batch.
 
         Delegates the eligibility check to the submodule via
-        ``submodule.can_use_cuda_graphs(batch)``. The default
+        ``submodule.can_use_accelerator_graphs(batch)``. The default
         implementation on NodeSubmodule derives this from
-        ``get_cuda_graph_configs`` (graph_walk membership).
+        ``get_accelerator_graph_configs`` (graph_walk membership).
         """
         submod_mgmt = self.submodule_management[batch.node_name]
         submodule = submod_mgmt.submodule
         if submodule is None:
             return False
-        runner = submod_mgmt.cuda_graph_runner
+        runner = submod_mgmt.accelerator_graph_runner
         if runner is None:
             return False
 
@@ -723,13 +723,13 @@ class KVCacheEngine(BaseEngine):
         bs = len(batch.request_ids)
         num_tokens = sum(inp.input_seq_len for inp in inputs)
 
-        if not submodule.can_use_cuda_graphs(batch, inputs):
+        if not submodule.can_use_accelerator_graphs(batch, inputs):
             self._log_graph_miss(
                 node_name=batch.node_name,
                 graph_walk=batch.graph_walk,
                 bs=bs, num_tokens=num_tokens, requires_cfg=has_cfg,
                 runner=runner,
-                reason="submodule.can_use_cuda_graphs() returned False",
+                reason="submodule.can_use_accelerator_graphs() returned False",
             )
             return False
 
@@ -756,7 +756,7 @@ class KVCacheEngine(BaseEngine):
         bs: int,
         num_tokens: int,
         requires_cfg: bool,
-        runner: CudaGraphRunner,
+        runner: AcceleratorGraphRunner,
         reason: str,
     ) -> None:
         """Warn (once per unique miss shape) when a runner exists but the
@@ -782,20 +782,20 @@ class KVCacheEngine(BaseEngine):
             reason, captured_for_walk or "<none>", captured_walks,
         )
 
-    def _execute_with_cuda_graph(
+    def _execute_with_accelerator_graph(
         self, batch: NodeBatch, submodule: ARNodeSubmodule,
         inputs: list[ARNodeInputs]
     ) -> NodeOutput:
-        """Execute using a captured CUDA graph.
+        """Execute using a captured accelerator graph.
 
-        The CudaGraphRunner handles:
-        1. Creating a BatchedCacheManager with persistent CUDA graph wrappers
+        The AcceleratorGraphRunner handles:
+        1. Creating a BatchedCacheManager with persistent accelerator graph wrappers
         2. Running preprocess (plan_attention/plan_rope outside the graph)
         3. Copying inputs to static buffers, replaying the graph
         4. Advancing seq_lens after replay (Python-only, not captured)
         5. Remapping outputs from dummy request IDs to real ones
         """
-        runner = self.submodule_management[batch.node_name].cuda_graph_runner
+        runner = self.submodule_management[batch.node_name].accelerator_graph_runner
 
         has_cfg = any(
             batch.per_request_info[rid].requires_cfg
@@ -809,7 +809,7 @@ class KVCacheEngine(BaseEngine):
             inputs=inputs,
             per_request_info=batch.per_request_info,
             submodule=submodule,
-            slot=batch.metadata.get("cuda_graph_slot"),
+            slot=batch.metadata.get("accelerator_graph_slot"),
             advance_event=batch.metadata.get("advance_event"),
             launch_started_event=batch.metadata.get("launch_started_event"),
             exec_timings=batch.exec_timings if self.enable_profile else None,
@@ -931,7 +931,7 @@ class KVCacheEngine(BaseEngine):
 
         if self.enable_nvtx:
             range_push("kv_cache.sampler_config", synchronize=False)
-        runner = submod_mgmt.cuda_graph_runner
+        runner = submod_mgmt.accelerator_graph_runner
         for rid, info in batch.per_request_info.items():
             sampling_config = info.sampling_config.get(batch.node_name)
             if sampling_config is not None:
@@ -1001,9 +1001,9 @@ class KVCacheEngine(BaseEngine):
         )
 
     def execute_forward(self, planned: PlannedBatch) -> NodeOutput:
-        """Dispatch CUDA-graph / batched / sequential.
+        """Dispatch accelerator-graph / batched / sequential.
 
-        Priority: CUDA graph (largest single launch) > batched (single
+        Priority: accelerator graph (largest single launch) > batched (single
         FlashInfer plan + forward) > sequential (per-rid fallback).
         """
         batch = planned.batch
@@ -1017,11 +1017,11 @@ class KVCacheEngine(BaseEngine):
 
         submod_mgmt.tp_group.barrier()
 
-        if self._can_use_cuda_graph(batch, node_inputs):
+        if self._can_use_accelerator_graph(batch, node_inputs):
             if self.enable_nvtx:
-                range_push("kv_cache.cuda_graph_path", synchronize=False)
+                range_push("kv_cache.accelerator_graph_path", synchronize=False)
             try:
-                output = self._execute_with_cuda_graph(batch, submodule, node_inputs)
+                output = self._execute_with_accelerator_graph(batch, submodule, node_inputs)
             finally:
                 if self.enable_nvtx:
                     range_pop(synchronize=False)
@@ -1166,14 +1166,14 @@ class KVCacheEngine(BaseEngine):
 
     def reserve_replay_slot(self, batch: NodeBatch) -> int | None:
         """Allocate the next double-buffer slot for this batch and stash it
-        on ``batch.metadata['cuda_graph_slot']``.
+        on ``batch.metadata['accelerator_graph_slot']``.
 
         Worker's main thread calls this on the speculative path
         BEFORE submitting both pre-plan and replay so they target the same
         slot (and the OPPOSITE slot from the in-flight replay). Returns the
         slot index, or ``None`` if no captured graph matches (eager path).
         """
-        runner = self.submodule_management[batch.node_name].cuda_graph_runner
+        runner = self.submodule_management[batch.node_name].accelerator_graph_runner
         if runner is None or not runner.graphs:
             return None
         has_cfg = any(
@@ -1190,7 +1190,7 @@ class KVCacheEngine(BaseEngine):
             batch_size=bs,
         )
         if slot is not None:
-            batch.metadata["cuda_graph_slot"] = slot
+            batch.metadata["accelerator_graph_slot"] = slot
         return slot
 
     def reset_pre_plan_for_batch(self, batch: NodeBatch) -> None:
@@ -1199,14 +1199,14 @@ class KVCacheEngine(BaseEngine):
         or pre-plan failures without disturbing other slots' valid
         pre-plan state. No-op if no captured graph matches.
         """
-        runner = self.submodule_management[batch.node_name].cuda_graph_runner
+        runner = self.submodule_management[batch.node_name].accelerator_graph_runner
         if runner is None or not runner.graphs:
             return
         has_cfg = any(
             info.requires_cfg for info in batch.per_request_info.values()
         )
         bs = len(batch.request_ids)
-        slot = batch.metadata.get("cuda_graph_slot")
+        slot = batch.metadata.get("accelerator_graph_slot")
         runner.reset_pre_plan_state_for_slot(
             graph_walk=batch.graph_walk,
             requires_cfg=has_cfg,
@@ -1224,7 +1224,7 @@ class KVCacheEngine(BaseEngine):
         the GIL-contended plan() call.
 
         With double-buffer, the slot has already been reserved by
-        ``reserve_replay_slot`` and lives on ``batch.metadata['cuda_graph_slot']``.
+        ``reserve_replay_slot`` and lives on ``batch.metadata['accelerator_graph_slot']``.
         We forward it to the runner so plan() targets the inactive slot's
         wrapper (the one replay(N) is NOT using).
 
@@ -1232,13 +1232,13 @@ class KVCacheEngine(BaseEngine):
         wait on the plan future before running this batch). False if no
         captured graph matches, in which case the GPU thread plans inline.
         """
-        runner = self.submodule_management[batch.node_name].cuda_graph_runner
+        runner = self.submodule_management[batch.node_name].accelerator_graph_runner
         if runner is None or not runner.graphs:
             return False
         has_cfg = any(
             info.requires_cfg for info in batch.per_request_info.values()
         )
-        slot = batch.metadata.get("cuda_graph_slot")
+        slot = batch.metadata.get("accelerator_graph_slot")
         return runner.pre_plan_for_batch(
             graph_walk=batch.graph_walk,
             requires_cfg=has_cfg,
@@ -1259,8 +1259,8 @@ class KVCacheEngine(BaseEngine):
             # Mirror into the cuda-graph runner's master sampler buffers so
             # the per-step path can index_select instead of rebuilding from
             # Python (see ``SamplerBuffers.gather_for_request_ids``).
-            if submodule_mgmt.cuda_graph_runner is not None:
-                submodule_mgmt.cuda_graph_runner.register_request(request_id)
+            if submodule_mgmt.accelerator_graph_runner is not None:
+                submodule_mgmt.accelerator_graph_runner.register_request(request_id)
 
     def remove_request(self, request_id: str) -> None:
         for submodule_mgmt in self.submodule_management.values():
@@ -1272,8 +1272,8 @@ class KVCacheEngine(BaseEngine):
                 cross_mgr.remove_request(request_id)
             submodule_mgmt.sampler.remove_request(request_id)
             submodule_mgmt.submodule.cleanup_request(request_id)
-            if submodule_mgmt.cuda_graph_runner is not None:
-                submodule_mgmt.cuda_graph_runner.unregister_request(request_id)
+            if submodule_mgmt.accelerator_graph_runner is not None:
+                submodule_mgmt.accelerator_graph_runner.unregister_request(request_id)
 
     def pause_request(
         self, request_id: str, cache_label: str = "main",

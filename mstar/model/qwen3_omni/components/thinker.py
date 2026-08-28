@@ -245,9 +245,9 @@ class Qwen3OmniThinkerModel(nn.Module):
         # the position-id advance from the seq-len advance (needed for vision
         # prefill where the 3D-grid span != number of tokens).
         #
-        # NOTE: correct for eager + decode-only capture.  CudaGraphRunner
+        # NOTE: correct for eager + decode-only capture.  AcceleratorGraphRunner
         # does its own post-replay ``advance_seq_lens()`` at
-        # cuda_graph_runner.py:552 with no args, so this ``pos_id_ns`` is
+        # accelerator_graph_runner.py:552 with no args, so this ``pos_id_ns`` is
         # NOT honored on the replay path.  If we ever capture vision
         # prefill, that runner call would need to accept a submodule-
         # supplied ``pos_id_ns``.
