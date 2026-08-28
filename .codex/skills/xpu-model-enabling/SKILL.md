@@ -145,20 +145,42 @@ torch._C._dispatch_find_schema_or_throw(name, "").schema()
 - Run an exact-shape XPU probe after rebuilding. A successful wheel build does
   not prove the specialization was instantiated.
 
+## Bring Up Accelerator Graph Capture
+
+- Establish a visually correct eager reference from the same source revision,
+  runtime, seed, and physical devices before enabling capture.
+- Probe the exact attention operator on every physical card. A single faulty
+  device can look like a graph, collective, or synchronization defect in a
+  distributed full-model run.
+- Preserve numerical contracts while making inputs replayable. In diffusion
+  models, timestep-derived frequencies may require FP32 even when model
+  activations use BF16.
+- Keep mutable replay inputs in stable buffers and update them before replay;
+  do not replace tensors whose addresses were captured.
+- Initially leave collectives outside capture unless the installed PyTorch and
+  oneCCL combination has a focused passing graph-capture test.
+- Compare eager and graph outputs before comparing timings. A fast corrupt
+  image is not a performance result.
+- Require repeated measurements outside normal variance. In the BAGEL study,
+  corrected XPUGraph took 66.39 seconds versus a 67.32-second eager control,
+  so no material speedup was established.
+
 ## Validate In Layers
 
 1. Verify imports and operator registration.
 2. Run exact-shape kernel probes.
 3. Validate TP shapes and checkpoint loading.
 4. Exercise the full XCCL world and every subgroup.
-5. Wait for server readiness and check health.
-6. Run deterministic text generation.
-7. Run image generation and editing when supported.
-8. Decode and inspect output images.
-9. Measure per-device memory and client-observed turnaround.
-10. Repeat requests to detect cache leaks or stale state.
-11. Verify SHM or IPC resources are cleaned after request completion.
-12. Compare same-seed sequential and parallel outputs within BF16 tolerance.
+5. Run the exact critical kernel on every physical accelerator.
+6. Wait for server readiness and check health.
+7. Run deterministic text generation.
+8. Run image generation and editing when supported.
+9. Decode and inspect output images.
+10. Measure per-device memory and client-observed turnaround.
+11. Repeat requests to detect cache leaks or stale state.
+12. Verify SHM or IPC resources are cleaned after request completion.
+13. Compare same-seed sequential and parallel outputs within BF16 tolerance.
+14. For graph work, compare eager and captured modes from the same revision.
 
 Count only HTTP 200 responses as performance samples. Fast HTTP 500 responses
 measure error latency. Compare repeated runs before attributing small timing

@@ -3,11 +3,13 @@
 ## Tested hardware and runtime
 
 - Hardware: Intel Arc Pro B60, 24 GB VRAM per device
-- Collectives: PyTorch XCCL over oneCCL OFI/TCP
+- PyTorch: `2.15.0.dev20260824+xpu`
+- Collectives: PyTorch XCCL over oneCCL `2022.1.2`, OFI/TCP bootstrap
 - KV cache: paged, 64-token pages, 8192-token sequence limit
 - Attention: `vllm-xpu-kernels`
 - Benchmark batch size: 1
-- Latest tested kernel package: `vllm-xpu-kernels 0.1.dev5+g95d80c7a1`
+- Latest tested kernel package:
+  `vllm-xpu-kernels 0.1.14.dev15+gcd0ba52.d20260824`
 
 Two deployment profiles were validated:
 
@@ -34,6 +36,18 @@ export HF_HUB_OFFLINE=1
 ```
 
 `HF_HUB_OFFLINE=1` assumes the BAGEL checkpoint is already cached.
+
+The validation host had one physical card with a device-specific
+paged-attention correctness failure. An exact eager kernel probe passed on
+physical devices 0-5 and 7 but failed on physical device 6, while a two-rank
+XCCL test involving that card passed. Exclude a faulty card before interpreting
+full-model output:
+
+```bash
+export ZE_AFFINITY_MASK=0,1,2,3,4,5,7
+```
+
+Logical device indexes remain contiguous after applying the mask.
 
 ## BAGEL kernel support
 
@@ -173,6 +187,8 @@ files. Set `MSTAR_KV_SHM_DIR` in the shell to use a different shared filesystem.
 | Parallel CFG, SHM KV migration | 66.70 s | HTTP 200 |
 | Parallel CFG, SHM migration, warm repeat | 60.01 s | HTTP 200 |
 | Parallel CFG image editing | 80.16 s | HTTP 200 |
+| Parallel CFG eager, current runtime control | 67.32 s | Valid image |
+| Parallel CFG XPUGraph, corrected capture | 66.39 s | Valid image |
 
 The dedicated attention specialization reduced the original fallback runtime
 by approximately 54%. TP=2 was about 9% faster than TP=4 and used about
@@ -185,3 +201,11 @@ CUDA and XPU. Same-seed parallel-versus-sequential output comparison measured
 43.82 dB PSNR and 0.51 mean pixel error, consistent with BF16 execution-order
 differences. Server startup and checkpoint loading are excluded from all
 request timings.
+
+The corrected XPUGraph result was only about 1.4% faster than the matching
+eager control, which is within run-to-run noise. Treat graph capture as a
+correctness experiment on this stack, not as a demonstrated performance win.
+The graph-safe implementation must preserve timestep frequency calculations in
+FP32; precomputing them in the model BF16 dtype corrupts both eager and captured
+outputs. Always compare graph mode with an eager run from the same code and
+runtime, using the same seed and healthy physical devices.

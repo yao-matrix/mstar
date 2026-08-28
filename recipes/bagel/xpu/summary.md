@@ -62,7 +62,7 @@ A custom wheel proved the specialization, and upstream later added it in
 `95d80c7a1d4bc06360fcd3b92deffa36da7eadca`. The latest tested package was:
 
 ```text
-vllm-xpu-kernels 0.1.dev5+g95d80c7a1
+vllm-xpu-kernels 0.1.14.dev15+gcd0ba52.d20260824
 ```
 
 ## CFG parallelism and KV migration
@@ -119,6 +119,21 @@ unchanged.
 - Focused BAGEL/cache regressions: 17 passed.
 - Ruff, Python compilation, and diff checks passed.
 
+The final validation runtime used PyTorch `2.15.0.dev20260824+xpu` and oneCCL
+`2022.1.2`.
+
+One physical XPU on the host produced incorrect paged-attention results even
+in an isolated eager operator test. Physical devices 0-5 and 7 passed the same
+test; physical device 6 failed, while an XCCL pair test involving it passed.
+The final full-model runs used:
+
+```bash
+export ZE_AFFINITY_MASK=0,1,2,3,4,5,7
+```
+
+This was a host/device workaround, not a model topology change: logical device
+6 mapped to physical device 7.
+
 ## Benchmark
 
 | Build or topology | Turnaround |
@@ -130,11 +145,38 @@ unchanged.
 | CFG parallel, SHM KV migration | 66.70 s |
 | CFG parallel, SHM warm repeat | 60.01 s |
 | CFG parallel image editing | 80.16 s |
+| CFG parallel eager, current runtime control | 67.32 s |
+| CFG parallel XPUGraph, corrected capture | 66.39 s |
 
 SHM-based CFG parallelism delivered a 2.67x speedup over the corresponding
 177.85-second sequential TP=2 comparison. Host staging added about 0.8 seconds
 relative to the local-prefill prototype while removing model-specific control
 flow and retaining future compatibility with a device IPC backend.
+
+## XPUGraph follow-up
+
+The follow-up branch generalized the CUDA graph wrapper into an accelerator
+graph abstraction and exercised PyTorch XPUGraph. Debugging established three
+important correctness rules:
+
+- Compare graph mode against eager mode from the same source revision. A
+  corrupt eager reference means the failure is outside graph replay.
+- Probe every physical device with the exact paged-attention geometry before
+  blaming graph capture or XCCL.
+- Keep BAGEL timestep frequency construction in FP32. Storing the precomputed
+  frequencies in the model BF16 dtype changes the denoising trajectory and
+  corrupts the image in both eager and graph modes.
+
+Collective capture should still be isolated from compute capture during
+bring-up, because successful eager XCCL does not prove that the collective is
+graph-capture safe. However, the final image corruption in this activity was
+not caused by XCCL capture; it was resolved by avoiding the faulty physical
+card and preserving FP32 timestep frequencies.
+
+With correctness restored, XPUGraph completed in 66.39 seconds versus a
+67.32-second eager control. The approximately 1.4% difference is not a
+material, repeatable speedup. Profiling should identify launch-bound regions
+before expanding capture coverage.
 
 ## Pull request structure
 
@@ -154,7 +196,8 @@ flow and retaining future compatibility with a device IPC backend.
 - Add automated multi-XPU integration coverage for cache migration and image
   generation.
 - Consume a released `vllm-xpu-kernels` wheel containing the required tuple.
-- Investigate XPU graph capture or compilation after correctness and operator
-  coverage stabilize.
+- Profile the corrected eager and XPUGraph paths to find launch-bound regions;
+  do not expand capture coverage without a repeatable gain above run-to-run
+  variance.
 - Optimize ViT attention, which currently uses PyTorch SDPA fallback.
 - Improve shutdown handling for interrupted multi-process runs.
