@@ -1,6 +1,6 @@
 # BAGEL Intel XPU Benchmark Recipe
 
-## Tested hardware and runtime
+## August benchmark hardware and runtime
 
 - Hardware: Intel Arc Pro B60, 24 GB VRAM per device
 - PyTorch: `2.15.0.dev20260824+xpu`
@@ -8,10 +8,10 @@
 - KV cache: paged, 64-token pages, 8192-token sequence limit
 - Attention: `vllm-xpu-kernels`
 - Benchmark batch size: 1
-- Latest tested kernel package:
+- Kernel package used for the August benchmarks:
   `vllm-xpu-kernels 0.1.14.dev15+gcd0ba52.d20260824`
 
-Two deployment profiles were validated:
+Two profiles were validated on that revision:
 
 | Profile | Configuration | Placement |
 | --- | --- | --- |
@@ -37,11 +37,12 @@ export HF_HUB_OFFLINE=1
 
 `HF_HUB_OFFLINE=1` assumes the BAGEL checkpoint is already cached.
 
-The validation host had one physical card with a device-specific
-paged-attention correctness failure. An exact eager kernel probe passed on
-physical devices 0-5 and 7 but failed on physical device 6, while a two-rank
-XCCL test involving that card passed. Exclude a faulty card before interpreting
-full-model output:
+With the August runtime, one physical card gave incorrect paged-attention
+results. An exact eager kernel probe passed on physical devices 0-5 and 7
+but failed on physical device 6, while a two-rank
+XCCL test involving that card passed. The later September run used physical
+devices 0-6 successfully; re-probe a suspect card after changing the runtime.
+The August workaround was:
 
 ```bash
 export ZE_AFFINITY_MASK=0,1,2,3,4,5,7
@@ -166,15 +167,22 @@ file is a valid 1024x1024 RGB PNG.
 ## KV migration checks
 
 For parallel CFG, shared-memory files are request-scoped and should be removed
-when the request cache is released:
+when the request cache is released. The August implementation used a fixed
+directory:
 
 ```bash
 find /dev/shm/mstar_kv -maxdepth 1 -type f -print
 ```
 
-The directory should be empty after request completion. Publication is gated
-by `StoreWritePolicy.ALWAYS`; ordinary colocated serving does not stage KV
-files. Set `MSTAR_KV_SHM_DIR` in the shell to use a different shared filesystem.
+The directory should be empty after request completion. On the newer PR #221
+implementation, each deployment has a private `mstar_kv_*` directory. Check
+for remaining snapshot files with:
+
+```bash
+find /dev/shm -maxdepth 2 -type f -name 'mstar_kv_*.pt' -print
+```
+
+Set `MSTAR_KV_SHM_DIR` in the shell to use a different shared filesystem.
 
 ## Results
 
@@ -194,8 +202,8 @@ The dedicated attention specialization reduced the original fallback runtime
 by approximately 54%. TP=2 was about 9% faster than TP=4 and used about
 19,459 MiB per LLM device after generation.
 
-Parallel CFG with SHM migration was 2.67x faster than the latest 177.85-second
-sequential comparison. It was about 0.8 seconds slower than the local-prefill
+Parallel CFG with SHM migration was 2.67x faster than the corresponding
+177.85-second sequential comparison. It was about 0.8 seconds slower than the local-prefill
 prototype while preserving the same BAGEL graph and cache semantics across
 CUDA and XPU. Same-seed parallel-versus-sequential output comparison measured
 43.82 dB PSNR and 0.51 mean pixel error, consistent with BF16 execution-order
@@ -209,3 +217,46 @@ The graph-safe implementation must preserve timestep frequency calculations in
 FP32; precomputing them in the model BF16 dtype corrupts both eager and captured
 outputs. Always compare graph mode with an eager run from the same code and
 runtime, using the same seed and healthy physical devices.
+
+## September 28 validation of upstream PR #221
+
+This later run used
+[PR #221 head `98c218d`](https://github.com/mstar-project/mstar/pull/221/commits/98c218dc4b0d840ce461832ac863bf121d5ef38a),
+which has a different resource configuration and device placement from the
+historical branch documented above. Run the following from that PR's checkout,
+with its BAGEL weights already cached:
+
+```bash
+ZE_AFFINITY_MASK=0,1,2,3,4,5,6 HF_HUB_OFFLINE=1 \
+python -m mstar.api_server.entrypoint \
+  --config configs/bagel_xpu_cfg_tp2.yaml \
+  --cache-dir /root/.cache/huggingface/hub \
+  --socket-path-prefix /tmp/mstar_bagel_xpu_cfg_tp2/ \
+  --upload-dir /tmp/mstar_uploads_bagel_xpu_cfg_tp2/ \
+  --port 8011 \
+  --tensor-comm-protocol SHM \
+  --timeout 600 \
+  --log-stats-file /tmp/mstar-bagel-xpu-cfg-tp2-stats.jsonl \
+  --log-level INFO
+```
+
+That configuration places LLM TP=2 on logical XPUs 0-1, `cfg_text` TP=2 on
+2-3, `cfg_img` TP=2 on 4-5, and ViT/VAE on 6. All seven workers reached
+ready state and `/health` returned HTTP 200. The runtime had PyTorch
+`2.15.0.dev20260921+xpu` and
+`vllm-xpu-kernels 0.1.dev387+gd7c35d281`.
+
+The text-to-image request sent
+`{"model":"bagel","prompt":"a cat in a hat"}` to
+`POST /v1/images/generations`. The image edit sent that PNG, plus the prompt
+“Place the cat on the moon, keeping its hat,” as multipart data to
+`POST /v1/images/edits`. Both returned HTTP 200 and visually correct
+1024x1024 PNGs. Client-observed turnaround was 72.29 seconds for generation
+and 76.88 seconds for editing. The edit exercises multiple prefill walks and
+the chunked SHM snapshot path.
+
+The upstream fix keeps snapshot descriptors immutable and saves only the
+changed tail pages on append. Its focused test set passed 84 tests. After
+each XPU request, zero `mstar_kv_*.pt` files remained under `/dev/shm`.
+These two timings validate function and cleanup on this revision; they do not
+establish a new speedup relative to the August sequential baseline.

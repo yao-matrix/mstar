@@ -59,7 +59,7 @@ chunk-prefill tuple:
 
 A custom wheel proved the specialization, and upstream later added it in
 `vllm-xpu-kernels` commit
-`95d80c7a1d4bc06360fcd3b92deffa36da7eadca`. The latest tested package was:
+`95d80c7a1d4bc06360fcd3b92deffa36da7eadca`. The August benchmark used:
 
 ```text
 vllm-xpu-kernels 0.1.14.dev15+gcd0ba52.d20260824
@@ -87,7 +87,7 @@ CUDA: device -> CUDA IPC -> device
 XPU/CPU: device -> host shared memory -> device
 ```
 
-The generic SHM backend:
+The initial generic SHM backend:
 
 - Packs only occupied pages for each request and cache label.
 - Publishes atomically to a shared-memory filesystem.
@@ -113,26 +113,27 @@ unchanged.
 - CFG-parallel topology: seven workers, three independent TP=2 LLM groups.
 - Text generation returned `OK!`.
 - 1024x1024 text-to-image and image editing completed successfully.
-- Repeated requests left `/dev/shm/mstar_kv` empty after cleanup.
+- Repeated requests left the SHM KV directory empty after cleanup.
 - Same-seed sequential/parallel output comparison: 43.82 dB PSNR and 0.51
   mean pixel error.
 - Focused BAGEL/cache regressions: 17 passed.
 - Ruff, Python compilation, and diff checks passed.
 
-The final validation runtime used PyTorch `2.15.0.dev20260824+xpu` and oneCCL
+The August validation runtime used PyTorch `2.15.0.dev20260824+xpu` and oneCCL
 `2022.1.2`.
 
-One physical XPU on the host produced incorrect paged-attention results even
-in an isolated eager operator test. Physical devices 0-5 and 7 passed the same
-test; physical device 6 failed, while an XCCL pair test involving it passed.
-The final full-model runs used:
+With the August runtime, one physical XPU produced incorrect paged-attention
+results even in an isolated eager operator test. Physical devices 0-5 and 7
+passed; physical device 6 failed, while an XCCL pair test involving it passed.
+Those full-model runs used:
 
 ```bash
 export ZE_AFFINITY_MASK=0,1,2,3,4,5,7
 ```
 
-This was a host/device workaround, not a model topology change: logical device
-6 mapped to physical device 7.
+That was a workaround for the tested host and runtime: logical device 6 mapped
+to physical device 7. A later run used physical devices 0-6 successfully, so
+probe suspect hardware again after changing the runtime.
 
 ## Benchmark
 
@@ -152,6 +153,52 @@ SHM-based CFG parallelism delivered a 2.67x speedup over the corresponding
 177.85-second sequential TP=2 comparison. Host staging added about 0.8 seconds
 relative to the local-prefill prototype while removing model-specific control
 flow and retaining future compatibility with a device IPC backend.
+
+## September 28 PR #221 review follow-up
+
+The current upstream [PR #221](https://github.com/mstar-project/mstar/pull/221)
+uses the resource-based KV manager, after the implementation measured above was
+rebased. Its review exposed several correctness and lifecycle requirements:
+
+- Merge KV publication from every TP rank. Each rank owns different page
+  indexes and a different transfer descriptor. Workers send only the
+  publication they produced, so out-of-order rank messages cannot roll back
+  another rank's state.
+- Keep SHM files in a private deployment directory. Create it only for
+  non-CUDA KV resources that transfer remotely, and clean request files and
+  stale directories.
+- Contain a missing or unreadable snapshot as a per-request retrieve failure.
+  Keep publication and removal under the KV manager lock.
+- Export only labels needed by a remote consumer. Main-LLM prefill creates the
+  CFG branches; the remote CFG workers do not prefill. For think-then-image,
+  publish the final decode KV once after the loop stops instead of copying the
+  whole cache on every decode token. Keep `main` at handoff boundaries when the
+  LLM itself is split across worker instances.
+- Track a content-reset epoch separately from the normal mutation generation.
+  Appending KV changes the length without invalidating a remote prefix;
+  rewinding or replacing a stream invalidates it even if its length is
+  unchanged.
+- Keep each published descriptor immutable. Commit
+  [`98c218d`](https://github.com/mstar-project/mstar/pull/221/commits/98c218dc4b0d840ce461832ac863bf121d5ef38a)
+  stores growing snapshots as immutable tail chunks, so repeated prefill
+  publication does not retain a full copy of the growing KV at every step.
+  All chunks are removed on request cleanup.
+
+On PR #221 head `98c218d`, seven Intel Arc Pro B60 XPUs (physical 0-6),
+PyTorch `2.15.0.dev20260921+xpu`, and
+`vllm-xpu-kernels 0.1.dev387+gd7c35d281`:
+
+| Request | Client-observed turnaround | Output |
+| --- | ---: | --- |
+| Text-to-image, “a cat in a hat” | 72.29 s | HTTP 200, valid 1024x1024 PNG |
+| Edit the image to place the cat on the moon | 76.88 s | HTTP 200, valid 1024x1024 PNG |
+
+Both images were visually checked. The edit exercised text and image prefill.
+All seven workers reached ready state; `/health` returned HTTP 200. After
+each request, zero `mstar_kv_*.pt` files remained in `/dev/shm`. The focused
+CFG/KV test set passed 84 tests. These are two functional samples on a newer
+runtime, not a new comparison with the August sequential baseline or a
+repeatability benchmark. The deployment was stopped after validation.
 
 ## XPUGraph follow-up
 
@@ -191,8 +238,8 @@ before expanding capture coverage.
 
 - Replace host staging with XPU device IPC when PyTorch and the runtime expose a
   stable cross-process mechanism; keep the same `KVTransferEngine` contract.
-- Make SHM copies asynchronous and reuse a bounded arena instead of serialized
-  per-label files if migration becomes a significant transition cost.
+- Make SHM copies asynchronous if migration becomes a significant transition
+  cost; measure the chunked implementation before changing its storage model.
 - Add automated multi-XPU integration coverage for cache migration and image
   generation.
 - Consume a released `vllm-xpu-kernels` wheel containing the required tuple.

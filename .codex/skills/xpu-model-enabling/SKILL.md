@@ -96,15 +96,24 @@ For local multi-process migration:
 - Use CUDA IPC on CUDA when available.
 - Use host-staged SHM for CPU/XPU correctness when device IPC is unavailable.
 - Publish only occupied pages, not the maximum cache allocation.
-- Version publications by page indexes and sequence length. Page indexes can
-  remain unchanged while new tokens modify a partially filled final page.
+- Identify which labels cross worker instances and publish only those labels.
+  A decode loop should publish its final KV at handoff, after its last commit,
+  rather than exporting the whole cache on every token.
+- Version publications by page indexes, sequence length, and a separate
+  content-reset epoch. Ordinary appends preserve the remote cached prefix;
+  rewinds or replacements invalidate it even at the same length.
 - Preserve TP rank alignment: source rank `r` transfers its local KV-head shard
-  to destination rank `r`, and reject mismatched TP world sizes.
+  to destination rank `r`, and reject mismatched TP world sizes. Merge every
+  rank's publication, and send only each worker's own update so message order
+  cannot roll back another rank's state.
 - Copy the precise page/token ranges described by the cache planner.
-- Publish atomically so consumers never observe partial files.
-- Scope segments to request and label, and remove them during request cleanup.
-- Gate publication with the existing store-write policy so colocated serving
-  does not stage unused data.
+- Publish atomically and keep each descriptor's bytes immutable. For repeated
+  growing publications, retain immutable tail chunks rather than another full
+  cache copy. Keep old chunks until their readers can no longer need them.
+- Use a private deployment directory, create it only when remote KV transfer
+  is needed, and remove request files during cleanup.
+- Report missing or unreadable SHM as a per-request retrieve failure so one
+  broken snapshot does not fail unrelated requests.
 - Keep the transfer interface stable so future XPU IPC can replace SHM without
   changing model Walks.
 
@@ -178,7 +187,8 @@ torch._C._dispatch_find_schema_or_throw(name, "").schema()
 9. Decode and inspect output images.
 10. Measure per-device memory and client-observed turnaround.
 11. Repeat requests to detect cache leaks or stale state.
-12. Verify SHM or IPC resources are cleaned after request completion.
+12. Exercise multi-prefill handoffs and verify SHM or IPC resources are cleaned
+    after request completion.
 13. Compare same-seed sequential and parallel outputs within BF16 tolerance.
 14. For graph work, compare eager and captured modes from the same revision.
 
