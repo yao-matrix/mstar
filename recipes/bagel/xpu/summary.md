@@ -231,8 +231,11 @@ before expanding capture coverage.
 - BAGEL TP=2 XPU serving: upstream PR #220.
 - CFG-parallel TP=2 plus generic SHM KV migration: upstream PR #221, stacked on
   #220.
-- Benchmark and reusable skill documentation: separate stacked documentation
-  PR.
+- Benchmark documentation: separate stacked documentation PR. Reusable
+  [M* agents](https://github.com/yao-matrix/mBuddy/tree/main/agents/mstar),
+  [M* skills](https://github.com/yao-matrix/mBuddy/tree/main/skills/mstar),
+  and [XPU skills](https://github.com/yao-matrix/mBuddy/tree/main/skills/xpu)
+  live in mBuddy.
 
 ## Remaining work
 
