@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Sep 18, 2026"/>
+    <meta name="docbuild:last-update" content="Sep 28, 2026"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -285,6 +285,12 @@
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.submodules.html">mstar.model.omnivoice.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.orpheus.html">mstar.model.orpheus</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.orpheus.components.html">mstar.model.orpheus.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.orpheus.config.html">mstar.model.orpheus.config</a></li>
@@ -325,8 +331,10 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.utils.html">mstar.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
 </ul>
 </details></li>
@@ -556,6 +564,7 @@
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#communication">Communication</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-python-frontend">Serving (Python frontend)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-rust-frontend">Serving (Rust frontend)</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rust-frontend-limitations">Rust frontend limitations</a></li>
 </ul>
@@ -616,7 +625,14 @@ process, e.g. to run entities on separate hosts.</p></td>
 <td><p>Base of the deterministic entity-id → TCP port map (<code class="docutils literal notranslate"><span class="pre">api_server</span></code>
 = base, <code class="docutils literal notranslate"><span class="pre">conductor</span></code> = base+1, <code class="docutils literal notranslate"><span class="pre">worker_&lt;rank&gt;</span></code> = base+100+rank).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_REQUIRE_CUDA_GRAPHS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code> makes a worker fail at startup when any CUDA graph bucket
+could not be captured, instead of serving that bucket eagerly at
+10-20x the latency. Off by default: a failed capture is logged at
+ERROR with a per-runner summary and the rest keeps running.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 <td><p>SHM tensor-transport implementation. <code class="docutils literal notranslate"><span class="pre">0</span></code>: per-uuid files.
 <code class="docutils literal notranslate"><span class="pre">1</span></code>: the Rust shared-memory arena (requires the <code class="docutils literal notranslate"><span class="pre">rust/</span></code>
@@ -624,12 +640,12 @@ extension; raises if missing). <code class="docutils literal notranslate"><span 
 extension imports, files otherwise. Must match across the
 deployment — arena locations ride in the tensor descriptors.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SEGMENT_MB</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SEGMENT_MB</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">256</span></code></p></td>
 <td><p>Size of each arena segment. The arena grows segment by segment;
 existing segments never move (registrations stay valid).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_MAX_SEGMENTS</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_MAX_SEGMENTS</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">32</span></code></p></td>
 <td><p>Growth cap PER ENTITY. Every entity (workers + the api-server data
 worker) creates its own arena, so node-wide /dev/shm demand can
@@ -638,12 +654,12 @@ reach <code class="docutils literal notranslate"><span class="pre">MAX_SEGMENTS<
 fails fast if one entity’s ceiling exceeds /dev/shm. At the cap,
 sends spill (see <code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SPILL</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_FULL_TIMEOUT_S</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_FULL_TIMEOUT_S</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">30</span></code></p></td>
 <td><p>Strict mode only (<code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SPILL=0</span></code>): how long a send
 backpressures on a full arena before failing.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SPILL</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SPILL</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p>Degrade gracefully at the segment cap: stage the tensor through the
 per-uuid file protocol instead — slower, never fails, matching the
@@ -652,19 +668,19 @@ backpressure + timeout — only meaningful where ANOTHER thread
 drains consumer ACKs (the threaded api-server); on a worker the
 ACKs arrive on the very thread that would be waiting.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SPILL_AFTER_S</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SPILL_AFTER_S</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 <td><p>Optional grace before spilling, for deployments where another
 thread frees slots concurrently. Default 0: spill immediately
 (a worker cannot receive ACKs while it waits).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_PIN</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_PIN</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">cudaHostRegister</span></code> each mapped segment (both sides) so D2H/H2D
 copies through the side streams run at page-locked bandwidth and
 stay asynchronous. <code class="docutils literal notranslate"><span class="pre">0</span></code> disables (pageable copies).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_PIN_MAX_MB</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_PIN_MAX_MB</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">4096</span></code></p></td>
 <td><p>Budget for TOTAL pinned host memory PER PROCESS, distinct from the
 segment cap (pinned pages come out of the OS’s pageable pool
@@ -673,7 +689,7 @@ system-wide). Node-wide pinned demand is approx
 so one process can pin more than its own arena holds. Segments
 past the budget stay unpinned: copies work, without async overlap.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SLOT_TTL_S</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_SLOT_TTL_S</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 <td><p>TTL backstop for abort-orphaned slots (a request aborted after
 staging but before all consumer ACKs defers reclaim forever).
@@ -683,7 +699,7 @@ timeout) cannot race a real consumer. <code class="docutils literal notranslate"
 pending review discussion); reclaims run under capacity pressure
 and with the periodic stats sweep, logging loudly.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_STATS_INTERVAL_S</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SHM_ARENA_STATS_INTERVAL_S</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">60</span></code></p></td>
 <td><p>Under <code class="docutils literal notranslate"><span class="pre">--log-stats</span></code>: how often the arena logs its occupancy /
 fragmentation snapshot (segments, free bytes, largest contiguous
@@ -737,6 +753,41 @@ preprocess option emits.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1,2,4</span></code></p></td>
 <td><p>Comma-separated batch sizes to capture. Read only when
 <code class="docutils literal notranslate"><span class="pre">MSTAR_VIT_BATCHING=1</span></code>; otherwise only batch size 1 is captured.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_OMNIVOICE_MODEL_PATH</span></code></p></td>
+<td><p>unset</p></td>
+<td><p>OmniVoice: load weights from this local directory instead of the
+checkpoint the registry names. For serving a fine-tune of the same
+architecture off a mounted volume, where the registry entry would
+otherwise pull the public weights from the Hub.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="serving-python-frontend">
+<h2>Serving (Python frontend)<a class="headerlink" href="#serving-python-frontend" title="Link to this heading">#</a></h2>
+<p>Read by <code class="docutils literal notranslate"><span class="pre">mstar-serve</span></code> / <code class="docutils literal notranslate"><span class="pre">mstar.api_server.entrypoint</span></code>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 14.0%" />
+<col style="width: 58.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_ROOT_PATH</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p>Mount the app under a URL sub-path. Set it when an ingress routes the
+deployment at a prefix and does not strip that prefix before the
+request reaches the pod (Run:AI serves a workload at
+<code class="docutils literal notranslate"><span class="pre">/&lt;project&gt;/&lt;job-name&gt;/</span></code>, for instance); without it FastAPI 404s
+every route. Empty by default, so a direct deployment is unaffected.</p></td>
 </tr>
 </tbody>
 </table>
@@ -873,6 +924,13 @@ actually ready right now; <code class="docutils literal notranslate"><span class
 <td><p><code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>: every N iterations log per-phase p50/p95/mean of the
 worker main loop (speculate, await_gpu, submit_spec, …).</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_KV_DEBUG_ASSERTS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: after every <code class="docutils literal notranslate"><span class="pre">admit</span></code>, <code class="docutils literal notranslate"><span class="pre">commit</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_request</span></code> and
+<code class="docutils literal notranslate"><span class="pre">remove_request</span></code>, check the KV page bookkeeping (free list, owner
+counts, seals) against the streams holding the pages. Walks every
+live stream; tests and debugging only.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -928,6 +986,7 @@ worker main loop (speculate, await_gpu, submit_spec, …).</p></td>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#communication">Communication</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-python-frontend">Serving (Python frontend)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-rust-frontend">Serving (Rust frontend)</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rust-frontend-limitations">Rust frontend limitations</a></li>
 </ul>
@@ -966,7 +1025,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 18, 2026.
+  Last updated on Sep 28, 2026.
   <br/>
 </p>
   </div>
