@@ -9,6 +9,13 @@
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      apply_torch_config
+      recompile_limit
+   
    
 
    
@@ -31,4 +38,5 @@
    cuda_graph_runner
    engine
    resources
+   windowing
 

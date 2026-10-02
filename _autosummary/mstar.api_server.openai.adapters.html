@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Sep 28, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 02, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -215,18 +215,28 @@
 <li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.router.html">mstar.api_server.openai.router</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.serving_chat.html">mstar.api_server.openai.serving_chat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.serving_images.html">mstar.api_server.openai.serving_images</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.serving_realtime.html">mstar.api_server.openai.serving_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.serving_speech.html">mstar.api_server.openai.serving_speech</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.serving_transcriptions.html">mstar.api_server.openai.serving_transcriptions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.serving_videos.html">mstar.api_server.openai.serving_videos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.api_server.openai.speech_chunking.html">mstar.api_server.openai.speech_chunking</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.api_server.request_types.html">mstar.api_server.request_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.api_server.rust_frontend.html">mstar.api_server.rust_frontend</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.communication.html">mstar.communication</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="mstar.communication.arena.html">mstar.communication.arena</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.communication.codec.html">mstar.communication.codec</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.communication.communicator.html">mstar.communication.communicator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.communication.event.html">mstar.communication.event</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.communication.rust_communicator.html">mstar.communication.rust_communicator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.communication.tensor_store.html">mstar.communication.tensor_store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.communication.tensor_uuid.html">mstar.communication.tensor_uuid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.communication.tensors.html">mstar.communication.tensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.communication.wire.html">mstar.communication.wire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.communication.wire_types.html">mstar.communication.wire_types</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.conductor.html">mstar.conductor</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -250,6 +260,7 @@
 <li class="toctree-l4"><a class="reference internal" href="mstar.engine.resources.step.html">mstar.engine.resources.step</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.engine.windowing.html">mstar.engine.windowing</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.graph.html">mstar.graph</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -262,12 +273,15 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.model.html">mstar.model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.components.html">mstar.model.components</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.attention.html">mstar.model.components.attention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.components.audio_features.html">mstar.model.components.audio_features</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.components.aut_encoder.html">mstar.model.components.aut_encoder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.decoder_layer.html">mstar.model.components.decoder_layer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.distributed.html">mstar.model.components.distributed</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.linear.html">mstar.model.components.linear</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.mlp.html">mstar.model.components.mlp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.moe.html">mstar.model.components.moe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.components.norm.html">mstar.model.components.norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.components.qwen3_lm.html">mstar.model.components.qwen3_lm</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.cosmos3.html">mstar.model.cosmos3</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -275,6 +289,7 @@
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.cosmos3.config.html">mstar.model.cosmos3.config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.cosmos3.constants.html">mstar.model.cosmos3.constants</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.cosmos3.loader.html">mstar.model.cosmos3.loader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.cosmos3.sessions.html">mstar.model.cosmos3.sessions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.cosmos3.submodules.html">mstar.model.cosmos3.submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.cosmos3.tests.html">mstar.model.cosmos3.tests</a></li>
 </ul>
@@ -282,6 +297,14 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.higgs_audio.html">mstar.model.higgs_audio</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.higgs_audio.components.html">mstar.model.higgs_audio.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.higgs_audio.config.html">mstar.model.higgs_audio.config</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.kokoro.html">mstar.model.kokoro</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.kokoro.components.html">mstar.model.kokoro.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.kokoro.config.html">mstar.model.kokoro.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.kokoro.g2p.html">mstar.model.kokoro.g2p</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.kokoro.submodules.html">mstar.model.kokoro.submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.kokoro.voices.html">mstar.model.kokoro.voices</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.model.multimodal.html">mstar.model.multimodal</a></li>
@@ -315,6 +338,14 @@
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.wan22.submodules.html">mstar.model.wan22.submodules</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.waypoint.html">mstar.model.waypoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.waypoint.checkpoint.html">mstar.model.waypoint.checkpoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.waypoint.components.html">mstar.model.waypoint.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.waypoint.config.html">mstar.model.waypoint.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.waypoint.ring_geometry.html">mstar.model.waypoint.ring_geometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.waypoint.submodules.html">mstar.model.waypoint.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.whisper.html">mstar.model.whisper</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.whisper.components.html">mstar.model.whisper.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.whisper.config.html">mstar.model.whisper.config</a></li>
@@ -338,7 +369,10 @@
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.profiler.html">mstar.utils.profiler</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="mstar.worker.html">mstar.worker</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../environment_variables.html">Environment variables</a></li>
@@ -577,6 +611,21 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3Adapter.video_to_request"><code class="docutils literal notranslate"><span class="pre">Cosmos3Adapter.video_to_request()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter"><code class="docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.chat_to_request"><code class="docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter.chat_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.supports_chat"><code class="docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter.supports_chat</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter"><code class="docutils literal notranslate"><span class="pre">HiggsAudioAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter.supports_transcriptions"><code class="docutils literal notranslate"><span class="pre">HiggsAudioAdapter.supports_transcriptions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter.transcription_to_request"><code class="docutils literal notranslate"><span class="pre">HiggsAudioAdapter.transcription_to_request()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.KokoroAdapter"><code class="docutils literal notranslate"><span class="pre">KokoroAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.KokoroAdapter.speech_to_request"><code class="docutils literal notranslate"><span class="pre">KokoroAdapter.speech_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.KokoroAdapter.supports_speech"><code class="docutils literal notranslate"><span class="pre">KokoroAdapter.supports_speech</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter"><code class="docutils literal notranslate"><span class="pre">OmniVoiceAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter.speech_to_request"><code class="docutils literal notranslate"><span class="pre">OmniVoiceAdapter.speech_to_request()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter.supports_speech"><code class="docutils literal notranslate"><span class="pre">OmniVoiceAdapter.supports_speech</span></code></a></li>
@@ -584,14 +633,28 @@
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.chat_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.chat_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.compression_ratio_threshold"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.compression_ratio_threshold</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.image_edit_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.image_edit_to_request()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.image_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.image_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.long_form"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.long_form</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.max_audio_seconds"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.max_audio_seconds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.parse_transcript"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.parse_transcript()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.realtime_step_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.realtime_step_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.seeks_by_timestamps"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.seeks_by_timestamps</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_lookahead"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_lookahead</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_chars"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_max_chars</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_pieces"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_max_pieces</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_min_chars"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_min_chars</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.stream_text"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.stream_text()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_chat"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_chat</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_images"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_images</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_realtime"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_realtime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_realtime_transcription"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_realtime_transcription</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_speech"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_speech</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_transcriptions"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_transcriptions</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_videos"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_videos</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.transcription_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.transcription_to_request()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.video_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.video_to_request()</span></code></a></li>
 </ul>
 </li>
@@ -617,9 +680,26 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.SubmitArgs.text"><code class="docutils literal notranslate"><span class="pre">SubmitArgs.text</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript"><code class="docutils literal notranslate"><span class="pre">Transcript</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.language"><code class="docutils literal notranslate"><span class="pre">Transcript.language</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.segments"><code class="docutils literal notranslate"><span class="pre">Transcript.segments</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.text"><code class="docutils literal notranslate"><span class="pre">Transcript.text</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.unfinished"><code class="docutils literal notranslate"><span class="pre">Transcript.unfinished</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.words"><code class="docutils literal notranslate"><span class="pre">Transcript.words</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Wan22Adapter"><code class="docutils literal notranslate"><span class="pre">Wan22Adapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Wan22Adapter.supports_videos"><code class="docutils literal notranslate"><span class="pre">Wan22Adapter.supports_videos</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Wan22Adapter.video_to_request"><code class="docutils literal notranslate"><span class="pre">Wan22Adapter.video_to_request()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.max_audio_seconds"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.max_audio_seconds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.parse_transcript"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.parse_transcript()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.seeks_by_timestamps"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.seeks_by_timestamps</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.stream_text"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.stream_text()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.supports_transcriptions"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.supports_transcriptions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.transcription_to_request"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.transcription_to_request()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.flatten_messages"><code class="docutils literal notranslate"><span class="pre">flatten_messages()</span></code></a></li>
@@ -677,23 +757,38 @@ OpenAI-capable models opt in by adding an adapter and registering it in
 <tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Cosmos3Adapter" title="mstar.api_server.openai.adapters.Cosmos3Adapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cosmos3Adapter</span></code></a>()</p></td>
 <td><p>NVIDIA Cosmos3: text-to-image and text/image-to-video generation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter" title="mstar.api_server.openai.adapters.OmniVoiceAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OmniVoiceAdapter</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter" title="mstar.api_server.openai.adapters.Cosmos3EdgeAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter</span></code></a>()</p></td>
+<td><p>Cosmos3-Edge: the generator surfaces of <a class="reference internal" href="#mstar.api_server.openai.adapters.Cosmos3Adapter" title="mstar.api_server.openai.adapters.Cosmos3Adapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmos3Adapter</span></code></a> plus chat (the reasoner: the understanding tower served as a VLM).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter" title="mstar.api_server.openai.adapters.HiggsAudioAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HiggsAudioAdapter</span></code></a>()</p></td>
+<td><p>Higgs-Audio v3 STT: an instruction-following LLM decoder, so the OpenAI <code class="docutils literal notranslate"><span class="pre">prompt</span></code> is the transcription instruction (the model has a default).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.KokoroAdapter" title="mstar.api_server.openai.adapters.KokoroAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KokoroAdapter</span></code></a>()</p></td>
+<td><p>Kokoro-82M: text-to-speech, audio out only.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter" title="mstar.api_server.openai.adapters.OmniVoiceAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OmniVoiceAdapter</span></code></a>()</p></td>
 <td><p>OmniVoice: zero-shot TTS in three modes over one endpoint.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a>()</p></td>
 <td><p>Base adapter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.OrpheusAdapter" title="mstar.api_server.openai.adapters.OrpheusAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrpheusAdapter</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.OrpheusAdapter" title="mstar.api_server.openai.adapters.OrpheusAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrpheusAdapter</span></code></a>()</p></td>
 <td><p>Orpheus: text-to-speech (audio out only).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Qwen3OmniAdapter" title="mstar.api_server.openai.adapters.Qwen3OmniAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qwen3OmniAdapter</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Qwen3OmniAdapter" title="mstar.api_server.openai.adapters.Qwen3OmniAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qwen3OmniAdapter</span></code></a>()</p></td>
 <td><p>Qwen3-Omni: multimodal chat (text, optionally + speech) and TTS.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubmitArgs</span></code></a>(text, file_paths, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubmitArgs</span></code></a>(text, file_paths, ...)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Transcript" title="mstar.api_server.openai.adapters.Transcript"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transcript</span></code></a>(text[, language, segments, ...])</p></td>
+<td><p>A finished transcription as the serving layer reports it.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Wan22Adapter" title="mstar.api_server.openai.adapters.Wan22Adapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Wan22Adapter</span></code></a>()</p></td>
 <td><p>Wan2.2-TI2V-5B: text/image-to-video generation (video only).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.api_server.openai.adapters.WhisperAdapter" title="mstar.api_server.openai.adapters.WhisperAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WhisperAdapter</span></code></a>()</p></td>
+<td><p>Whisper (large-v3, large-v3-turbo): speech-to-text.</p></td>
 </tr>
 </tbody>
 </table>
@@ -820,6 +915,103 @@ and for video <code class="docutils literal notranslate"><span class="pre">num_f
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Cosmos3EdgeAdapter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">Cosmos3EdgeAdapter</span></span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#Cosmos3EdgeAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mstar.api_server.openai.adapters.Cosmos3Adapter" title="mstar.api_server.openai.adapters.Cosmos3Adapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmos3Adapter</span></code></a></p>
+<p>Cosmos3-Edge: the generator surfaces of <a class="reference internal" href="#mstar.api_server.openai.adapters.Cosmos3Adapter" title="mstar.api_server.openai.adapters.Cosmos3Adapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmos3Adapter</span></code></a> plus
+chat (the reasoner: the understanding tower served as a VLM).</p>
+<p>Chat requests take the OpenAI <code class="docutils literal notranslate"><span class="pre">messages</span></code> layout with image / video
+attachments in order; <code class="docutils literal notranslate"><span class="pre">temperature</span></code> / <code class="docutils literal notranslate"><span class="pre">top_p</span></code> / <code class="docutils literal notranslate"><span class="pre">max_tokens</span></code> map to
+the reasoner’s sampler, and <code class="docutils literal notranslate"><span class="pre">extra_body</span></code> knobs (<code class="docutils literal notranslate"><span class="pre">enable_thinking</span></code>,
+<code class="docutils literal notranslate"><span class="pre">top_k</span></code>, <code class="docutils literal notranslate"><span class="pre">repetition_penalty</span></code>, <code class="docutils literal notranslate"><span class="pre">video_fps</span></code> / <code class="docutils literal notranslate"><span class="pre">video_num_frames</span></code>)
+pass through.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.chat_to_request">
+<span class="sig-name descname"><span class="pre">chat_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#Cosmos3EdgeAdapter.chat_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.chat_to_request" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.ChatCompletionRequest" title="mstar.api_server.openai.protocol.ChatCompletionRequest"><em>ChatCompletionRequest</em></a>)</p></li>
+<li><p><strong>upload_dir</strong> (<em>Path</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.supports_chat">
+<span class="sig-name descname"><span class="pre">supports_chat</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.supports_chat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.HiggsAudioAdapter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">HiggsAudioAdapter</span></span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#HiggsAudioAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a></p>
+<p>Higgs-Audio v3 STT: an instruction-following LLM decoder, so the OpenAI
+<code class="docutils literal notranslate"><span class="pre">prompt</span></code> is the transcription instruction (the model has a default).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.HiggsAudioAdapter.supports_transcriptions">
+<span class="sig-name descname"><span class="pre">supports_transcriptions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter.supports_transcriptions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.HiggsAudioAdapter.transcription_to_request">
+<span class="sig-name descname"><span class="pre">transcription_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#HiggsAudioAdapter.transcription_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter.transcription_to_request" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.TranscriptionRequest" title="mstar.api_server.openai.protocol.TranscriptionRequest"><em>TranscriptionRequest</em></a>)</p></li>
+<li><p><strong>audio_path</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.KokoroAdapter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">KokoroAdapter</span></span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#KokoroAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.KokoroAdapter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a></p>
+<p>Kokoro-82M: text-to-speech, audio out only.</p>
+<p><code class="docutils literal notranslate"><span class="pre">voice</span></code> is a bundled voice or a blend (<code class="docutils literal notranslate"><span class="pre">af_bella+af_sky</span></code>,
+<code class="docutils literal notranslate"><span class="pre">af_bella(2)+af_sky(1)</span></code>) and <code class="docutils literal notranslate"><span class="pre">speed</span></code> scales the predicted durations;
+both are real model knobs and are forwarded. Kokoro does not sample, so
+<code class="docutils literal notranslate"><span class="pre">temperature</span></code> / <code class="docutils literal notranslate"><span class="pre">top_p</span></code> are ignored. <code class="docutils literal notranslate"><span class="pre">lang_code</span></code> (a G2P language
+override; the default follows the voice’s prefix) and <code class="docutils literal notranslate"><span class="pre">phonemes</span></code> (skip
+G2P) arrive through <code class="docutils literal notranslate"><span class="pre">extra_body</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.KokoroAdapter.speech_to_request">
+<span class="sig-name descname"><span class="pre">speech_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#KokoroAdapter.speech_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.KokoroAdapter.speech_to_request" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.SpeechRequest" title="mstar.api_server.openai.protocol.SpeechRequest"><em>SpeechRequest</em></a>)</p></li>
+<li><p><strong>upload_dir</strong> (<em>Path</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.KokoroAdapter.supports_speech">
+<span class="sig-name descname"><span class="pre">supports_speech</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.KokoroAdapter.supports_speech" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OmniVoiceAdapter">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">OmniVoiceAdapter</span></span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OmniVoiceAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a></p>
@@ -886,6 +1078,11 @@ docstring) and are reached only via <code class="docutils literal notranslate"><
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.compression_ratio_threshold">
+<span class="sig-name descname"><span class="pre">compression_ratio_threshold</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.4</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.compression_ratio_threshold" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.image_edit_to_request">
 <span class="sig-name descname"><span class="pre">image_edit_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OpenAIAdapter.image_edit_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.image_edit_to_request" title="Link to this definition">#</a></dt>
@@ -919,6 +1116,81 @@ docstring) and are reached only via <code class="docutils literal notranslate"><
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.long_form">
+<span class="sig-name descname"><span class="pre">long_form</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sequential'</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.long_form" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.max_audio_seconds">
+<span class="sig-name descname"><span class="pre">max_audio_seconds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.max_audio_seconds" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.parse_transcript">
+<span class="sig-name descname"><span class="pre">parse_transcript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OpenAIAdapter.parse_transcript"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.parse_transcript" title="Link to this definition">#</a></dt>
+<dd><p>Structured view of a model’s raw text stream. The default is plain
+text; a model whose stream carries control tokens (Whisper’s language
+and timestamp tokens, an LLM decoder’s tags) parses them here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.TranscriptionRequest" title="mstar.api_server.openai.protocol.TranscriptionRequest"><em>TranscriptionRequest</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Transcript" title="mstar.api_server.openai.adapters.Transcript">Transcript</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.realtime_step_request">
+<span class="sig-name descname"><span class="pre">realtime_step_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OpenAIAdapter.realtime_step_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.realtime_step_request" title="Link to this definition">#</a></dt>
+<dd><p>One streaming step: transcribe <code class="docutils literal notranslate"><span class="pre">audio_path</span></code> (everything heard so
+far) continuing from <code class="docutils literal notranslate"><span class="pre">prefix</span></code>, the stable part of the previous raw
+hypothesis. Models that cannot continue a hypothesis leave this
+unimplemented and stay off <code class="docutils literal notranslate"><span class="pre">/v1/realtime</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.TranscriptionRequest" title="mstar.api_server.openai.protocol.TranscriptionRequest"><em>TranscriptionRequest</em></a>)</p></li>
+<li><p><strong>audio_path</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.seeks_by_timestamps">
+<span class="sig-name descname"><span class="pre">seeks_by_timestamps</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.seeks_by_timestamps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_lookahead">
+<span class="sig-name descname"><span class="pre">speech_chunk_lookahead</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_lookahead" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_chars">
+<span class="sig-name descname"><span class="pre">speech_chunk_max_chars</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">400</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_chars" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_pieces">
+<span class="sig-name descname"><span class="pre">speech_chunk_max_pieces</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_pieces" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_min_chars">
+<span class="sig-name descname"><span class="pre">speech_chunk_min_chars</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_min_chars" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.speech_to_request">
 <span class="sig-name descname"><span class="pre">speech_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OpenAIAdapter.speech_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_to_request" title="Link to this definition">#</a></dt>
@@ -931,6 +1203,23 @@ docstring) and are reached only via <code class="docutils literal notranslate"><
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.stream_text">
+<span class="sig-name descname"><span class="pre">stream_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OpenAIAdapter.stream_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.stream_text" title="Link to this definition">#</a></dt>
+<dd><p>The client-facing text of the raw stream so far. It must only
+grow as <code class="docutils literal notranslate"><span class="pre">raw</span></code> does, so a model with control tokens strips them and
+holds back a tail that may still turn out to be one. The default
+passes the text through.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>raw</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -951,14 +1240,40 @@ docstring) and are reached only via <code class="docutils literal notranslate"><
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.supports_realtime_transcription">
+<span class="sig-name descname"><span class="pre">supports_realtime_transcription</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_realtime_transcription" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.supports_speech">
 <span class="sig-name descname"><span class="pre">supports_speech</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_speech" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.supports_transcriptions">
+<span class="sig-name descname"><span class="pre">supports_transcriptions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_transcriptions" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.supports_videos">
 <span class="sig-name descname"><span class="pre">supports_videos</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_videos" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.transcription_to_request">
+<span class="sig-name descname"><span class="pre">transcription_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#OpenAIAdapter.transcription_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.OpenAIAdapter.transcription_to_request" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.TranscriptionRequest" title="mstar.api_server.openai.protocol.TranscriptionRequest"><em>TranscriptionRequest</em></a>)</p></li>
+<li><p><strong>audio_path</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.OpenAIAdapter.video_to_request">
@@ -1116,6 +1431,56 @@ via <code class="docutils literal notranslate"><span class="pre">extra_body</spa
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Transcript">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">Transcript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">words</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unfinished</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#Transcript"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.Transcript" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A finished transcription as the serving layer reports it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">text</span></code> is the clean transcript. <code class="docutils literal notranslate"><span class="pre">language</span></code> is an ISO-639-1 code when the
+model reported one (detected or forced). <code class="docutils literal notranslate"><span class="pre">segments</span></code> / <code class="docutils literal notranslate"><span class="pre">words</span></code> carry
+<code class="docutils literal notranslate"><span class="pre">{&quot;start&quot;,</span> <span class="pre">&quot;end&quot;,</span> <span class="pre">&quot;text&quot;}</span></code> / <code class="docutils literal notranslate"><span class="pre">{&quot;start&quot;,</span> <span class="pre">&quot;end&quot;,</span> <span class="pre">&quot;word&quot;}</span></code> in seconds when
+the model emitted timestamps; empty otherwise. <code class="docutils literal notranslate"><span class="pre">unfinished</span></code> says the
+output stopped inside a segment (a start timestamp with no end): the text
+after the last closed segment is provisional, and a long-form driver
+re-decodes that audio from the last segment end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+<li><p><strong>language</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>]</em>)</p></li>
+<li><p><strong>words</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>]</em>)</p></li>
+<li><p><strong>unfinished</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Transcript.language">
+<span class="sig-name descname"><span class="pre">language</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.Transcript.language" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Transcript.segments">
+<span class="sig-name descname"><span class="pre">segments</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.Transcript.segments" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Transcript.text">
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><a class="headerlink" href="#mstar.api_server.openai.adapters.Transcript.text" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Transcript.unfinished">
+<span class="sig-name descname"><span class="pre">unfinished</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.Transcript.unfinished" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Transcript.words">
+<span class="sig-name descname"><span class="pre">words</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.Transcript.words" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="mstar.api_server.openai.adapters.Wan22Adapter">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">Wan22Adapter</span></span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#Wan22Adapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.Wan22Adapter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a></p>
@@ -1138,6 +1503,85 @@ rate (the mp4 container rate), not a generation knob — see
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.VideoGenerationRequest" title="mstar.api_server.openai.protocol.VideoGenerationRequest"><em>VideoGenerationRequest</em></a>)</p></li>
 <li><p><strong>upload_dir</strong> (<em>Path</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.SubmitArgs" title="mstar.api_server.openai.adapters.SubmitArgs">SubmitArgs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.api_server.openai.adapters.</span></span><span class="sig-name descname"><span class="pre">WhisperAdapter</span></span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#WhisperAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mstar.api_server.openai.adapters.OpenAIAdapter" title="mstar.api_server.openai.adapters.OpenAIAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a></p>
+<p>Whisper (large-v3, large-v3-turbo): speech-to-text.</p>
+<p>The transcript stream is Whisper’s own token stream rendered as text:
+a leading <code class="docutils literal notranslate"><span class="pre">&lt;|xx|&gt;</span></code> language token when the language was detected or
+forced, and <code class="docutils literal notranslate"><span class="pre">&lt;|s.ss|&gt;</span></code> timestamp tokens around each segment when
+timestamps were requested. <code class="docutils literal notranslate"><span class="pre">parse_transcript</span></code> lifts those into
+<a class="reference internal" href="#mstar.api_server.openai.adapters.Transcript" title="mstar.api_server.openai.adapters.Transcript"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transcript</span></code></a>; <code class="docutils literal notranslate"><span class="pre">stream_text</span></code> hides them from streaming clients.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter.max_audio_seconds">
+<span class="sig-name descname"><span class="pre">max_audio_seconds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30.0</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter.max_audio_seconds" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter.parse_transcript">
+<span class="sig-name descname"><span class="pre">parse_transcript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#WhisperAdapter.parse_transcript"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter.parse_transcript" title="Link to this definition">#</a></dt>
+<dd><p>Structured view of a model’s raw text stream. The default is plain
+text; a model whose stream carries control tokens (Whisper’s language
+and timestamp tokens, an LLM decoder’s tags) parses them here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.TranscriptionRequest" title="mstar.api_server.openai.protocol.TranscriptionRequest"><em>TranscriptionRequest</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mstar.api_server.openai.adapters.Transcript" title="mstar.api_server.openai.adapters.Transcript">Transcript</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter.seeks_by_timestamps">
+<span class="sig-name descname"><span class="pre">seeks_by_timestamps</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter.seeks_by_timestamps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter.stream_text">
+<span class="sig-name descname"><span class="pre">stream_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#WhisperAdapter.stream_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter.stream_text" title="Link to this definition">#</a></dt>
+<dd><p>The client-facing text of the raw stream so far. It must only
+grow as <code class="docutils literal notranslate"><span class="pre">raw</span></code> does, so a model with control tokens strips them and
+holds back a tail that may still turn out to be one. The default
+passes the text through.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>raw</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter.supports_transcriptions">
+<span class="sig-name descname"><span class="pre">supports_transcriptions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter.supports_transcriptions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mstar.api_server.openai.adapters.WhisperAdapter.transcription_to_request">
+<span class="sig-name descname"><span class="pre">transcription_to_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audio_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/api_server/openai/adapters.html#WhisperAdapter.transcription_to_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.api_server.openai.adapters.WhisperAdapter.transcription_to_request" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>req</strong> (<a class="reference internal" href="mstar.api_server.openai.protocol.html#mstar.api_server.openai.protocol.TranscriptionRequest" title="mstar.api_server.openai.protocol.TranscriptionRequest"><em>TranscriptionRequest</em></a>)</p></li>
+<li><p><strong>audio_path</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1249,6 +1693,21 @@ apply their own prompt formatting in <code class="docutils literal notranslate">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3Adapter.video_to_request"><code class="docutils literal notranslate"><span class="pre">Cosmos3Adapter.video_to_request()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter"><code class="docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.chat_to_request"><code class="docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter.chat_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Cosmos3EdgeAdapter.supports_chat"><code class="docutils literal notranslate"><span class="pre">Cosmos3EdgeAdapter.supports_chat</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter"><code class="docutils literal notranslate"><span class="pre">HiggsAudioAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter.supports_transcriptions"><code class="docutils literal notranslate"><span class="pre">HiggsAudioAdapter.supports_transcriptions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.HiggsAudioAdapter.transcription_to_request"><code class="docutils literal notranslate"><span class="pre">HiggsAudioAdapter.transcription_to_request()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.KokoroAdapter"><code class="docutils literal notranslate"><span class="pre">KokoroAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.KokoroAdapter.speech_to_request"><code class="docutils literal notranslate"><span class="pre">KokoroAdapter.speech_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.KokoroAdapter.supports_speech"><code class="docutils literal notranslate"><span class="pre">KokoroAdapter.supports_speech</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter"><code class="docutils literal notranslate"><span class="pre">OmniVoiceAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter.speech_to_request"><code class="docutils literal notranslate"><span class="pre">OmniVoiceAdapter.speech_to_request()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OmniVoiceAdapter.supports_speech"><code class="docutils literal notranslate"><span class="pre">OmniVoiceAdapter.supports_speech</span></code></a></li>
@@ -1256,14 +1715,28 @@ apply their own prompt formatting in <code class="docutils literal notranslate">
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.chat_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.chat_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.compression_ratio_threshold"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.compression_ratio_threshold</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.image_edit_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.image_edit_to_request()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.image_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.image_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.long_form"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.long_form</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.max_audio_seconds"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.max_audio_seconds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.parse_transcript"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.parse_transcript()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.realtime_step_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.realtime_step_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.seeks_by_timestamps"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.seeks_by_timestamps</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_lookahead"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_lookahead</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_chars"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_max_chars</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_max_pieces"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_max_pieces</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_chunk_min_chars"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_chunk_min_chars</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.speech_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.speech_to_request()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.stream_text"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.stream_text()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_chat"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_chat</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_images"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_images</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_realtime"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_realtime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_realtime_transcription"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_realtime_transcription</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_speech"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_speech</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_transcriptions"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_transcriptions</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.supports_videos"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.supports_videos</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.transcription_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.transcription_to_request()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.OpenAIAdapter.video_to_request"><code class="docutils literal notranslate"><span class="pre">OpenAIAdapter.video_to_request()</span></code></a></li>
 </ul>
 </li>
@@ -1289,9 +1762,26 @@ apply their own prompt formatting in <code class="docutils literal notranslate">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.SubmitArgs.text"><code class="docutils literal notranslate"><span class="pre">SubmitArgs.text</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript"><code class="docutils literal notranslate"><span class="pre">Transcript</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.language"><code class="docutils literal notranslate"><span class="pre">Transcript.language</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.segments"><code class="docutils literal notranslate"><span class="pre">Transcript.segments</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.text"><code class="docutils literal notranslate"><span class="pre">Transcript.text</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.unfinished"><code class="docutils literal notranslate"><span class="pre">Transcript.unfinished</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Transcript.words"><code class="docutils literal notranslate"><span class="pre">Transcript.words</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Wan22Adapter"><code class="docutils literal notranslate"><span class="pre">Wan22Adapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Wan22Adapter.supports_videos"><code class="docutils literal notranslate"><span class="pre">Wan22Adapter.supports_videos</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.Wan22Adapter.video_to_request"><code class="docutils literal notranslate"><span class="pre">Wan22Adapter.video_to_request()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.max_audio_seconds"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.max_audio_seconds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.parse_transcript"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.parse_transcript()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.seeks_by_timestamps"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.seeks_by_timestamps</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.stream_text"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.stream_text()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.supports_transcriptions"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.supports_transcriptions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.WhisperAdapter.transcription_to_request"><code class="docutils literal notranslate"><span class="pre">WhisperAdapter.transcription_to_request()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.api_server.openai.adapters.flatten_messages"><code class="docutils literal notranslate"><span class="pre">flatten_messages()</span></code></a></li>
@@ -1329,7 +1819,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 28, 2026.
+  Last updated on Oct 02, 2026.
   <br/>
 </p>
   </div>

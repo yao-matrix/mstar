@@ -20,6 +20,8 @@ mstar.streaming.chunk\_policy
       ChunkPolicy
       FixedChunkPolicy
       LeftContextChunkPolicy
+      RampChunkPolicy
+      ScheduledLeftContextChunkPolicy
       SlidingWindowChunkPolicy
    
    

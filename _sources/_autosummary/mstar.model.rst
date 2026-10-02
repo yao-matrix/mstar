@@ -31,6 +31,7 @@
    components
    cosmos3
    higgs_audio
+   kokoro
    loader
    multimodal
    omnivoice
@@ -43,5 +44,6 @@
    utils
    vjepa2
    wan22
+   waypoint
    whisper
 
