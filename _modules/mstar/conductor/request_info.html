@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 02, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 05, 2026"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -951,6 +951,11 @@ window.runMermaid = runMermaid;</script>
     <span class="c1"># rather than riding on this object across the wire.</span>
     <span class="n">dynamic_loop_iter_counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
+    <span class="c1"># stream edge -&gt; items it starts with that are context only (a voice</span>
+    <span class="c1"># clone's reference frames); primes the consumer's StreamBuffer. Make this</span>
+    <span class="c1"># a per-stream dataclass if more per-request stream settings appear.</span>
+    <span class="n">stream_lead_items</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
 <div class="viewcode-block" id="CurrentForwardPassInfo.update_publish_info">
 <a class="viewcode-back" href="../../../_autosummary/mstar.conductor.request_info.html#mstar.conductor.request_info.CurrentForwardPassInfo.update_publish_info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_publish_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PublishedInfo</span><span class="p">]):</span>
@@ -1079,7 +1084,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 02, 2026.
+  Last updated on Oct 05, 2026.
   <br/>
 </p>
   </div>

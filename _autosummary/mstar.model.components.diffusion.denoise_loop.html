@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 02, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 05, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -850,6 +850,8 @@ the answer off the step; it asks here instead.</p>
 bucket, and the <code class="docutils literal notranslate"><span class="pre">cg_key_info</span></code> this batch’s <code class="docutils literal notranslate"><span class="pre">declare_step</span></code> puts on
 its step. Disagreeing is not an error anywhere — it just misses the
 capture and runs eager — so derive both from one place.</p>
+<p><code class="docutils literal notranslate"><span class="pre">per_request_input_metadata</span></code> is the batch’s per-step input facts (as
+on <code class="docutils literal notranslate"><span class="pre">ModelInputsFromEngine</span></code>), e.g. for a bucket that follows a stream chunk.</p>
 <p>None (the default) means the walk has a single capture.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1352,7 +1354,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 02, 2026.
+  Last updated on Oct 05, 2026.
   <br/>
 </p>
   </div>
