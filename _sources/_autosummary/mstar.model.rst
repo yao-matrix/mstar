@@ -28,8 +28,10 @@
    :recursive:
 
    base
+   chatterbox
    components
    cosmos3
+   flux2_klein
    higgs_audio
    kokoro
    loader
@@ -37,6 +39,7 @@
    omnivoice
    orpheus
    pi05
+   qwen3_5
    qwen3_omni
    qwen3_tts
    registry
@@ -46,4 +49,5 @@
    wan22
    waypoint
    whisper
+   z_image
 

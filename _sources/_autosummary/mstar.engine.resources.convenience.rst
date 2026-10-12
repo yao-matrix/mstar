@@ -18,6 +18,8 @@ mstar.engine.resources.convenience
    .. autosummary::
    
       AttentionCallable
+      LinearAttnCallable
+      Mamba2Callable
       RaggedAttentionCallable
    
    

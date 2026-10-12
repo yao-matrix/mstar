@@ -29,11 +29,15 @@
 
    adarms_norm
    attention
+   causal_conv1d
    containers
    exitcode
    fused_moe
+   h2d
+   hf_snapshot
    ipc_format
    logging_config
    orphan
    profiler
+   streams
 
