@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -671,6 +671,13 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -737,9 +744,13 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -747,6 +758,7 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -1024,6 +1036,8 @@ window.runMermaid = runMermaid;</script>
         <span class="c1"># the step whose pre-plan is staged across the pre-planning resources,</span>
         <span class="c1"># as `_step_key` describes it; None when nothing is staged</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_staged</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># (step key, ready) of the last pre_admit whose stage is still up</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_admitted</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="StepRunner.resolve_cached_prefix">
 <a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.resolve_cached_prefix">[docs]</a>
@@ -1059,16 +1073,62 @@ window.runMermaid = runMermaid;</script>
             <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="StepRunner.prefix_chain_keys">
+<a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.prefix_chain_keys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefix_chain_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""The node's resources with a prefix cache open right now. Empty in</span>
+<span class="sd">        the common case, which lets the caller skip a per-request sweep that</span>
+<span class="sd">        was six no-op calls per request per step."""</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sweep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">,</span> <span class="n">node_name</span><span class="p">):</span>
+            <span class="n">resource</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">resource</span><span class="o">.</span><span class="n">keys_prefix_chains</span><span class="p">:</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c1"># a resource that overrides the hook without saying when it keys</span>
+            <span class="c1"># is swept as before the skip existed</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">extend_prefix_chain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Resource</span><span class="o">.</span><span class="n">extend_prefix_chain</span>
+                <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">keys_prefix_chains</span> <span class="ow">is</span> <span class="n">Resource</span><span class="o">.</span><span class="n">keys_prefix_chains</span>
+            <span class="p">):</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">keys</span></div>
+
+
 <div class="viewcode-block" id="StepRunner.extend_prefix_chains">
 <a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.extend_prefix_chains">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">extend_prefix_chains</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">graph_walk</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Offer this step's sampled tokens to the node's own resources."""</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sweep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">,</span> <span class="n">node_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sweep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">,</span> <span class="n">node_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend_prefix_chain</span><span class="p">(</span>
                 <span class="n">rid</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">graph_walk</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span>
             <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StepRunner.extend_prefix_chains_batch">
+<a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.extend_prefix_chains_batch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extend_prefix_chains_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">request_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">graph_walk</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">host_rows</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""``extend_prefix_chains`` for a step: a resource with a batch form</span>
+<span class="sd">        takes the host rows; the others are offered each request's host copy."""</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">resource</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">batched</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="s2">"extend_prefix_chains_batch"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">batched</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">batched</span><span class="p">(</span><span class="n">request_ids</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">graph_walk</span><span class="p">,</span> <span class="n">host_rows</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">rid</span> <span class="ow">in</span> <span class="n">request_ids</span><span class="p">:</span>
+                <span class="n">per_rid</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">per_rid</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">resource</span><span class="o">.</span><span class="n">extend_prefix_chain</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">graph_walk</span><span class="p">,</span> <span class="n">per_rid</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_preplan_deps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1150,11 +1210,31 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">overrides</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ResourceReqConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""open state on all resources; `overrides` are per-resource"""</span>
+<span class="w">        </span><span class="sd">"""open state on all resources; `overrides` are per-resource. All or</span>
+<span class="sd">        nothing: a resource that raises leaves the request on none of them."""</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">ingest_request</span><span class="p">(</span>
+                    <span class="n">rid</span><span class="p">,</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">overrides</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">overrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="c1"># the raising resource may have taken part of it too</span>
+                <span class="k">for</span> <span class="n">done</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">[:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">done</span><span class="p">]</span><span class="o">.</span><span class="n">remove_request</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                            <span class="s2">"rolling back request </span><span class="si">%s</span><span class="s2"> on resource </span><span class="si">%s</span><span class="s2"> failed"</span><span class="p">,</span> <span class="n">rid</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span>
+                        <span class="p">)</span>
+                <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="StepRunner.ingest_capture_row">
+<a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.ingest_capture_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ingest_capture_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""open a capture padding row on all resources"""</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">ingest_request</span><span class="p">(</span>
-                <span class="n">rid</span><span class="p">,</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">overrides</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">overrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">ingest_capture_row</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StepRunner.remove_request">
@@ -1229,9 +1309,10 @@ window.runMermaid = runMermaid;</script>
             <span class="p">),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_drop_stale_preplan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="n">SubmoduleStep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_drop_stale_preplan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="n">SubmoduleStep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the step's key when the stage is for this very step."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_staged</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">is_preplan</span><span class="p">:</span>
-            <span class="k">return</span>
+            <span class="k">return</span> <span class="kc">None</span>
         <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_key</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_staged</span> <span class="o">!=</span> <span class="n">key</span><span class="p">:</span>
             <span class="c1"># Not the normal path: the worker meant to run the staged step</span>
@@ -1242,6 +1323,8 @@ window.runMermaid = runMermaid;</script>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_staged</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_staged</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_preplan</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">key</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">staged</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1253,6 +1336,7 @@ window.runMermaid = runMermaid;</script>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear_preplan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Drop the staged pre-plan on every resource, and the record of it."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_staged</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_admitted</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">clear_preplan</span><span class="p">()</span></div>
 
@@ -1263,10 +1347,21 @@ window.runMermaid = runMermaid;</script>
 <span class="w">        </span><span class="sd">"""Reserve capacity for step. A refused admit gives back everything</span>
 <span class="sd">        the step reserved.</span>
 <span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drop_stale_preplan</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">staged_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_stale_preplan</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="c1"># A step whose ``pre_admit`` ran a step ahead, and whose stage is still</span>
+        <span class="c1"># up for it, skips the resources that sweep covered: each would only</span>
+        <span class="c1"># find its own reservation and no-op (0.1 ms of Python per step at</span>
+        <span class="c1"># 128 rows, on the gpu thread). A refusal below still unwinds them.</span>
+        <span class="n">covered</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ready</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_admitted</span>
+        <span class="k">if</span> <span class="n">pre</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">staged_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pre</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">staged_key</span><span class="p">:</span>
+            <span class="n">covered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preplan_keys_for</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+            <span class="n">ready</span> <span class="o">=</span> <span class="n">pre</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">admitted</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_for</span><span class="p">(</span><span class="n">step</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">covered</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nvtx</span><span class="p">:</span>
                 <span class="n">range_push</span><span class="p">(</span><span class="sa">f</span><span class="s2">"res.admit.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">t0</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span> <span class="k">if</span> <span class="n">PHASE_PERIOD</span> <span class="k">else</span> <span class="mf">0.0</span>
@@ -1282,7 +1377,7 @@ window.runMermaid = runMermaid;</script>
                     <span class="s2">"Admit for resource </span><span class="si">%s</span><span class="s2"> failed with error: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
                     <span class="n">key</span><span class="p">,</span> <span class="n">outcome</span><span class="o">.</span><span class="n">reason</span><span class="o">.</span><span class="n">message</span>
                 <span class="p">)</span>
-                <span class="k">for</span> <span class="n">done</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">([</span><span class="o">*</span><span class="n">admitted</span><span class="p">,</span> <span class="n">key</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">done</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">([</span><span class="o">*</span><span class="n">covered</span><span class="p">,</span> <span class="o">*</span><span class="n">admitted</span><span class="p">,</span> <span class="n">key</span><span class="p">]):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">done</span><span class="p">]</span><span class="o">.</span><span class="n">rollback_admit</span><span class="p">(</span>
                         <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">done</span><span class="p">),</span> <span class="n">step</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -1304,6 +1399,7 @@ window.runMermaid = runMermaid;</script>
             <span class="c1"># the resources promote their staged share below (or plan afresh</span>
             <span class="c1"># if nothing was staged): either way nothing stays staged</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_staged</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pre_admitted</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">plan_results</span>
         <span class="n">results</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_for</span><span class="p">(</span><span class="n">step</span><span class="p">):</span>
@@ -1349,9 +1445,11 @@ window.runMermaid = runMermaid;</script>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">done</span><span class="p">]</span><span class="o">.</span><span class="n">rollback_admit</span><span class="p">(</span>
                         <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">done</span><span class="p">),</span> <span class="n">step</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span>
                     <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pre_admitted</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">return</span> <span class="n">FullAdmitOutcome</span><span class="p">(</span><span class="n">outcome</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="n">admitted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">ready</span> <span class="o">=</span> <span class="n">ready</span> <span class="ow">and</span> <span class="n">outcome</span><span class="o">.</span><span class="n">ready</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_admitted</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step_key</span><span class="p">(</span><span class="n">step</span><span class="p">),</span> <span class="n">ready</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">FULL_ADMIT_OK</span> <span class="k">if</span> <span class="n">ready</span> <span class="k">else</span> <span class="n">FULL_ADMIT_NOT_READY</span></div>
 
 
@@ -1420,6 +1518,67 @@ window.runMermaid = runMermaid;</script>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">resource</span> <span class="ow">in</span> <span class="n">publishers</span><span class="p">:</span>
                 <span class="n">info</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">publish_for_step</span><span class="p">(</span>
                     <span class="n">rid</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="n">node_name</span><span class="p">,</span> <span class="n">graph_walk</span><span class="o">=</span><span class="n">graph_walk</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">per_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_key</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="StepRunner.publish_snapshot">
+<a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.publish_snapshot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publish_snapshot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">request_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">graph_walk</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""``publish``, deferred: per rid the snapshot each publisher took.</span>
+
+<span class="sd">        Finished by ``publish_from_snapshots`` for the rids that need it. A rid</span>
+<span class="sd">        with nothing to publish has no entry."""</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sweep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_publish_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publish_order</span><span class="p">,</span> <span class="n">node_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">order</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="c1"># one call per publisher for the whole batch, then one dict per</span>
+        <span class="c1"># request that has anything to publish</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">publish_snapshot_batch</span><span class="p">(</span>
+                <span class="n">request_ids</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="n">node_name</span><span class="p">,</span> <span class="n">graph_walk</span><span class="o">=</span><span class="n">graph_walk</span><span class="p">,</span>
+            <span class="p">))</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">order</span>
+        <span class="p">]</span>
+        <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">request_ids</span><span class="p">):</span>
+            <span class="n">per_key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">snaps</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="n">snap</span> <span class="o">=</span> <span class="n">snaps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">snap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">per_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">snap</span>
+            <span class="k">if</span> <span class="n">per_key</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_key</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="StepRunner.publish_from_snapshots">
+<a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.runner.html#mstar.engine.resources.StepRunner.publish_from_snapshots">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publish_from_snapshots</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">snapshots</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">request_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">graph_walk</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PublishedInfo</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""The published info of ``request_ids`` from their snapshots."""</span>
+        <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PublishedInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">rid</span> <span class="ow">in</span> <span class="n">request_ids</span><span class="p">:</span>
+            <span class="n">snaps</span> <span class="o">=</span> <span class="n">snapshots</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">snaps</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">per_key</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PublishedInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">snap</span> <span class="ow">in</span> <span class="n">snaps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">publish_from_snapshot</span><span class="p">(</span>
+                    <span class="n">rid</span><span class="p">,</span> <span class="n">snap</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="n">node_name</span><span class="p">,</span> <span class="n">graph_walk</span><span class="o">=</span><span class="n">graph_walk</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">per_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
@@ -1517,7 +1676,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

@@ -27,6 +27,7 @@ mstar.engine.resources.kv.transfer
       CudaIpcKVTransferInfo
       KVReadInfo
       KVTransferEngine
+      KVTransferInfo
       KVTransferManager
       LocalOnlyKVTransferEngine
       MooncakeKVTransferEngine

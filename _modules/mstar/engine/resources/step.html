@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -671,6 +671,13 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -737,9 +744,13 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -747,6 +758,7 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -998,6 +1010,10 @@ window.runMermaid = runMermaid;</script>
     <span class="c1"># None outside a captured replay, where the two are the same. Padding rows</span>
     <span class="c1"># carry negative handles, so this stays homogeneous with `request_ids`.</span>
     <span class="n">_padded_request_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># ``request_ids`` as a set, built on first use after the padded list is</span>
+    <span class="c1"># set: the per-row tests below run for every row of every resource on two</span>
+    <span class="c1"># threads, and a list scan made each of them linear in the batch.</span>
+    <span class="n">_real_rids</span><span class="p">:</span> <span class="nb">frozenset</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">padded_request_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
@@ -1008,7 +1024,18 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="StepContext.set_padded_rids">
 <a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.step.html#mstar.engine.resources.StepContext.set_padded_rids">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_padded_rids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">padded_rids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_padded_request_ids</span> <span class="o">=</span> <span class="n">padded_rids</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_padded_request_ids</span> <span class="o">=</span> <span class="n">padded_rids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_real_rids</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="StepContext.is_real_row">
+<a class="viewcode-back" href="../../../../_autosummary/mstar.engine.resources.step.html#mstar.engine.resources.StepContext.is_real_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_real_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Whether ``rid`` is one of this step's real requests."""</span>
+        <span class="n">real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_real_rids</span>
+        <span class="k">if</span> <span class="n">real</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_real_rids</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request_ids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rid</span> <span class="ow">in</span> <span class="n">real</span></div>
 
 
 <div class="viewcode-block" id="StepContext.is_padding_row">
@@ -1018,7 +1045,12 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">        It carries the template span so shapes match the capture, but a resource</span>
 <span class="sd">        should reserve, address and commit nothing on its behalf."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_request_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_ids</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_request_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_real_rids</span>
+        <span class="k">if</span> <span class="n">real</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_real_rids</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request_ids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">real</span></div>
 
 
 <div class="viewcode-block" id="StepContext.set_piecewise_leases">
@@ -1213,7 +1245,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

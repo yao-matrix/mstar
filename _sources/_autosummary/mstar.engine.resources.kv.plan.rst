@@ -24,9 +24,11 @@ mstar.engine.resources.kv.plan
 
    .. autosummary::
    
+      HostLens
       KVPlanOutput
       KVPlanOutputs
       PagedIndptrs
+      PinnedIndexRing
       SequenceView
    
    

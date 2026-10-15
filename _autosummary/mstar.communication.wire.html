@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -318,6 +318,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -384,9 +391,13 @@
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -394,6 +405,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -621,6 +633,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.AUTO_PREFIX"><code class="docutils literal notranslate"><span class="pre">AUTO_PREFIX</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.DATA"><code class="docutils literal notranslate"><span class="pre">DATA</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.OPAQUE"><code class="docutils literal notranslate"><span class="pre">OPAQUE</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.PICKLED_EXT"><code class="docutils literal notranslate"><span class="pre">PICKLED_EXT</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.WireError"><code class="docutils literal notranslate"><span class="pre">WireError</span></code></a></li>
@@ -659,13 +672,14 @@ annotations per message is about 17x slower than pickle.</p>
 <div><p>those fields carry <code class="docutils literal notranslate"><span class="pre">[tag,</span> <span class="pre">payload]</span></code>.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>A value whose declared type says nothing useful (bare <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">Any</span></code>,
-<code class="docutils literal notranslate"><span class="pre">model_kwargs</span></code>) goes as plain msgpack only when that round-trips exactly
-– scalars, lists, str-keyed dicts – and is pickled into an ExtType
-otherwise. Such fields hold whatever a model or a client put there, so
-converting them by hand is lossy (tuples come back as lists, int keys as
-pairs) or raises mid-send; pickle is what they crossed the wire as before.
-A Rust sender only ever splices these as opaque, already-encoded bytes.</p></li>
+<li><p>Loosely typed fields (bare <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">Any</span></code>, <code class="docutils literal notranslate"><span class="pre">model_kwargs</span></code>) use plain
+msgpack where it round-trips exactly, and data-only extensions for tuples,
+sets, non-string map keys, dataclasses, torch sizes/dtypes, NumPy values,
+dates, and the msgpack timestamps/extensions a <code class="docutils literal notranslate"><span class="pre">/generate/ws</span></code> client sends.
+Unsupported Python objects are rejected at send time. Incoming frames
+never run pickle; the only classes a frame can name are registered or
+mstar dataclasses, built from decoded field values.
+A Rust sender splices these as opaque, already-encoded bytes.</p></li>
 </ul>
 <p class="rubric">Module Attributes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
@@ -674,10 +688,13 @@ A Rust sender only ever splices these as opaque, already-encoded bytes.</p></li>
 <td><p>Tag prefix for a dataclass reached through a loosely-typed field and never explicitly registered.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mstar.communication.wire.PICKLED_EXT" title="mstar.communication.wire.PICKLED_EXT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PICKLED_EXT</span></code></a></p></td>
-<td><p>msgpack ext code for a pickled value from a loosely-typed field.</p></td>
+<td><p>retained only to reject old frames clearly.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mstar.communication.wire.OPAQUE" title="mstar.communication.wire.OPAQUE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPAQUE</span></code></a></p></td>
-<td><p>Frame tag for a payload that is not a registered message.</p></td>
+<td><p>never decoded.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mstar.communication.wire.DATA" title="mstar.communication.wire.DATA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DATA</span></code></a></p></td>
+<td><p>Data-only envelope for a payload that is not a registered message.</p></td>
 </tr>
 </tbody>
 </table>
@@ -724,19 +741,31 @@ maintenance – the curated tags in wire_types.py stay short.</p>
 </dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="mstar.communication.wire.DATA">
+<span class="sig-prename descclassname"><span class="pre">mstar.communication.wire.</span></span><span class="sig-name descname"><span class="pre">DATA</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'__data__'</span></span><a class="headerlink" href="#mstar.communication.wire.DATA" title="Link to this definition">#</a></dt>
+<dd><p>Data-only envelope for a payload that is not a registered message.</p>
+</dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="mstar.communication.wire.OPAQUE">
 <span class="sig-prename descclassname"><span class="pre">mstar.communication.wire.</span></span><span class="sig-name descname"><span class="pre">OPAQUE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'__py__'</span></span><a class="headerlink" href="#mstar.communication.wire.OPAQUE" title="Link to this definition">#</a></dt>
-<dd><p>Frame tag for a payload that is not a registered message. The codec has to
-be total — a communicator carries whatever a caller hands it, and a codec
-that raises on some payloads turns into a silent hang at the receiver
-(the send dies, the peer waits forever). Registered messages, which are
-the only ones a Rust endpoint decodes, never take this path.</p>
+<dd><p>never decoded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Legacy whole-message pickle tag</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="mstar.communication.wire.PICKLED_EXT">
 <span class="sig-prename descclassname"><span class="pre">mstar.communication.wire.</span></span><span class="sig-name descname"><span class="pre">PICKLED_EXT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">80</span></span><a class="headerlink" href="#mstar.communication.wire.PICKLED_EXT" title="Link to this definition">#</a></dt>
-<dd><p>msgpack ext code for a pickled value from a loosely-typed field.</p>
+<dd><p>retained only to reject old frames clearly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Legacy pickle code</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">
@@ -788,9 +817,8 @@ the frame decodes identically to having built the whole message here.</p>
 <span class="sig-prename descclassname"><span class="pre">mstar.communication.wire.</span></span><span class="sig-name descname"><span class="pre">encode_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hints</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/communication/wire.html#encode_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.communication.wire.encode_fields" title="Link to this definition">#</a></dt>
 <dd><p>Several field values as one msgpack array, each by its declared type.</p>
 <p>For a payload that is a bare tuple of values rather than a message.
-<code class="docutils literal notranslate"><span class="pre">encode</span></code> would reach the pickle fallback on one of those – a list has
-no wire tag – and a pickled payload cannot be spliced into a frame the
-Rust runtime builds.</p>
+Unlike <code class="docutils literal notranslate"><span class="pre">encode</span></code>, this omits the top-level envelope, so Rust can split
+the array and splice its fields into the frame it builds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#bytes" title="(in Python v3.12)">bytes</a></p>
@@ -876,6 +904,7 @@ Rust runtime builds.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.AUTO_PREFIX"><code class="docutils literal notranslate"><span class="pre">AUTO_PREFIX</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.DATA"><code class="docutils literal notranslate"><span class="pre">DATA</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.OPAQUE"><code class="docutils literal notranslate"><span class="pre">OPAQUE</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.PICKLED_EXT"><code class="docutils literal notranslate"><span class="pre">PICKLED_EXT</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.wire.WireError"><code class="docutils literal notranslate"><span class="pre">WireError</span></code></a></li>
@@ -918,7 +947,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

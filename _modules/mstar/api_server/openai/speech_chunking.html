@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -671,6 +671,13 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -737,9 +744,13 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -747,6 +758,7 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -924,6 +936,7 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
 
 <span class="c1"># One sentence: a lazy body up to a Latin terminator (with any closing quotes</span>
 <span class="c1"># or brackets) that precedes whitespace or the end, a CJK terminator, a</span>
@@ -944,8 +957,28 @@ window.runMermaid = runMermaid;</script>
 <span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_cut_evenly</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Near-equal pieces of at most ``max_chars``, none starting on a combining mark."""</span>
+    <span class="n">pieces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="n">max_chars</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">left</span> <span class="o">//</span> <span class="n">max_chars</span><span class="p">)</span>  <span class="c1"># pieces still needed</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">cut</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">left</span> <span class="o">//</span> <span class="n">n</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">cut</span> <span class="o">&gt;</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">cut</span><span class="p">])</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"M"</span><span class="p">):</span>
+            <span class="n">cut</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">cut</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>  <span class="c1"># nothing but marks: cut anyway</span>
+            <span class="n">cut</span> <span class="o">=</span> <span class="n">end</span>
+        <span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">cut</span><span class="p">])</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">cut</span>
+    <span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">pieces</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_hard_wrap</span><span class="p">(</span><span class="n">sentence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">"""Split one over-long sentence at clause boundaries, then at spaces."""</span>
+<span class="w">    </span><span class="sd">"""Split one over-long sentence at clause boundaries, then at spaces, then</span>
+<span class="sd">    (for text with neither, such as Thai or Chinese without punctuation) into</span>
+<span class="sd">    near-equal pieces of at most ``max_chars``."""</span>
     <span class="n">pieces</span> <span class="o">=</span> <span class="p">[</span><span class="n">sentence</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">_SOFT_BREAKS</span><span class="p">:</span>
         <span class="n">wrapped</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -966,7 +999,7 @@ window.runMermaid = runMermaid;</script>
             <span class="k">if</span> <span class="n">current</span><span class="p">:</span>
                 <span class="n">wrapped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
         <span class="n">pieces</span> <span class="o">=</span> <span class="n">wrapped</span>
-    <span class="k">return</span> <span class="n">pieces</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pieces</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_cut_evenly</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_chars</span> <span class="k">else</span> <span class="p">[</span><span class="n">p</span><span class="p">])]</span>
 
 
 <div class="viewcode-block" id="split_sentences">
@@ -975,7 +1008,7 @@ window.runMermaid = runMermaid;</script>
 <span class="w">    </span><span class="sd">"""Group ``text`` into sentence chunks of at most ``max_chars`` characters.</span>
 
 <span class="sd">    Sentences are never cut unless one alone exceeds ``max_chars`` (then it is</span>
-<span class="sd">    wrapped at clause boundaries, or spaces as a last resort). A trailing</span>
+<span class="sd">    wrapped at clause boundaries, then spaces, then by length). A trailing</span>
 <span class="sd">    fragment shorter than ``min_chars`` is merged into its predecessor so the</span>
 <span class="sd">    model is not asked to voice a lone "Okay." Returns ``[text]`` when nothing</span>
 <span class="sd">    needs splitting and ``[]`` for blank input.</span>
@@ -1061,7 +1094,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

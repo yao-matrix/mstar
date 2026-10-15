@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -671,6 +671,13 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../_autosummary/mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../_autosummary/mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../../_autosummary/mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../../_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../../_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -737,9 +744,13 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -747,6 +758,7 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../_autosummary/mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../_autosummary/mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -958,6 +970,15 @@ window.runMermaid = runMermaid;</script>
 
 
 
+<div class="viewcode-block" id="KVTransferInfo">
+<a class="viewcode-back" href="../../../../../_autosummary/mstar.engine.resources.kv.transfer.html#mstar.engine.resources.kv.transfer.KVTransferInfo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KVTransferInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Base of the descriptors a transfer engine publishes for its KV cache.</span>
+<span class="sd">    The wire carries a subclass as ``[tag, fields]``, so the descriptor the</span>
+<span class="sd">    conductor re-sends every pass takes the typed path."""</span></div>
+
+
+
 <div class="viewcode-block" id="KVTransferEngine">
 <a class="viewcode-back" href="../../../../../_autosummary/mstar.engine.resources.kv.transfer.html#mstar.engine.resources.kv.transfer.KVTransferEngine">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KVTransferEngine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -1016,7 +1037,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="MooncakeKVTransferInfo">
 <a class="viewcode-back" href="../../../../../_autosummary/mstar.engine.resources.kv.transfer.html#mstar.engine.resources.kv.transfer.MooncakeKVTransferInfo">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MooncakeKVTransferInfo</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MooncakeKVTransferInfo</span><span class="p">(</span><span class="n">KVTransferInfo</span><span class="p">):</span>
     <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">data_ptr</span><span class="p">:</span> <span class="nb">int</span>
@@ -1134,10 +1155,10 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="CudaIpcKVTransferInfo">
 <a class="viewcode-back" href="../../../../../_autosummary/mstar.engine.resources.kv.transfer.html#mstar.engine.resources.kv.transfer.CudaIpcKVTransferInfo">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CudaIpcKVTransferInfo</span><span class="p">:</span>
-    <span class="n">cuda_share</span><span class="p">:</span> <span class="nb">tuple</span>
-    <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span>
-    <span class="n">stride</span><span class="p">:</span> <span class="nb">tuple</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CudaIpcKVTransferInfo</span><span class="p">(</span><span class="n">KVTransferInfo</span><span class="p">):</span>
+    <span class="n">cuda_share</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">stride</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span>
@@ -1354,7 +1375,7 @@ window.runMermaid = runMermaid;</script>
 <div class="viewcode-block" id="ShmKVTransferInfo">
 <a class="viewcode-back" href="../../../../../_autosummary/mstar.engine.resources.kv.transfer.html#mstar.engine.resources.kv.transfer.ShmKVTransferInfo">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ShmKVTransferInfo</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShmKVTransferInfo</span><span class="p">(</span><span class="n">KVTransferInfo</span><span class="p">):</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">page_indices</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
     <span class="n">layout</span><span class="p">:</span> <span class="n">KVLayout</span>
@@ -1912,7 +1933,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

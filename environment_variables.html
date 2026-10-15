@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -318,6 +318,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -384,9 +391,13 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -394,6 +405,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -689,12 +701,11 @@ runtime and the tensor store must share.</p></td>
 <td><p>How messages are encoded on every communicator edge (see
 <a class="reference internal" href="_autosummary/mstar.communication.codec.html#mstar.communication.codec.default_codec" title="mstar.communication.codec.default_codec"><code class="xref py py-func docutils literal notranslate"><span class="pre">mstar.communication.codec.default_codec()</span></code></a>). <code class="docutils literal notranslate"><span class="pre">msgpack</span></code>: the
 typed encoding in <a class="reference internal" href="_autosummary/mstar.communication.wire.html#module-mstar.communication.wire" title="mstar.communication.wire"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mstar.communication.wire</span></code></a>, language-neutral
-so an edge can terminate in a Rust process. <code class="docutils literal notranslate"><span class="pre">pickle</span></code>: the old
-Python-only wire, kept for bisecting a wire problem. Both ends of an
-edge must agree, so this is all-or-nothing for a mesh – one process
-set differently cannot talk to its peers. <code class="docutils literal notranslate"><span class="pre">pickle</span></code> is incompatible
-with the Rust graph runtime, which builds its frames as typed
-msgpack; that pairing fails at startup rather than mixing wires.</p></td>
+so an edge can terminate in a Rust process. <code class="docutils literal notranslate"><span class="pre">pickle</span></code> is no longer
+supported and fails at startup. Loosely typed metadata uses data-only
+extensions instead of pickle. Upgrade all processes in a deployment
+together: older processes cannot decode the new extensions, and
+updated processes reject legacy pickle messages and metadata.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_ZMQ_TRANSPORT</span></code></p></td>
 <td><p>constructor’s protocol</p></td>
@@ -933,7 +944,15 @@ get an immediate 503 instead of queueing into the request timeout.
 <td><p><code class="docutils literal notranslate"><span class="pre">128</span></code></p></td>
 <td><p>Request body limit (multipart uploads included).</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_TOKENIZER</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_TOKENIZE_PARALLEL</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>When a long prompt is encoded as parallel chunks, set
+<code class="docutils literal notranslate"><span class="pre">TOKENIZERS_PARALLELISM=true</span></code> for the process first: the Rust
+tokenizer only uses its thread pool while that variable reads true,
+and serving environments often export it false. <code class="docutils literal notranslate"><span class="pre">0</span></code> leaves the
+variable as it is (the chunked encode then runs serially).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_TOKENIZER</span></code></p></td>
 <td><p>unset</p></td>
 <td><p>Path to a HuggingFace <code class="docutils literal notranslate"><span class="pre">tokenizer.json</span></code> enabling frontend
 tokenization. Leave unset with the Python backend — its preprocess
@@ -1002,10 +1021,112 @@ which serialises the very overlap this flag buys.</p></td>
 while the previous replay runs. <code class="docutils literal notranslate"><span class="pre">0</span></code> plans inline on the GPU
 thread.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_DECODE_BUCKETS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1,2,4,8,16,32,48,64,96,128</span></code></p></td>
+<td><p>The decode batch sizes a model captures as CUDA graphs (Qwen3.5 reads
+it; a model with its own ladder reads it the same way). A decode step
+runs at the smallest bucket that holds its rows, so the ladder bounds
+both the rows per step and the graph memory; narrow it (for example
+<code class="docutils literal notranslate"><span class="pre">1,2,4,8,16,32</span></code>) on a memory-tight GPU or for an A/B against the
+former ladder. <code class="docutils literal notranslate"><span class="pre">MSTAR_QWEN35_DECODE_BUCKETS</span></code> overrides it for
+Qwen3.5 alone.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_LAZY_PUBLISH</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Publish resource state (KV pages, positions) only for the requests
+whose frame or completion carries it: <code class="docutils literal notranslate"><span class="pre">finalize_batch</span></code> keeps a
+cheap per-request snapshot and the worker finishes it on demand.
+<code class="docutils literal notranslate"><span class="pre">0</span></code> builds the full publication for every request on every step,
+the old behaviour; it was a quarter of the GPU thread’s host time at
+batch 32 in a decode loop that never reads it.</p></td>
+</tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_MAX_CONSECUTIVE_SPEC_STEPS</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1024</span></code></p></td>
 <td><p>Cap on back-to-back speculative steps before the leader yields to
 other ready work.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_QWEN35_PREFILL_TOKEN_BUCKETS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">32,64,128,256,512,1024,2048,4096,8192</span></code></p></td>
+<td><p>Total tokens of a packed Qwen3.5 text-prefill step that get a captured
+graph (one per bucket and batch size). A prompt past the top bucket
+prefills eagerly, which is launch-bound: an eager 8k prefill on 0.8B
+spends 78 ms of wall time on 36 ms of kernels. The default now reaches
+8192; narrow it to save graph memory and capture time, or extend it.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_KV_CHAIN_LAZY_STEPS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>How many decode steps of sampled ids the KV manager holds back before
+it extends the requests’ prefix chains (the per-page keys the prefix
+cache is indexed by), one extend per request per batch of steps instead
+of one per step. The per-request Python of that extension was 0.3 to
+0.4 ms a step at 128 rows. A page key then appears up to that many
+steps late and a later commit indexes it, as the single-request path
+already allows; a request that finishes in between may leave its last
+page unindexed. The default <code class="docutils literal notranslate"><span class="pre">1</span></code> extends on every step: <code class="docutils literal notranslate"><span class="pre">16</span></code>
+measured as noise at c64/c128 on 0.8B (the extension is a small part
+of the stop check’s tail).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_KV_PINNED_INDPTRS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>The KV plan writes FlashInfer’s index arrays (qo_indptr, kv_indptr,
+kv_indices, last_page_len) into a ring of page-locked host buffers and
+the decode wrapper copies the indices straight into its captured
+device buffer from there, so the copies FlashInfer’s <code class="docutils literal notranslate"><span class="pre">plan</span></code> issues
+are really asynchronous. From pageable memory the driver stages each
+one and FlashInfer makes the indices copy blocking. Measured neutral
+to slightly negative at c32-c128 on 0.8B (the event bookkeeping per
+take costs about what it saves), so it is off by default.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_KV_PLAN_CACHE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>The KV manager plans a captured decode step off the previous step’s
+plan when the batch is the same rows in the same order and nothing
+but that step’s commit touched the streams: every length is one
+more, pages change only where a row crossed a page boundary, and the
+five FlashInfer index arrays come from numpy instead of a per-row
+Python pass. The first version measured a loss at c64/c128 on 0.8B
+(batches change every step or two there, and a hit still rebuilt the
+views); the reworked path keeps the views lazy and is off by default
+until measured. <code class="docutils literal notranslate"><span class="pre">0</span></code> plans every step from the streams. <code class="docutils literal notranslate"><span class="pre">2</span></code> runs
+both and logs a difference, for checking a run.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_DEVICE_LOOPBACK</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Whether a decode node may keep its loop-back token on the device:
+the sampler writes each request’s last token to a slot-addressed
+master and the next step reads its input ids from it, so the worker
+routes the signal with no tensor (no per-request store, hold or
+cleanup per step). Only nodes that declare the read
+(<code class="docutils literal notranslate"><span class="pre">reads_device_loopback</span></code>: Qwen3.5 decode) and only when the sampler
+has graph buffers; the sampler keeps the masters for those nodes
+alone, so a node that takes its tokens on the host (Whisper’s
+decoder) no longer pays the eager-step master write, a small
+synchronous host-to-device copy per step. <code class="docutils literal notranslate"><span class="pre">0</span></code> keeps every node on
+the per-request tensor path.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_INGRAPH_DECODE_ROPE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>A captured decode step builds its rotary tables inside the graph from
+the position resource’s planned positions instead of staging them.
+Experiment knob, measured and gated on its own.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SAMPLER_INGRAPH_SCATTER</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>The captured sampler gathers its RNG offsets from the slot masters
+and scatters the advanced offsets and the sampled tokens back inside
+the graph, so a replayed decode step issues none of those launches on
+the gpu thread afterwards (each one is a GIL release the main thread’s
+postprocess wins). Padding rows then address a trash master row and
+the masters are allocated once for <code class="docutils literal notranslate"><span class="pre">MSTAR_SAMPLER_SLOTS</span></code> concurrent
+requests (default 4096, a hard cap with this on). Only with the device
+loop-back on. An experiment knob; measure before turning it on.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_RUST_SEND_TIMING</span></code></p></td>
+<td><p>unset</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code> makes the Rust runtime print, every 500 calls, how long the
+worker’s per-step send spends in its own work against the whole call
+(which includes taking the GIL back when the send had to release it).
+A diagnostic for the host-overhead work; off by default.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_SPEC_PEEK_FOR_FAIRNESS</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
@@ -1143,7 +1264,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

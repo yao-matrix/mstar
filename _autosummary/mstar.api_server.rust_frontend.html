@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -318,6 +318,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -384,9 +391,13 @@
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -394,6 +405,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -651,7 +663,7 @@ protocol are untouched):</p>
 <blockquote>
 <div><dl>
 <dt>frontend -&gt; bridge:  {t:”submit”, rid, text, file_paths,</dt><dd><p>input_modalities, output_modalities, model_kwargs,
-streaming} | {t:”abort”, rid}</p>
+prompt_parts, streaming} | {t:”abort”, rid}</p>
 </dd>
 <dt>bridge -&gt; frontend:  {t:”chunk”, rid, modality, data(bin), metadata}</dt><dd><div class="line-block">
 <div class="line">{t:”err”, rid, msg} | {t:”done”, rid}</div>
@@ -660,9 +672,10 @@ streaming} | {t:”abort”, rid}</p>
 </dl>
 </div></blockquote>
 <p>The submit shape is <code class="docutils literal notranslate"><span class="pre">APIServer.submit_request</span></code>’s signature verbatim — the
-protocol was designed by flattening it. The bridge mesh lives in its own
-socket dir (private to the frontend/bridge pair), so entity names never
-collide with the conductor/worker mesh.</p>
+protocol was designed by flattening it. <code class="docutils literal notranslate"><span class="pre">prompt_parts</span></code> travels for a chat
+only, one map of <code class="docutils literal notranslate"><span class="pre">PromptPart</span></code>’s fields per part. The bridge mesh lives in
+its own socket dir (private to the frontend/bridge pair), so entity names
+never collide with the conductor/worker mesh.</p>
 <p>Opt-in: <code class="docutils literal notranslate"><span class="pre">mstar-serve</span> <span class="pre">--rust-frontend</span></code> replaces <code class="docutils literal notranslate"><span class="pre">uvicorn.run</span></code> with the
 <code class="docutils literal notranslate"><span class="pre">mstar-server</span></code> binary + this loop. Everything else in the process
 (preprocess worker, conductor spawn, tensor transport) is identical.</p>
@@ -861,7 +874,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

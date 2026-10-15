@@ -26,7 +26,6 @@ mstar.communication.codec
    
       Codec
       MsgpackCodec
-      PickleCodec
       WireCodec
    
    

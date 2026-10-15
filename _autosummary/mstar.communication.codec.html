@@ -55,7 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -318,6 +318,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -384,9 +391,13 @@
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -394,6 +405,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -630,11 +642,6 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.MsgpackCodec.encode"><code class="docutils literal notranslate"><span class="pre">MsgpackCodec.encode()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.PickleCodec"><code class="docutils literal notranslate"><span class="pre">PickleCodec</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.PickleCodec.decode"><code class="docutils literal notranslate"><span class="pre">PickleCodec.decode()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.PickleCodec.encode"><code class="docutils literal notranslate"><span class="pre">PickleCodec.encode()</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.WireCodec"><code class="docutils literal notranslate"><span class="pre">WireCodec</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.WireCodec.decode"><code class="docutils literal notranslate"><span class="pre">WireCodec.decode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.WireCodec.encode"><code class="docutils literal notranslate"><span class="pre">WireCodec.encode()</span></code></a></li>
@@ -673,7 +680,7 @@ encoding is a codec change, never a transport change.</p>
 <td><p>Decode a drained batch one frame at a time.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mstar.communication.codec.default_codec" title="mstar.communication.codec.default_codec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_codec</span></code></a>()</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">MSTAR_WIRE_CODEC=pickle</span></code> falls back to pickle.</p></td>
+<td><p>Select typed msgpack; reject the removed pickle codec at startup.</p></td>
 </tr>
 </tbody>
 </table>
@@ -687,10 +694,7 @@ encoding is a codec change, never a transport change.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#mstar.communication.codec.MsgpackCodec" title="mstar.communication.codec.MsgpackCodec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MsgpackCodec</span></code></a>()</p></td>
 <td><p>Raw msgpack, no schema: for edges whose payloads are already plain dicts and whose other end is not Python — the Rust <code class="docutils literal notranslate"><span class="pre">mstar-server</span></code> frontend bridge.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.communication.codec.PickleCodec" title="mstar.communication.codec.PickleCodec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickleCodec</span></code></a>()</p></td>
-<td><p>The old wire.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mstar.communication.codec.WireCodec" title="mstar.communication.codec.WireCodec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WireCodec</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mstar.communication.codec.WireCodec" title="mstar.communication.codec.WireCodec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WireCodec</span></code></a>()</p></td>
 <td><p>Typed msgpack (<code class="docutils literal notranslate"><span class="pre">mstar.communication.wire</span></code>): language-neutral and lossless for the message dataclasses.</p></td>
 </tr>
 </tbody>
@@ -753,50 +757,6 @@ replacement for pickle; use <a class="reference internal" href="#mstar.communica
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mstar.communication.codec.PickleCodec">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.communication.codec.</span></span><span class="sig-name descname"><span class="pre">PickleCodec</span></span><a class="reference internal" href="../_modules/mstar/communication/codec.html#PickleCodec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.communication.codec.PickleCodec" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#mstar.communication.codec.Codec" title="mstar.communication.codec.Codec"><code class="xref py py-class docutils literal notranslate"><span class="pre">Codec</span></code></a></p>
-<p>The old wire. Python-only, so an edge using it cannot terminate in a
-Rust process; kept for bisecting a wire problem.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="mstar.communication.codec.PickleCodec.decode">
-<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_imports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ASCII'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'strict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mstar.communication.codec.PickleCodec.decode" title="Link to this definition">#</a></dt>
-<dd><p>Read and return an object from the given pickle data.</p>
-<p>The protocol version of the pickle is detected automatically, so no
-protocol argument is needed.  Bytes past the pickled object’s
-representation are ignored.</p>
-<p>Optional keyword arguments are <em>fix_imports</em>, <em>encoding</em> and <em>errors</em>,
-which are used to control compatibility support for pickle stream
-generated by Python 2.  If <em>fix_imports</em> is True, pickle will try to
-map the old Python 2 names to the new names used in Python 3.  The
-<em>encoding</em> and <em>errors</em> tell pickle how to decode 8-bit string
-instances pickled by Python 2; these default to ‘ASCII’ and ‘strict’,
-respectively.  The <em>encoding</em> can be ‘bytes’ to read these 8-bit
-string instances as bytes objects.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mstar.communication.codec.PickleCodec.encode">
-<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_imports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mstar.communication.codec.PickleCodec.encode" title="Link to this definition">#</a></dt>
-<dd><p>Return the pickled representation of the object as a bytes object.</p>
-<p>The optional <em>protocol</em> argument tells the pickler to use the given
-protocol; supported protocols are 0, 1, 2, 3, 4 and 5.  The default
-protocol is 4. It was introduced in Python 3.4, and is incompatible
-with previous versions.</p>
-<p>Specifying a negative protocol version selects the highest protocol
-version supported.  The higher the protocol used, the more recent the
-version of Python needed to read the pickle produced.</p>
-<p>If <em>fix_imports</em> is True and <em>protocol</em> is less than 3, pickle will
-try to map the new Python 3 names to the old module names used in
-Python 2, so that the pickle data stream is readable with Python 2.</p>
-<p>If <em>buffer_callback</em> is None (the default), buffer views are serialized
-into <em>file</em> as part of the pickle stream.  It is an error if
-<em>buffer_callback</em> is not None and <em>protocol</em> is None or smaller than 5.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="mstar.communication.codec.WireCodec">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mstar.communication.codec.</span></span><span class="sig-name descname"><span class="pre">WireCodec</span></span><a class="reference internal" href="../_modules/mstar/communication/codec.html#WireCodec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.communication.codec.WireCodec" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mstar.communication.codec.Codec" title="mstar.communication.codec.Codec"><code class="xref py py-class docutils literal notranslate"><span class="pre">Codec</span></code></a></p>
@@ -848,7 +808,7 @@ requests included – to one bad payload.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mstar.communication.codec.default_codec">
 <span class="sig-prename descclassname"><span class="pre">mstar.communication.codec.</span></span><span class="sig-name descname"><span class="pre">default_codec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mstar/communication/codec.html#default_codec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mstar.communication.codec.default_codec" title="Link to this definition">#</a></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">MSTAR_WIRE_CODEC=pickle</span></code> falls back to pickle.</p>
+<dd><p>Select typed msgpack; reject the removed pickle codec at startup.</p>
 <p>Both ends of an edge must agree, so this is all-or-nothing for a mesh —
 a single process set differently will not be able to talk to its peers.</p>
 <dl class="field-list simple">
@@ -917,11 +877,6 @@ a single process set differently will not be able to talk to its peers.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.MsgpackCodec.encode"><code class="docutils literal notranslate"><span class="pre">MsgpackCodec.encode()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.PickleCodec"><code class="docutils literal notranslate"><span class="pre">PickleCodec</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.PickleCodec.decode"><code class="docutils literal notranslate"><span class="pre">PickleCodec.decode()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.PickleCodec.encode"><code class="docutils literal notranslate"><span class="pre">PickleCodec.encode()</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.WireCodec"><code class="docutils literal notranslate"><span class="pre">WireCodec</span></code></a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.WireCodec.decode"><code class="docutils literal notranslate"><span class="pre">WireCodec.decode()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mstar.communication.codec.WireCodec.encode"><code class="docutils literal notranslate"><span class="pre">WireCodec.encode()</span></code></a></li>
@@ -962,7 +917,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

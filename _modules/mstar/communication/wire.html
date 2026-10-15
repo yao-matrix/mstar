@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 12, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -671,6 +671,13 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/mstar.model.nemotron_duplex.config.html">mstar.model.nemotron_duplex.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/mstar.model.nemotron_duplex.realtime_api.html">mstar.model.nemotron_duplex.realtime_api</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/mstar.model.nemotron_duplex.submodules.html">mstar.model.nemotron_duplex.submodules</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/mstar.model.omnivoice.html">mstar.model.omnivoice</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/mstar.model.omnivoice.components.html">mstar.model.omnivoice.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/mstar.model.omnivoice.config.html">mstar.model.omnivoice.config</a></li>
@@ -737,9 +744,13 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.generation_kwargs.html">mstar.utils.generation_kwargs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.h2d.html">mstar.utils.h2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.hf_snapshot.html">mstar.utils.hf_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.ipc_format.html">mstar.utils.ipc_format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.knobs.html">mstar.utils.knobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
@@ -747,6 +758,7 @@ window.runMermaid = runMermaid;</script>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/mstar.worker.html">mstar.worker</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.worker.batch_builder.html">mstar.worker.batch_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/mstar.worker.rid_table.html">mstar.worker.rid_table</a></li>
 </ul>
 </details></li>
@@ -927,23 +939,26 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">- ``set`` becomes a list and is rebuilt on decode.</span>
 <span class="sd">- ``PublishedInfo`` / ``ResourceReqConfig`` / ``MessageBody`` are abstract, so</span>
 <span class="sd">  those fields carry ``[tag, payload]``.</span>
-<span class="sd">- A value whose declared type says nothing useful (bare ``dict``, ``Any``,</span>
-<span class="sd">  ``model_kwargs``) goes as plain msgpack only when that round-trips exactly</span>
-<span class="sd">  -- scalars, lists, str-keyed dicts -- and is pickled into an ExtType</span>
-<span class="sd">  otherwise. Such fields hold whatever a model or a client put there, so</span>
-<span class="sd">  converting them by hand is lossy (tuples come back as lists, int keys as</span>
-<span class="sd">  pairs) or raises mid-send; pickle is what they crossed the wire as before.</span>
-<span class="sd">  A Rust sender only ever splices these as opaque, already-encoded bytes.</span>
+<span class="sd">- Loosely typed fields (bare ``dict``, ``Any``, ``model_kwargs``) use plain</span>
+<span class="sd">  msgpack where it round-trips exactly, and data-only extensions for tuples,</span>
+<span class="sd">  sets, non-string map keys, dataclasses, torch sizes/dtypes, NumPy values,</span>
+<span class="sd">  dates, and the msgpack timestamps/extensions a ``/generate/ws`` client sends.</span>
+<span class="sd">  Unsupported Python objects are rejected at send time. Incoming frames</span>
+<span class="sd">  never run pickle; the only classes a frame can name are registered or</span>
+<span class="sd">  mstar dataclasses, built from decoded field values.</span>
+<span class="sd">  A Rust sender splices these as opaque, already-encoded bytes.</span>
 <span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">msgpack</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 <span class="c1"># Registry for the abstract field types. A subclass has to be registered</span>
@@ -1017,12 +1032,13 @@ window.runMermaid = runMermaid;</script>
     <span class="k">return</span> <span class="n">v</span>
 
 
-<span class="c1">#: msgpack ext code for a pickled value from a loosely-typed field.</span>
+<span class="c1">#: Legacy pickle code: retained only to reject old frames clearly.</span>
 <span class="n">PICKLED_EXT</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="n">DATA_EXT</span> <span class="o">=</span> <span class="mi">81</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_pickled</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">(</span><span class="n">PICKLED_EXT</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_data_ext</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">(</span><span class="n">DATA_EXT</span><span class="p">,</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">packb</span><span class="p">([</span><span class="n">kind</span><span class="p">,</span> <span class="n">value</span><span class="p">],</span> <span class="n">use_bin_type</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
 
 <span class="c1"># -- plan compilation -------------------------------------------------------</span>
@@ -1224,7 +1240,10 @@ window.runMermaid = runMermaid;</script>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">omit_if_none</span><span class="p">:</span>
                 <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">continue</span>
-        <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">enc</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">enc</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">WireError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
     <span class="k">return</span> <span class="n">out</span>
 
 
@@ -1264,8 +1283,11 @@ window.runMermaid = runMermaid;</script>
     <span class="n">obj</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">qualname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">is_dataclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"wire tag </span><span class="si">{</span><span class="n">tag</span><span class="si">!r}</span><span class="s2"> does not name a dataclass"</span><span class="p">)</span>
+    <span class="c1"># The path must be where the class is defined, not a hop through an</span>
+    <span class="c1"># imported module to some other package's class.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">is_dataclass</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">module_name</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">==</span> <span class="n">qualname</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"wire tag </span><span class="si">{</span><span class="n">tag</span><span class="si">!r}</span><span class="s2"> does not name an mstar dataclass"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">obj</span>
 
 
@@ -1281,17 +1303,82 @@ window.runMermaid = runMermaid;</script>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_dynamic_decode</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Mirror of ``_dynamic``: plain values come back as they are, and a</span>
-<span class="sd">    pickled one is unpickled."""</span>
+<span class="w">    </span><span class="sd">"""Restore supported values without executing a reconstruction program."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="n">PICKLED_EXT</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">PICKLED_EXT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"pickle metadata is no longer supported; upgrade all peers"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="n">DATA_EXT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown msgpack ext code </span><span class="si">{</span><span class="n">raw</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_decode_data_ext</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">WireError</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">LookupError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"malformed data extension: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">_dynamic_decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_dynamic_decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">return</span> <span class="n">raw</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decode_data_ext</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+    <span class="n">kind</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">unpackb</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict_map_key</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"tuple"</span><span class="p">,</span> <span class="s2">"set"</span><span class="p">,</span> <span class="s2">"frozenset"</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">_dynamic_decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_array</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"tuple"</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="s2">"set"</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="s2">"frozenset"</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">}[</span><span class="n">kind</span><span class="p">](</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"torch_size"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">_array</span><span class="p">(</span><span class="n">value</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"torch.Size dimensions must be integers"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"dict"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">_dynamic_decode</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">_dynamic_decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_array</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"dataclass"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_decode_tagged</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"torch_dtype"</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">_dtype_from_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown torch dtype </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dtype</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"numpy_array"</span><span class="p">,</span> <span class="s2">"numpy_scalar"</span><span class="p">):</span>
+        <span class="n">dtype_str</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"NumPy dtype must be a dtype string"</span><span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype_str</span><span class="p">)</span>
+        <span class="n">_check_numpy_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"invalid NumPy shape"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="ow">or</span> <span class="n">math</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"NumPy shape and dtype do not match the data size"</span><span class="p">)</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"numpy_scalar"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"NumPy scalar must have an empty shape"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">array</span><span class="p">[()]</span>
+        <span class="k">return</span> <span class="n">array</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"msgpack_timestamp"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="o">*</span><span class="n">_array</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"msgpack_ext"</span><span class="p">:</span>
+        <span class="c1"># Opaque client data: code 80 here is never the legacy pickle extension.</span>
+        <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">(</span><span class="o">*</span><span class="n">_array</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"datetime"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"date"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown data extension kind </span><span class="si">{</span><span class="n">kind</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_numpy_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Only plain dtypes, which ``dtype.str`` round-trips exactly. Both ends</span>
+<span class="sd">    apply this, so the receiver accepts everything the sender produces."""</span>
+    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">hasobject</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"object arrays are not supported on the wire"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">.</span><span class="n">subdtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"structured and subarray NumPy dtypes are not supported on the wire: </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"NumPy dtype metadata is not supported on the wire"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"zero-size NumPy dtypes are not supported on the wire: </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_plain</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1307,31 +1394,75 @@ window.runMermaid = runMermaid;</script>
     <span class="k">return</span> <span class="kc">False</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_dynamic_at</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``_dynamic`` for a map entry; a refusal names the key that held it."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_dynamic</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">WireError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_dynamic</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A value whose declared type says nothing useful (bare ``dict``, ``Any``).</span>
-<span class="sd">    Plain msgpack when that is exact, pickled otherwise -- see the module</span>
-<span class="sd">    docstring."""</span>
+<span class="w">    </span><span class="sd">"""Encode a loosely typed value as data, preserving its supported type."""</span>
     <span class="k">if</span> <span class="n">_is_plain</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">value</span>
-    <span class="k">return</span> <span class="n">_pickled</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"torch_size"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_dynamic</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_dynamic_at</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"dict"</span><span class="p">,</span> <span class="p">[[</span><span class="n">_dynamic</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">_dynamic</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">[</span><span class="n">_dynamic</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">is_dataclass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"dataclass"</span><span class="p">,</span> <span class="n">_encode_tagged</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"torch_dtype"</span><span class="p">,</span> <span class="n">_dtype_name</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">):</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_check_numpy_dtype</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span>
+            <span class="s2">"numpy_scalar"</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"numpy_array"</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">array</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)],</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"msgpack_timestamp"</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">seconds</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">nanoseconds</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">ExtType</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"msgpack_ext"</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+        <span class="c1"># ISO text keeps fixed offsets (what YAML produces); a zone with rules would shift.</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"only fixed-offset datetime timezones are supported on the wire"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_data_ext</span><span class="p">(</span><span class="s2">"date"</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span>
+            <span class="s2">"tensors cannot travel in control metadata; send them on a tensor edge "</span>
+            <span class="s2">"and list the model kwarg in Model.PREPROCESS_ONLY_KWARGS"</span>
+        <span class="p">)</span>
+    <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unsupported wire value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="c1"># -- public -----------------------------------------------------------------</span>
 
-<span class="c1">#: Frame tag for a payload that is not a registered message. The codec has to</span>
-<span class="c1">#: be total — a communicator carries whatever a caller hands it, and a codec</span>
-<span class="c1">#: that raises on some payloads turns into a silent hang at the receiver</span>
-<span class="c1">#: (the send dies, the peer waits forever). Registered messages, which are</span>
-<span class="c1">#: the only ones a Rust endpoint decodes, never take this path.</span>
+<span class="c1">#: Legacy whole-message pickle tag: never decoded.</span>
 <span class="n">OPAQUE</span> <span class="o">=</span> <span class="s2">"__py__"</span>
+<span class="c1">#: Data-only envelope for a payload that is not a registered message.</span>
+<span class="n">DATA</span> <span class="o">=</span> <span class="s2">"__data__"</span>
 
 
 <div class="viewcode-block" id="encode">
 <a class="viewcode-back" href="../../../_autosummary/mstar.communication.wire.html#mstar.communication.wire.encode">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
     <span class="n">tag</span> <span class="o">=</span> <span class="n">_TYPE_TO_TAG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">packb</span><span class="p">([</span><span class="n">OPAQUE</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">msg</span><span class="p">)],</span> <span class="n">use_bin_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># An auto tag exists only in processes that already met the class, so it</span>
+    <span class="c1"># stays inside the self-describing envelope; a fresh peer can't resolve it</span>
+    <span class="c1"># as a top-level message tag.</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">AUTO_PREFIX</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">packb</span><span class="p">([</span><span class="n">DATA</span><span class="p">,</span> <span class="n">_dynamic</span><span class="p">(</span><span class="n">msg</span><span class="p">)],</span> <span class="n">use_bin_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">packb</span><span class="p">([</span><span class="n">tag</span><span class="p">,</span> <span class="n">_encode_dataclass</span><span class="p">(</span><span class="n">msg</span><span class="p">)],</span> <span class="n">use_bin_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
@@ -1360,9 +1491,8 @@ window.runMermaid = runMermaid;</script>
 <span class="w">    </span><span class="sd">"""Several field values as one msgpack array, each by its declared type.</span>
 
 <span class="sd">    For a payload that is a bare tuple of values rather than a message.</span>
-<span class="sd">    ``encode`` would reach the pickle fallback on one of those -- a list has</span>
-<span class="sd">    no wire tag -- and a pickled payload cannot be spliced into a frame the</span>
-<span class="sd">    Rust runtime builds.</span>
+<span class="sd">    Unlike ``encode``, this omits the top-level envelope, so Rust can split</span>
+<span class="sd">    the array and splice its fields into the frame it builds.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">packb</span><span class="p">(</span>
         <span class="p">[</span><span class="n">_encoder</span><span class="p">(</span><span class="n">h</span><span class="p">)(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">hints</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span>
@@ -1376,7 +1506,9 @@ window.runMermaid = runMermaid;</script>
 <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
     <span class="n">tag</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="n">msgpack</span><span class="o">.</span><span class="n">unpackb</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict_map_key</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">OPAQUE</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="s2">"pickle messages are no longer supported; upgrade all peers"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">DATA</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_dynamic_decode</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
     <span class="bp">cls</span> <span class="o">=</span> <span class="n">_TAG_TO_TYPE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">WireError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown wire message tag </span><span class="si">{</span><span class="n">tag</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
@@ -1429,7 +1561,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 12, 2026.
+  Last updated on Oct 15, 2026.
   <br/>
 </p>
   </div>

@@ -12,6 +12,7 @@ mstar.communication.wire
       AUTO_PREFIX
       PICKLED_EXT
       OPAQUE
+      DATA
    
    
 
