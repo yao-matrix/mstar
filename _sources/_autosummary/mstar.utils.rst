@@ -31,6 +31,7 @@
    attention
    causal_conv1d
    containers
+   device
    exitcode
    fast_tokenize
    fused_moe
@@ -43,5 +44,6 @@
    logging_config
    orphan
    profiler
+   socket_prefix
    streams
 

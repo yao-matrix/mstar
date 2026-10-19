@@ -54,7 +54,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -198,6 +198,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="serving.html">Serving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="clients.html">Using a Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation and Benchmarks</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
@@ -230,7 +231,6 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.tensor_uuid.html">mstar.communication.tensor_uuid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.tensors.html">mstar.communication.tensors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.wire.html">mstar.communication.wire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.wire_types.html">mstar.communication.wire_types</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.conductor.html">mstar.conductor</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -238,13 +238,12 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.engine.html">mstar.engine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.cuda_graph_config.html">mstar.engine.cuda_graph_config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.cuda_graph_runner.html">mstar.engine.cuda_graph_runner</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.engine.html">mstar.engine.engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.accelerator_graph_backend.html">mstar.engine.accelerator_graph_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.accelerator_graph_config.html">mstar.engine.accelerator_graph_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.accelerator_graph_runner.html">mstar.engine.accelerator_graph_runner</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.engine.resources.html">mstar.engine.resources</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.attn.html">mstar.engine.resources.attn</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.base.html">mstar.engine.resources.base</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.convenience.html">mstar.engine.resources.convenience</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.kv.html">mstar.engine.resources.kv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.position.html">mstar.engine.resources.position</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.recurrent.html">mstar.engine.resources.recurrent</a></li>
@@ -270,21 +269,6 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.chatterbox.config.html">mstar.model.chatterbox.config</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.components.html">mstar.model.components</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.attention.html">mstar.model.components.attention</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.audio_features.html">mstar.model.components.audio_features</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.aut_encoder.html">mstar.model.components.aut_encoder</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.decoder_layer.html">mstar.model.components.decoder_layer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.diffusion.html">mstar.model.components.diffusion</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.distributed.html">mstar.model.components.distributed</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.linear.html">mstar.model.components.linear</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.linear_attn.html">mstar.model.components.linear_attn</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.mlp.html">mstar.model.components.mlp</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.moe.html">mstar.model.components.moe</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.norm.html">mstar.model.components.norm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.qwen3_lm.html">mstar.model.components.qwen3_lm</a></li>
-</ul>
-</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.cosmos3.html">mstar.model.cosmos3</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.cosmos3.components.html">mstar.model.cosmos3.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.cosmos3.config.html">mstar.model.cosmos3.config</a></li>
@@ -297,8 +281,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.html">mstar.model.flux2_klein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.components.html">mstar.model.flux2_klein.components</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.config.html">mstar.model.flux2_klein.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.submodules.html">mstar.model.flux2_klein.submodules</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.higgs_audio.html">mstar.model.higgs_audio</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -307,13 +289,16 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.kokoro.html">mstar.model.kokoro</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.components.html">mstar.model.kokoro.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.config.html">mstar.model.kokoro.config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.g2p.html">mstar.model.kokoro.g2p</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.submodules.html">mstar.model.kokoro.submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.voices.html">mstar.model.kokoro.voices</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.ltx2_5.html">mstar.model.ltx2_5</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.ltx2_5.components.html">mstar.model.ltx2_5.components</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.model.media_limits.html">mstar.model.media_limits</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
@@ -348,13 +333,10 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.html">mstar.model.vjepa2</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.components.html">mstar.model.vjepa2.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.config.html">mstar.model.vjepa2.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.submodules.html">mstar.model.vjepa2.submodules</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.wan22.html">mstar.model.wan22</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.wan22.components.html">mstar.model.wan22.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.wan22.config.html">mstar.model.wan22.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.wan22.submodules.html">mstar.model.wan22.submodules</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.waypoint.html">mstar.model.waypoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -372,8 +354,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.z_image.html">mstar.model.z_image</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.z_image.components.html">mstar.model.z_image.components</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.z_image.config.html">mstar.model.z_image.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.z_image.submodules.html">mstar.model.z_image.submodules</a></li>
 </ul>
 </details></li>
 </ul>
@@ -387,6 +367,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.utils.html">mstar.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.device.html">mstar.utils.device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
@@ -398,6 +379,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.socket_prefix.html">mstar.utils.socket_prefix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.streams.html">mstar.utils.streams</a></li>
 </ul>
 </details></li>
@@ -657,6 +639,7 @@ vision-language-action policies, and world models — through a <strong>Python S
 <li class="toctree-l2"><a class="reference internal" href="installation.html#optional-dependencies">Optional dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#gpu-libraries">GPU libraries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#omnivoice-omnivoice">omnivoice (OmniVoice)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#qwen-tts-qwen3-tts">qwen-tts (Qwen3-TTS)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#flash-attn-qwen3-omni">flash-attn (Qwen3-Omni)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#flash-attn-4-waypoint-fa3-sm90-kernel">flash-attn-4 (Waypoint, FA3 sm90 kernel)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#matching-your-cuda-toolkit">Matching your CUDA toolkit</a></li>
@@ -693,6 +676,16 @@ vision-language-action policies, and world models — through a <strong>Python S
 <li class="toctree-l2"><a class="reference internal" href="clients.html#openai-compatible-api">OpenAI-compatible API</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation and Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#how-a-run-is-measured">How a run is measured</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#suites">Suites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#datasets">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#quality-judges">Quality judges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#results-and-reports">Results and reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#adding-a-suite">Adding a suite</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -707,7 +700,7 @@ vision-language-action policies, and world models — through a <strong>Python S
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Supported Models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="models.html#notes">Notes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="models.html#qwen3-5-qwen3-5">Qwen3.5 (<code class="docutils literal notranslate"><span class="pre">qwen3_5_*</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#qwen3-5-qwen3-8-qwen3-5-qwen3-8-27b">Qwen3.5 / Qwen3.8 (<code class="docutils literal notranslate"><span class="pre">qwen3_5_*</span></code>, <code class="docutils literal notranslate"><span class="pre">qwen3_8_27b</span></code>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#kokoro-notes">Kokoro notes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#qwen3-tts-notes">Qwen3-TTS notes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#nemotron-voicechat-nemotron-duplex-notes">Nemotron VoiceChat (<code class="docutils literal notranslate"><span class="pre">nemotron_duplex</span></code>) notes</a></li>
@@ -716,6 +709,7 @@ vision-language-action policies, and world models — through a <strong>Python S
 <li class="toctree-l2"><a class="reference internal" href="models.html#cosmos3-edge-reasoner-and-action-loop">Cosmos3-Edge reasoner and action loop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#cosmos3-streaming-rollout-windowed-video">Cosmos3 streaming rollout (windowed video)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#wan2-2-wan22">Wan2.2 (<code class="docutils literal notranslate"><span class="pre">wan22</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#ltx-2-5-ltx2-5">LTX-2.5 (<code class="docutils literal notranslate"><span class="pre">ltx2_5</span></code>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#flux-2-klein-flux2-klein-flux2-klein-9b">FLUX.2 [klein] (<code class="docutils literal notranslate"><span class="pre">flux2_klein</span></code> / <code class="docutils literal notranslate"><span class="pre">flux2_klein_9b</span></code>)</a></li>
 </ul>
 </li>
@@ -736,6 +730,7 @@ vision-language-action policies, and world models — through a <strong>Python S
 <li class="toctree-l2"><a class="reference internal" href="environment_variables.html#models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="environment_variables.html#serving-python-frontend">Serving (Python frontend)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="environment_variables.html#serving-rust-frontend">Serving (Rust frontend)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="environment_variables.html#request-media">Request media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="environment_variables.html#worker-scheduling">Worker scheduling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="environment_variables.html#compilation">Compilation</a></li>
 </ul>
@@ -823,7 +818,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 15, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

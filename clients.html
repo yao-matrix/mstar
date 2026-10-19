@@ -50,12 +50,12 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Architecture" href="architecture.html" />
+    <link rel="next" title="Evaluation and Benchmarks" href="evaluation.html" />
     <link rel="prev" title="Serving" href="serving.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.1" />
-    <meta name="docbuild:last-update" content="Oct 15, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -201,6 +201,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="serving.html">Serving</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Using a Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation and Benchmarks</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
@@ -233,7 +234,6 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.tensor_uuid.html">mstar.communication.tensor_uuid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.tensors.html">mstar.communication.tensors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.wire.html">mstar.communication.wire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.communication.wire_types.html">mstar.communication.wire_types</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.conductor.html">mstar.conductor</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -241,13 +241,12 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.engine.html">mstar.engine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.cuda_graph_config.html">mstar.engine.cuda_graph_config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.cuda_graph_runner.html">mstar.engine.cuda_graph_runner</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.engine.html">mstar.engine.engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.accelerator_graph_backend.html">mstar.engine.accelerator_graph_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.accelerator_graph_config.html">mstar.engine.accelerator_graph_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.engine.accelerator_graph_runner.html">mstar.engine.accelerator_graph_runner</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.engine.resources.html">mstar.engine.resources</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.attn.html">mstar.engine.resources.attn</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.base.html">mstar.engine.resources.base</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.convenience.html">mstar.engine.resources.convenience</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.kv.html">mstar.engine.resources.kv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.position.html">mstar.engine.resources.position</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.engine.resources.recurrent.html">mstar.engine.resources.recurrent</a></li>
@@ -273,21 +272,6 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.chatterbox.config.html">mstar.model.chatterbox.config</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.components.html">mstar.model.components</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.attention.html">mstar.model.components.attention</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.audio_features.html">mstar.model.components.audio_features</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.aut_encoder.html">mstar.model.components.aut_encoder</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.decoder_layer.html">mstar.model.components.decoder_layer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.diffusion.html">mstar.model.components.diffusion</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.distributed.html">mstar.model.components.distributed</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.linear.html">mstar.model.components.linear</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.linear_attn.html">mstar.model.components.linear_attn</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.mlp.html">mstar.model.components.mlp</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.moe.html">mstar.model.components.moe</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.norm.html">mstar.model.components.norm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.components.qwen3_lm.html">mstar.model.components.qwen3_lm</a></li>
-</ul>
-</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.cosmos3.html">mstar.model.cosmos3</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.cosmos3.components.html">mstar.model.cosmos3.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.cosmos3.config.html">mstar.model.cosmos3.config</a></li>
@@ -300,8 +284,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.html">mstar.model.flux2_klein</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.components.html">mstar.model.flux2_klein.components</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.config.html">mstar.model.flux2_klein.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.flux2_klein.submodules.html">mstar.model.flux2_klein.submodules</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.higgs_audio.html">mstar.model.higgs_audio</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -310,13 +292,16 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.kokoro.html">mstar.model.kokoro</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.components.html">mstar.model.kokoro.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.config.html">mstar.model.kokoro.config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.g2p.html">mstar.model.kokoro.g2p</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.submodules.html">mstar.model.kokoro.submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.kokoro.voices.html">mstar.model.kokoro.voices</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.ltx2_5.html">mstar.model.ltx2_5</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.ltx2_5.components.html">mstar.model.ltx2_5.components</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.model.media_limits.html">mstar.model.media_limits</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.model.multimodal.html">mstar.model.multimodal</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.html">mstar.model.nemotron_duplex</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.nemotron_duplex.components.html">mstar.model.nemotron_duplex.components</a></li>
@@ -351,13 +336,10 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.html">mstar.model.vjepa2</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.components.html">mstar.model.vjepa2.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.config.html">mstar.model.vjepa2.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.vjepa2.submodules.html">mstar.model.vjepa2.submodules</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.wan22.html">mstar.model.wan22</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.wan22.components.html">mstar.model.wan22.components</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.wan22.config.html">mstar.model.wan22.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.wan22.submodules.html">mstar.model.wan22.submodules</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.waypoint.html">mstar.model.waypoint</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -375,8 +357,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/mstar.model.z_image.html">mstar.model.z_image</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.z_image.components.html">mstar.model.z_image.components</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.z_image.config.html">mstar.model.z_image.config</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/mstar.model.z_image.submodules.html">mstar.model.z_image.submodules</a></li>
 </ul>
 </details></li>
 </ul>
@@ -390,6 +370,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/mstar.utils.html">mstar.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.adarms_norm.html">mstar.utils.adarms_norm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.containers.html">mstar.utils.containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.device.html">mstar.utils.device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.exitcode.html">mstar.utils.exitcode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.fast_tokenize.html">mstar.utils.fast_tokenize</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.gc_freeze.html">mstar.utils.gc_freeze</a></li>
@@ -401,6 +382,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.logging_config.html">mstar.utils.logging_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.orphan.html">mstar.utils.orphan</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.profiler.html">mstar.utils.profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.socket_prefix.html">mstar.utils.socket_prefix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mstar.utils.streams.html">mstar.utils.streams</a></li>
 </ul>
 </details></li>
@@ -701,7 +683,10 @@ replaces it.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">request_id</span></code></p></td>
 <td><p><em>(uuid)</em></p></td>
-<td><p>Optional client-supplied id; the server generates one when omitted.</p></td>
+<td><p>Optional client-supplied id; the server generates one when omitted. An id
+that still has a request in flight is refused with <code class="docutils literal notranslate"><span class="pre">409</span></code>; it is free
+again once that request finished, failed or was aborted (a client that
+drops a stream can resubmit its id at once).</p></td>
 </tr>
 </tbody>
 </table>
@@ -746,7 +731,8 @@ as a msgpack binary frame (<code class="docutils literal notranslate"><span clas
 message: one frame per result chunk, <code class="docutils literal notranslate"><span class="pre">{&quot;request_id&quot;,</span> <span class="pre">&quot;modality&quot;,</span> <span class="pre">&quot;data&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code>,
 then <code class="docutils literal notranslate"><span class="pre">{&quot;request_id&quot;,</span> <span class="pre">&quot;finish&quot;:</span> <span class="pre">true}</span></code>. A rejected message answers
 <code class="docutils literal notranslate"><span class="pre">{&quot;request_id&quot;,</span> <span class="pre">&quot;error&quot;:</span> <span class="pre">...}</span></code> and the socket stays open; a request that fails after it
-was accepted ends the same way, with the HTTP <code class="docutils literal notranslate"><span class="pre">status</span></code> it would have had, and no
+was accepted ends the same way. Both carry the HTTP <code class="docutils literal notranslate"><span class="pre">status</span></code> when there is one
+(<code class="docutils literal notranslate"><span class="pre">409</span></code> for a <code class="docutils literal notranslate"><span class="pre">request_id</span></code> still in flight, as on <code class="docutils literal notranslate"><span class="pre">/generate</span></code>), and no
 <code class="docutils literal notranslate"><span class="pre">finish</span></code> follows. Messages may be pipelined —
 send the next observation before the current action chunk has returned — and the
 <code class="docutils literal notranslate"><span class="pre">request_id</span></code> tells the replies apart. Closing the socket aborts whatever is still in
@@ -976,7 +962,9 @@ session re-transcribes everything heard so far as one engine request whose assis
 turn is prefilled with the previous hypothesis minus its last <code class="docutils literal notranslate"><span class="pre">unfixed_tokens</span></code>
 tokens (the Qwen3-ASR SDK’s streaming algorithm), so only the tail is ever revised.
 Tune <code class="docutils literal notranslate"><span class="pre">chunk_seconds</span></code> / <code class="docutils literal notranslate"><span class="pre">unfixed_chunks</span></code> / <code class="docutils literal notranslate"><span class="pre">unfixed_tokens</span></code> under <code class="docutils literal notranslate"><span class="pre">session.mstar</span></code>
-in <code class="docutils literal notranslate"><span class="pre">transcription_session.update</span></code>.</p></li>
+in <code class="docutils literal notranslate"><span class="pre">transcription_session.update</span></code>; a smaller <code class="docutils literal notranslate"><span class="pre">chunk_seconds</span></code> is raised to 0.5. An item holds
+at most 300 s of audio (<code class="docutils literal notranslate"><span class="pre">max_item_seconds</span></code> in the session, lower if the model hears
+less): commit before then, since an append past it is refused with an <code class="docutils literal notranslate"><span class="pre">error</span></code>.</p></li>
 <li><p><strong>Kokoro</strong> — <code class="docutils literal notranslate"><span class="pre">voice</span></code> is one of the 54 bundled voices (default <code class="docutils literal notranslate"><span class="pre">af_heart</span></code>) or a
 blend such as <code class="docutils literal notranslate"><span class="pre">af_bella+af_sky</span></code> or <code class="docutils literal notranslate"><span class="pre">af_bella(2)+af_sky(1)</span></code>; <code class="docutils literal notranslate"><span class="pre">speed</span></code> scales the
 speaking rate (0.25-4.0). <code class="docutils literal notranslate"><span class="pre">lang_code</span></code> and <code class="docutils literal notranslate"><span class="pre">phonemes</span></code> go through <code class="docutils literal notranslate"><span class="pre">extra_body</span></code>.
@@ -1009,11 +997,11 @@ in the Orpheus config).</p></li>
       </div>
     </a>
     <a class="right-next"
-       href="architecture.html"
+       href="evaluation.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Architecture</p>
+        <p class="prev-next-title">Evaluation and Benchmarks</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1072,7 +1060,7 @@ By M* Team
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 15, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

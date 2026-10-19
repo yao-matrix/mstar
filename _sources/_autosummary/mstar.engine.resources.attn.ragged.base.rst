@@ -9,6 +9,12 @@ mstar.engine.resources.attn.ragged.base
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      resolve_ragged_attn_backend
+   
    
 
    
@@ -18,6 +24,7 @@ mstar.engine.resources.attn.ragged.base
    .. autosummary::
    
       RaggedAttnManager
+      RaggedCrossAttnManager
    
    
 
